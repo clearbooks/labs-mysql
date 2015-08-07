@@ -21,7 +21,6 @@
     }
   ],
   "require":{
-    "doctrine/dbal": "2.5.1",
     "clearbooks/labs": "dev-master"
   },
   "require-dev": {
