@@ -87,8 +87,7 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
         $release = $this->gateway->getRelease( $id );
         $expectedRelease = new Release( $releaseName, $url, new \DateTime() );
 
-        $this->assertEquals( $expectedRelease->getReleaseName(), $release->getReleaseName() );
-        $this->assertEquals( $expectedRelease->getReleaseInfoUrl(), $release->getReleaseInfoUrl() );
+        $this->assertReleasesMatch( $expectedRelease, $release );
 
         $this->deleteAddedRelease( $id );
     }
@@ -113,8 +112,7 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
         $expectedRelease = new Release( $releaseName, $url, new \DateTime() );
         $releases =  $this->gateway->getAllReleases();
 
-        $this->assertEquals( $expectedRelease->getReleaseName(), $releases[0]->getReleaseName() );
-        $this->assertEquals( $expectedRelease->getReleaseInfoUrl(), $releases[0]->getReleaseInfoUrl() );
+        $this->assertReleasesMatch( $expectedRelease, $releases[0] );
 
         $this->deleteAddedRelease( $id );
     }
@@ -124,14 +122,29 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
      */
     public function givenMultipleReleases_getAllReleasesReturnsArrayOfReleases()
     {
-        $releasesToDelete = array(
-              $this->addRelease( 'Test release 1', 'a helpful url' ),
-              $this->addRelease( 'Test release 2', 'another helpful url' ),
-              $this->addRelease( 'Test release 3', 'a third helpful url' )
+        /**
+         * @var Release[] $expectedReleases
+         */
+        $expectedReleases = array(
+            new Release( 'Test release 1', 'a helpful url', new \DateTime() ),
+            new Release( 'Test release 2', 'another helpful url', new \DateTime() ),
+            new Release( 'Test release 3', 'a third helpful url', new \DateTime() )
         );
+
+        $releasesToDelete = array();
+
+        foreach ($expectedReleases as $expectedRelease ){
+            $releasesToDelete[] = $this->addRelease( $expectedRelease->getReleaseName(),
+                $expectedRelease->getReleaseInfoUrl() );
+        }
+
         $releases =  $this->gateway->getAllReleases();
 
         $this->assertCount( 3, $releases );
+
+        foreach( $expectedReleases as $index => $expectedRelease ){
+            $this->assertReleasesMatch( $expectedRelease, $releases[$index] );
+        }
 
         foreach ( $releasesToDelete as $id ){
             $this->deleteAddedRelease( $id );
@@ -156,6 +169,16 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
     {
         $this->gateway->addRelease( $releaseName, $url );
         return $this->connection->lastInsertId( "`release`" );
+    }
+
+    /**
+     * @param $expectedRelease
+     * @param $release
+     */
+    private function assertReleasesMatch( $expectedRelease, $release )
+    {
+        $this->assertEquals( $expectedRelease->getReleaseName(), $release->getReleaseName() );
+        $this->assertEquals( $expectedRelease->getReleaseInfoUrl(), $release->getReleaseInfoUrl() );
     }
 }
 //EOF MysqlReleaseGatewayTest.php
