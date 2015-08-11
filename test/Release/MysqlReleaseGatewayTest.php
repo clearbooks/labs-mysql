@@ -172,8 +172,8 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $expectedRelease
-     * @param $release
+     * @param Release $expectedRelease
+     * @param Release $release
      */
     private function assertReleasesMatch( $expectedRelease, $release )
     {
