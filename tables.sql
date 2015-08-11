@@ -4,7 +4,7 @@ CREATE TABLE `release`
     `name` VARCHAR(255) NOT NULL,
     `info` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE `toggle`
 (
@@ -16,4 +16,4 @@ CREATE TABLE `toggle`
     CONSTRAINT `toggle_fk_578f0a`
     FOREIGN KEY (`release_id`)
     REFERENCES `release` (`id`)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
