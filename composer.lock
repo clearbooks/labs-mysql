@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e8585ae6c5821382df34e7f083cb02a1",
+    "hash": "0d5bf12177bc02f0809d93a4fdae0434",
     "packages": [
         {
             "name": "clearbooks/labs",
@@ -12,7 +12,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/clearbooks/labs.git",
-                "reference": "a98be207dceee2dc7e2fe664882960d48b6064c4"
+                "reference": "ab6fe76ae9388a9945d7797e5e11c96b263b6ca3"
             },
             "require-dev": {
                 "codeclimate/php-test-reporter": "dev-master",
@@ -39,7 +39,7 @@
                 }
             ],
             "description": "Sensible releases",
-            "time": "2015-08-05 15:14:00"
+            "time": "2015-08-10 14:56:57"
         },
         {
             "name": "doctrine/annotations",
