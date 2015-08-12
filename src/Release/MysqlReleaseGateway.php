@@ -15,7 +15,7 @@ class MysqlReleaseGateway implements ReleaseGateway
 {
 
     /**
-     * @var \Doctrine\DBAL\Connection
+     * @var Connection
      */
     private $connection;
 
