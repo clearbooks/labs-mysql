@@ -9,7 +9,7 @@ namespace Clearbooks\LabsMysql\Release;
 
 use Clearbooks\Labs\Release\Gateway\ReleaseGateway;
 use Clearbooks\Labs\Release\Release;
-use Doctrine\DBAL\Driver\Connection;
+use Doctrine\DBAL\Connection;
 
 class MysqlReleaseGateway implements ReleaseGateway
 {
