@@ -10,7 +10,7 @@ CREATE TABLE `toggle`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
-    `release_id` INTEGER NOT NULL,
+    `release_id` INTEGER,
     PRIMARY KEY (`id`),
     INDEX `toggle_fi_578f0a` (`release_id`),
     CONSTRAINT `toggle_fk_578f0a`
