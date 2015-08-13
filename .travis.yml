@@ -10,7 +10,7 @@ install: composer install --dev
 before_script:
   - mysql -e 'create database labs;'
 script:
-  - mysql -uroot labs < labs.sql
+  - mysql -uroot labs < tables.sql
   - vendor/phpunit/phpunit/phpunit -c phpunit.xml --coverage-clover build/logs/clover.xml
 after_success:
   - if [ "$TRAVIS_PHP_VERSION" != "nightly" ] && [ "$TRAVIS_PHP_VERSION" != "7.0" ]; then wget https://scrutinizer-ci.com/ocular.phar; fi

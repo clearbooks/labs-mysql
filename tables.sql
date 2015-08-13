@@ -6,7 +6,7 @@ CREATE TABLE `release`
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-CREATE TABLE `toggle_type`
+CREATE TABLE `toggle`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `type_name` VARCHAR(255) NOT NULL,
