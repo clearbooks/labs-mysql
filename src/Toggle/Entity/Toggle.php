@@ -1,6 +1,7 @@
 <?php
 namespace Clearbooks\LabsMysql\Toggle\Entity;
 
+use Clearbooks\Labs\Toggle\Entity\ActivatableToggle;
 use Clearbooks\Labs\Toggle\Entity\ReleasableToggle;
 
 /**
@@ -9,7 +10,7 @@ use Clearbooks\Labs\Toggle\Entity\ReleasableToggle;
  * Date: 12/08/2015
  * Time: 14:14
  */
-class Toggle implements \Clearbooks\Labs\Toggle\Entity\MarketableToggle, ReleasableToggle
+class Toggle implements \Clearbooks\Labs\Toggle\Entity\MarketableToggle, ReleasableToggle, ActivatableToggle
 {
     /**
      * @var
@@ -19,16 +20,22 @@ class Toggle implements \Clearbooks\Labs\Toggle\Entity\MarketableToggle, Releasa
      * @var
      */
     private $releaseId;
+    /**
+     * @var
+     */
+    private $isActive;
 
     /**
      * Toggle constructor.
      * @param stirng $name
      * @param stirng $releaseId
+     * @param bool $isActive
      */
-    public function __construct($name, $releaseId)
+    public function __construct($name, $releaseId, $isActive = false)
     {
         $this->name = $name;
         $this->releaseId = $releaseId;
+        $this->isActive = $isActive;
     }
 
 
@@ -44,6 +51,14 @@ class Toggle implements \Clearbooks\Labs\Toggle\Entity\MarketableToggle, Releasa
      * @return string
      */
     public function getRelease()
+    {
+        return $this->releaseId;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive()
     {
         return $this->releaseId;
     }

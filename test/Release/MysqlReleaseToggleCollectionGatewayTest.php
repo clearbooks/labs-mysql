@@ -125,21 +125,24 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
     /**
      * @param stirng $name
      * @param string $releaseId
+     * @param bool $isActive
      * @return string
      */
-    private function addToggle( $name, $releaseId )
+    private function addToggle( $name, $releaseId, $isActive = false )
     {
-        $this->addToggleToDatebase( $name, $releaseId );
+        $this->addToggleToDatebase( $name, $releaseId, $isActive );
         return $this->connection->lastInsertId( "`toggle`" );
     }
 
     /**
      * @param string $name
      * @param stirng $releaseId
+     * @param bool $isActive
      * @return int
      */
-    public function addToggleToDatebase( $name, $releaseId )
+    public function addToggleToDatebase( $name, $releaseId, $isActive )
     {
-        return $this->connection->insert( "`toggle`", [ 'name' => $name, 'release_id' => $releaseId ] );
+        return $this->connection->insert( "`toggle`",
+            [ 'name' => $name, 'release_id' => $releaseId, 'toggle_type' => 1,'is_active' => $isActive ] );
     }
 }
