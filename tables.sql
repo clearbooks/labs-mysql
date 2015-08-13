@@ -6,12 +6,17 @@ CREATE TABLE `release`
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-CREATE TABLE `toggle`
-(
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `type_name` VARCHAR(255) NOT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS `toggle_type` (
+  `id` int(11) NOT NULL,
+  `type_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `toggle_type`
+--
+
+INSERT INTO `toggle_type` (`id`, `type_name`) VALUES
+(1, 'user_toggle');
 
 CREATE TABLE `toggle` (
  `id` int(11) NOT NULL AUTO_INCREMENT,
