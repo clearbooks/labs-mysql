@@ -82,6 +82,7 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
         $expectedToggle = new Toggle( "test1", $id );
         $expectedToggle2 = new Toggle( "test2", $id );
 
+        $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
         $returnedToggles = $this->gateway->getTogglesForRelease( $id );
 
         // Teardown
@@ -89,7 +90,12 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
         $this->deleteAddedToggle( $toggleId2 );
         $this->deleteAddedRelease( $id );
 
-        $this->assertEquals( [ $expectedToggle, $expectedToggle2 ], $returnedToggles );
+        $this->assertEquals( $expectedToggles, $returnedToggles );
+
+        foreach ( $expectedToggles as $key => $value ) {
+            $this->assertGetters( $value, $returnedToggles[ $key ] );
+        }
+
 
     }
 
@@ -143,6 +149,20 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
     public function addToggleToDatebase( $name, $releaseId, $isActive )
     {
         return $this->connection->insert( "`toggle`",
-            [ 'name' => $name, 'release_id' => $releaseId, 'toggle_type' => 1,'is_active' => $isActive ] );
+            [ 'name' => $name, 'release_id' => $releaseId, 'toggle_type' => 1, 'is_active' => $isActive ] );
+    }
+
+    /**
+     * @param Toggle $expectedToggle
+     * @param Toggle $returnedToggle
+     */
+    private function assertGetters( $expectedToggle, $returnedToggle )
+    {
+        $this->assertEquals( $expectedToggle->getName(),
+            $returnedToggle->getName() );
+        $this->assertEquals( $expectedToggle->getRelease(),
+            $returnedToggle->getRelease() );
+        $this->assertEquals( $expectedToggle->isActive(),
+            $returnedToggle->isActive() );
     }
 }
