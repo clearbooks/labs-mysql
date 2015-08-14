@@ -2,7 +2,7 @@
 namespace Clearbooks\LabsMysql\Toggle\Entity;
 
 use Clearbooks\Labs\Toggle\Entity\ActivatableToggle;
-use Clearbooks\Labs\Toggle\Entity\ReleasableToggle;
+use Clearbooks\Labs\Toggle\Entity\UserToggle;
 
 /**
  * Created by PhpStorm.
@@ -10,7 +10,7 @@ use Clearbooks\Labs\Toggle\Entity\ReleasableToggle;
  * Date: 12/08/2015
  * Time: 14:14
  */
-class Toggle implements \Clearbooks\Labs\Toggle\Entity\MarketableToggle, ReleasableToggle, ActivatableToggle
+class Toggle implements \Clearbooks\Labs\Toggle\Entity\MarketableToggle, UserToggle, ActivatableToggle
 {
     /**
      * @var
