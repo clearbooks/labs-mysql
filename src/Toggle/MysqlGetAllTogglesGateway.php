@@ -9,6 +9,8 @@
 namespace Clearbooks\LabsMysql\Toggle;
 
 
+use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
+
 abstract class MysqlGetAllTogglesGateway
 {
     /**
