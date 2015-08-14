@@ -31,7 +31,7 @@ class Toggle implements \Clearbooks\Labs\Toggle\Entity\MarketableToggle, Releasa
      * @param stirng $releaseId
      * @param bool $isActive
      */
-    public function __construct($name, $releaseId, $isActive = false)
+    public function __construct( $name, $releaseId, $isActive = false )
     {
         $this->name = $name;
         $this->releaseId = $releaseId;
