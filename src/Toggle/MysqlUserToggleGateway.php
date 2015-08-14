@@ -13,7 +13,7 @@ use Clearbooks\Labs\Toggle\Entity\UserToggle;
 use Clearbooks\Labs\Toggle\Gateway\UserToggleGateway;
 use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
 
-class MysqlUserToggleGateway implements UserToggleGateway
+class MysqlUserToggleGateway extends MysqlGetAllTogglesGateway implements UserToggleGateway
 {
     /**
      * @var Connection|\Doctrine\DBAL\Connection
@@ -34,12 +34,8 @@ class MysqlUserToggleGateway implements UserToggleGateway
      */
     public function getAllUserToggles()
     {
-        $toggles = [ ];
         $data = $this->connection->fetchAll( 'SELECT * FROM `toggle` JOIN `toggle_type` ON toggle.toggle_type = toggle_type.id WHERE type_name = ?',
             [ "user_toggle" ] );
-        foreach ( $data as $row ) {
-            $toggles[] = new Toggle( $row[ 'name' ], $row[ 'release_id' ], (bool) $row[ 'is_active' ] );
-        }
-        return $toggles;
+        return $this->getAllTogglesForGivenSqlStatement( $data );
     }
 }

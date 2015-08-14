@@ -12,9 +12,10 @@ namespace Clearbooks\LabsMysql\Release;
 use Clearbooks\Labs\Release\Gateway\ReleaseToggleCollection;
 use Clearbooks\Labs\Toggle\Entity\MarketableToggle;
 use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
+use Clearbooks\LabsMysql\Toggle\MysqlGetAllTogglesGateway;
 use Doctrine\DBAL\Connection;
 
-class MysqlReleaseToggleCollectionGateway implements ReleaseToggleCollection
+class MysqlReleaseToggleCollectionGateway extends MysqlGetAllTogglesGateway implements ReleaseToggleCollection
 {
     /**
      * @var Connection
@@ -25,7 +26,7 @@ class MysqlReleaseToggleCollectionGateway implements ReleaseToggleCollection
      * MysqlReleaseToggleCollectionGateway constructor.
      * @param Connection $connection
      */
-    public function __construct(Connection $connection )
+    public function __construct( Connection $connection )
     {
         $this->connection = $connection;
     }
@@ -36,11 +37,7 @@ class MysqlReleaseToggleCollectionGateway implements ReleaseToggleCollection
      */
     public function getTogglesForRelease( $releaseId )
     {
-        $toggles = [ ];
         $data = $this->connection->fetchAll( 'SELECT * FROM `toggle` WHERE release_id = ?', [ $releaseId ] );
-        foreach ( $data as $row ) {
-            $toggles[] = new Toggle( $row[ 'name' ], $releaseId, (bool) $row[ 'is_active' ] );
-        }
-        return $toggles;
+        return $this->getAllTogglesForGivenSqlStatement( $data );
     }
 }
