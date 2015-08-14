@@ -12,6 +12,7 @@ namespace Clearbooks\LabsMysql\Release;
 use Clearbooks\Labs\Release\Gateway\ReleaseToggleCollection;
 use Clearbooks\Labs\Toggle\Entity\MarketableToggle;
 use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
+use Doctrine\DBAL\Connection;
 
 class MysqlReleaseToggleCollectionGateway implements ReleaseToggleCollection
 {
@@ -24,7 +25,7 @@ class MysqlReleaseToggleCollectionGateway implements ReleaseToggleCollection
      * MysqlReleaseToggleCollectionGateway constructor.
      * @param Connection $connection
      */
-    public function __construct( $connection )
+    public function __construct(Connection $connection )
     {
         $this->connection = $connection;
     }
