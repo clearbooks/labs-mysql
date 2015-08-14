@@ -84,7 +84,7 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
         $toggleId1 = $this->addToggle( "test1", $id, true );
         $toggleId2 = $this->addToggle( "test2", $id );
 
-        $expectedToggle = new Toggle( "test1", $id, true);
+        $expectedToggle = new Toggle( "test1", $id, true );
 
         $returnedToggle = $this->gateway->getActivatableToggleByName( "test1" );
 
@@ -95,7 +95,7 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals( $expectedToggle, $returnedToggle );
         //testing isActive()
-        $this->assertEquals( $expectedToggle->isActive(), $returnedToggle->isActive());
+        $this->assertEquals( $expectedToggle->isActive(), $returnedToggle->isActive() );
     }
 
     /**
