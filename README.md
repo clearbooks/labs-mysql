@@ -1,2 +1,2 @@
-# labs-mysql [![Build Status](https://travis-ci.org/clearbooks/labs-mysql.svg?branch=master)](https://travis-ci.org/clearbooks/labs-mysql)
+# labs-mysql [![Build Status](https://travis-ci.org/clearbooks/labs-mysql.svg?branch=master)](https://travis-ci.org/clearbooks/labs-mysql) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/clearbooks/labs-mysql/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/clearbooks/labs-mysql/?branch=master) [![Code Coverage](https://scrutinizer-ci.com/g/clearbooks/labs-mysql/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/clearbooks/labs-mysql/?branch=master)
 Labs MySQL storage backend
