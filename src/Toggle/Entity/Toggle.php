@@ -27,8 +27,8 @@ class Toggle implements \Clearbooks\Labs\Toggle\Entity\MarketableToggle, Releasa
 
     /**
      * Toggle constructor.
-     * @param stirng $name
-     * @param stirng $releaseId
+     * @param string $name
+     * @param string $releaseId
      * @param bool $isActive
      */
     public function __construct( $name, $releaseId, $isActive = false )
