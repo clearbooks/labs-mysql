@@ -158,6 +158,6 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
     public function addToggleToDatebase( $name, $releaseId, $isActive, $toggle_type )
     {
         return $this->connection->insert( "`toggle`",
-            [ 'name' => $name, 'release_id' => $releaseId, 'toggle_type' => $toggle_type, 'is_activatable' => $isActive ] );
+            [ 'name' => $name, 'release_id' => $releaseId, 'toggle_type' => $toggle_type, 'is_active' => $isActive ] );
     }
 }

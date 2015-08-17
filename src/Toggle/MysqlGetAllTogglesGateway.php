@@ -21,7 +21,7 @@ abstract class MysqlGetAllTogglesGateway
     {
         $toggles = [ ];
         foreach ( $data as $row ) {
-            $toggles[] = new Toggle( $row[ 'name' ], $row[ 'release_id' ], (bool) $row[ 'is_activatable' ] );
+            $toggles[] = new Toggle( $row[ 'name' ], $row[ 'release_id' ], (bool) $row[ 'is_active' ] );
         }
         return $toggles;
     }
