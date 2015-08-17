@@ -43,6 +43,12 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
         $this->gateway = new MysqlUserToggleGateway( $this->connection );
     }
 
+    public function tearDown()
+    {
+        $this->deleteAddedToggles();
+        $this->deleteAddedReleases();
+    }
+
     /**
      * @test
      */
@@ -61,16 +67,12 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
         $url = 'a helpful url';
         $id = $this->addRelease( $releaseName, $url );
 
-        $toggleId1 = $this->addToggle( "test1", $id, true );
+        $this->addToggle( "test1", $id, true );
 
         $expectedToggle = new Toggle( "test1", $id, true );
 
         $expectedToggles[] = $expectedToggle;
         $returnedToggles = $this->gateway->getAllUserToggles();
-
-        // Teardown: Teardown is done before assert in order to keep DataBase clean in case of test failure
-        $this->deleteAddedToggle( $toggleId1 );
-        $this->deleteAddedRelease( $id );
 
         $this->assertEquals( $expectedToggles, $returnedToggles );
     }
@@ -85,10 +87,10 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
         $id = $this->addRelease( $releaseName, $url );
 
         //Parameters: name, release_id, is_activatable, toggle_type
-        $toggleId1 = $this->addToggle( "test1", $id, true, 1 );
-        $toggleId2 = $this->addToggle( "test2", $id, true, 1 );
-        $toggleId3 = $this->addToggle( "test3", $id, true, 2 );
-        $toggleId4 = $this->addToggle( "test4", $id, true, 2 );
+        $this->addToggle( "test1", $id, true, 1 );
+        $this->addToggle( "test2", $id, true, 1 );
+        $this->addToggle( "test3", $id, true, 2 );
+        $this->addToggle( "test4", $id, true, 2 );
 
         $expectedToggle = new Toggle( "test1", $id, true );
         $expectedToggle2 = new Toggle( "test2", $id, true );
@@ -96,32 +98,23 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
         $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
         $returnedToggles = $this->gateway->getAllUserToggles();
 
-        // Teardown: Teardown is done before assert in order to keep DataBase clean in case of test failure
-        $this->deleteAddedToggle( $toggleId1 );
-        $this->deleteAddedToggle( $toggleId2 );
-        $this->deleteAddedToggle( $toggleId3 );
-        $this->deleteAddedToggle( $toggleId4 );
-        $this->deleteAddedRelease( $id );
-
         $this->assertEquals( $expectedToggles, $returnedToggles );
     }
 
     /**
-     * @param string $id
      * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
      */
-    private function deleteAddedRelease( $id )
+    private function deleteAddedReleases()
     {
-        $this->connection->delete( '`release`', [ 'id' => $id ] );
+        $this->connection->delete( '`release`', [ '*' ] );
     }
 
     /**
-     * @param string $id
      * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
      */
-    private function deleteAddedToggle( $id )
+    private function deleteAddedToggles()
     {
-        $this->connection->delete( '`toggle`', [ 'id' => $id ] );
+        $this->connection->delete( '`toggle`', [ '*' ] );
     }
 
     /**
