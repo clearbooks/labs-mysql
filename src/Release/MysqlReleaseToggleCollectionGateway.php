@@ -39,7 +39,7 @@ class MysqlReleaseToggleCollectionGateway implements ReleaseToggleCollection
         $toggles = [ ];
         $data = $this->connection->fetchAll( 'SELECT * FROM `toggle` WHERE release_id = ?', [ $releaseId ] );
         foreach ( $data as $row ) {
-            $toggles[] = new Toggle( $row[ 'name' ], $releaseId, (bool) $row[ 'is_activatable' ] );
+            $toggles[] = new Toggle( $row[ 'name' ], $releaseId, (bool) $row[ 'is_active' ] );
         }
         return $toggles;
     }
