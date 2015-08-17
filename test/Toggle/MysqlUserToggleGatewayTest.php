@@ -68,8 +68,39 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
         $expectedToggles[] = $expectedToggle;
         $returnedToggles = $this->gateway->getAllUserToggles();
 
-        // Teardown
+        // Teardown: Teardown is done before assert in order to keep DataBase clean in case of test failure
         $this->deleteAddedToggle( $toggleId1 );
+        $this->deleteAddedRelease( $id );
+
+        $this->assertEquals( $expectedToggles, $returnedToggles );
+    }
+
+    /**
+     * @test
+     */
+    public function givenExistentUserTogglesAndNonUserTogglesFound_MysqlUserToggleGateway_ReturnsArrayOfUserTogglesOnly()
+    {
+        $releaseName = 'Test user toggle 1';
+        $url = 'a helpful url';
+        $id = $this->addRelease( $releaseName, $url );
+
+        //Parameters: name, release_id, is_activatable, toggle_type
+        $toggleId1 = $this->addToggle( "test1", $id, true, 1 );
+        $toggleId2 = $this->addToggle( "test2", $id, true, 1 );
+        $toggleId3 = $this->addToggle( "test3", $id, true, 2 );
+        $toggleId4 = $this->addToggle( "test4", $id, true, 2 );
+
+        $expectedToggle = new Toggle( "test1", $id, true );
+        $expectedToggle2 = new Toggle( "test2", $id, true );
+
+        $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
+        $returnedToggles = $this->gateway->getAllUserToggles();
+
+        // Teardown: Teardown is done before assert in order to keep DataBase clean in case of test failure
+        $this->deleteAddedToggle( $toggleId1 );
+        $this->deleteAddedToggle( $toggleId2 );
+        $this->deleteAddedToggle( $toggleId3 );
+        $this->deleteAddedToggle( $toggleId4 );
         $this->deleteAddedRelease( $id );
 
         $this->assertEquals( $expectedToggles, $returnedToggles );
@@ -105,26 +136,28 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param stirng $name
+     * @param string $name
      * @param string $releaseId
      * @param bool $isActive
+     * @param int $toggle_type
      * @return string
      */
-    private function addToggle( $name, $releaseId, $isActive = false )
+    private function addToggle( $name, $releaseId, $isActive = false, $toggle_type = 1 )
     {
-        $this->addToggleToDatebase( $name, $releaseId, $isActive );
+        $this->addToggleToDatebase( $name, $releaseId, $isActive, $toggle_type );
         return $this->connection->lastInsertId( "`toggle`" );
     }
 
     /**
      * @param string $name
-     * @param stirng $releaseId
+     * @param string $releaseId
      * @param bool $isActive
+     * @param int $toggle_type
      * @return int
      */
-    public function addToggleToDatebase( $name, $releaseId, $isActive )
+    public function addToggleToDatebase( $name, $releaseId, $isActive, $toggle_type )
     {
         return $this->connection->insert( "`toggle`",
-            [ 'name' => $name, 'release_id' => $releaseId, 'toggle_type' => 1, 'is_activatable' => $isActive ] );
+            [ 'name' => $name, 'release_id' => $releaseId, 'toggle_type' => $toggle_type, 'is_activatable' => $isActive ] );
     }
 }

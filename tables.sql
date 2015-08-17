@@ -14,7 +14,8 @@ CREATE TABLE `toggle_type`
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 INSERT INTO `toggle_type` (`id`, `type_name`) VALUES
-(NULL , 'user_toggle');
+(NULL , 'user_toggle'),
+(NULL, 'group_toggle');
 
 CREATE TABLE `toggle`
 (
