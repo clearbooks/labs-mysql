@@ -62,7 +62,7 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
 
         $returnedToggles = $this->gateway->getActivatableToggleByName( "test1" );
 
-        // Teardown
+        // Teardown: Teardown is done before assert in order to keep DataBase clean in case of test failure
         $this->deleteAddedToggle( $toggleId1 );
         $this->deleteAddedRelease( $id );
 
@@ -85,7 +85,7 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
         $expectedToggles = $expectedToggle;
         $returnedToggles = $this->gateway->getActivatableToggleByName( "test1" );
 
-        // Teardown
+        // Teardown: Teardown is done before assert in order to keep DataBase clean in case of test failure
         $this->deleteAddedToggle( $toggleId1 );
         $this->deleteAddedRelease( $id );
 
@@ -108,7 +108,7 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
 
         $returnedToggle = $this->gateway->getActivatableToggleByName( "test1" );
 
-        // Teardown
+        // Teardown: Teardown is done before assert in order to keep DataBase clean in case of test failure
         $this->deleteAddedToggle( $toggleId1 );
         $this->deleteAddedToggle( $toggleId2 );
         $this->deleteAddedRelease( $id );
@@ -148,7 +148,7 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param stirng $name
+     * @param string $name
      * @param string $releaseId
      * @param bool $isActive
      * @return string
@@ -161,7 +161,7 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
 
     /**
      * @param string $name
-     * @param stirng $releaseId
+     * @param string $releaseId
      * @param bool $isActive
      * @return int
      */
