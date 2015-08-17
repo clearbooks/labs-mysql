@@ -50,7 +50,7 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
     /**
      * @test
      */
-    public function givenNoExistentRelease_ReleaseToggleColection_ReturnsEmptyArray()
+    public function givenNoExistentRelease_ReleaseToggleCollection_ReturnsEmptyArray()
     {
         $returnedToggles = $this->gateway->getTogglesForRelease( 'bloop' );
         $this->assertEquals( [ ], $returnedToggles );
@@ -59,7 +59,7 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
     /**
      * @test
      */
-    public function givenNoExistentTogglesInTheExistentRelase_ReleaseToggleColection_ReturnsEmptyArray()
+    public function givenNoExistentTogglesInTheExistentRelase_ReleaseToggleCollection_ReturnsEmptyArray()
     {
         $releaseName = 'Test release for toggle 1';
         $url = 'a helpful url';
@@ -73,7 +73,7 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
     /**
      * @test
      */
-    public function givenExistentTogglesInTheExistentRelease_ReleaseToggleColoction_ReturnsArrayOfExistentToggles()
+    public function givenExistentTogglesInTheExistentRelease_ReleaseToggleCollection_ReturnsArrayOfExistentToggles()
     {
         $releaseName = 'Test release for toggle 2';
         $url = 'a helpful url';
@@ -100,7 +100,7 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
     /**
      * @test
      */
-    public function givenExistentTogglesInDifferentReleases_ReleaseToggleColoction_ReturnsArrayOfExistentTogglesForRequestedRelease()
+    public function givenExistentTogglesInDifferentReleases_ReleaseToggleCollection_ReturnsArrayOfExistentTogglesForRequestedRelease()
     {
         $releaseName = 'Test release for toggle 3.1';
         $url = 'a helpful url';

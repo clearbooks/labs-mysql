@@ -13,15 +13,15 @@ use Clearbooks\Labs\Toggle\Entity\UserToggle;
 class Toggle implements \Clearbooks\Labs\Toggle\Entity\MarketableToggle, UserToggle, ActivatableToggle
 {
     /**
-     * @var
+     * @var string
      */
     private $name;
     /**
-     * @var
+     * @var string
      */
     private $releaseId;
     /**
-     * @var
+     * @var bool
      */
     private $isActive;
 
