@@ -93,7 +93,7 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenMultipleExistentToggleWithDifferentNames_MysqlActivatableToggleGateway_ReturnsRequestedExistentToggle()
+    public function givenMultipleExistentTogglesWithDifferentNames_MysqlActivatableToggleGateway_ReturnsRequestedExistentToggle()
     {
         $releaseName = 'Test activatable toggle 3';
         $url = 'a helpful url';
