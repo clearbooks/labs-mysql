@@ -22,7 +22,7 @@ CREATE TABLE `toggle`
  `name` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
  `release_id` int(11) NOT NULL,
  `toggle_type` int(11) NOT NULL,
- `is_active` tinyint(1) NOT NULL DEFAULT '0',
+ `is_activatable` tinyint(1) NOT NULL DEFAULT '0',
  PRIMARY KEY (`id`),
  UNIQUE KEY `name` (`name`),
  KEY `toggle_fi_1` (`release_id`),

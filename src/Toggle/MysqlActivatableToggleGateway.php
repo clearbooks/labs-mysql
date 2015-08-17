@@ -33,12 +33,12 @@ class MysqlActivatableToggleGateway implements ActivatableToggleGateway
      */
     public function getActivatableToggleByName( $name )
     {
-        $data = $this->connection->fetchAssoc( 'SELECT * FROM `toggle` WHERE name = ?', [ $name ] );
+        $data = $this->connection->fetchAssoc( 'SELECT * FROM `toggle` WHERE name = ? AND is_activatable = ?', [ $name, true ] );
         if ( empty( $data ) ) {
             return null;
         }
-        $toggle = new Toggle( $data[ 'name' ], $data[ 'release_id' ], (bool) $data[ 'is_active' ] );
+        $toggle = new Toggle( $data[ 'name' ], $data[ 'release_id' ], (bool) $data[ 'is_activatable' ] );
 
-        return empty( $toggle ) ? null : $toggle;
+        return $toggle;
     }
 }

@@ -52,7 +52,7 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenExistentToggle_MysqlActivatableToggleGateway_RetusnsExistentToggle()
+    public function givenExistentToggleButNotActivatable_MysqlActivatableToggleGateway_ReturnsNull()
     {
         $releaseName = 'Test activatable toggle 1';
         $url = 'a helpful url';
@@ -60,7 +60,27 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
 
         $toggleId1 = $this->addToggle( "test1", $id );
 
-        $expectedToggle = new Toggle( "test1", $id );
+        $returnedToggles = $this->gateway->getActivatableToggleByName( "test1" );
+
+        // Teardown
+        $this->deleteAddedToggle( $toggleId1 );
+        $this->deleteAddedRelease( $id );
+
+        $this->assertEquals( null, $returnedToggles );
+    }
+
+    /**
+     * @test
+     */
+    public function givenExistentActivatableToggle_MysqlActivatableToggleGateway_RetusnsExistentToggle()
+    {
+        $releaseName = 'Test activatable toggle 2';
+        $url = 'a helpful url';
+        $id = $this->addRelease( $releaseName, $url );
+
+        $toggleId1 = $this->addToggle( "test1", $id, true );
+
+        $expectedToggle = new Toggle( "test1", $id, true );
 
         $expectedToggles = $expectedToggle;
         $returnedToggles = $this->gateway->getActivatableToggleByName( "test1" );
@@ -77,7 +97,7 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
      */
     public function givenMultipleExistentToggleWithDifferentNames_MysqlActivatableToggleGateway_RetusnsRequestedExistentToggle()
     {
-        $releaseName = 'Test activatable toggle 1';
+        $releaseName = 'Test activatable toggle 3';
         $url = 'a helpful url';
         $id = $this->addRelease( $releaseName, $url );
 
@@ -148,6 +168,6 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
     public function addToggleToDatebase( $name, $releaseId, $isActive )
     {
         return $this->connection->insert( "`toggle`",
-            [ 'name' => $name, 'release_id' => $releaseId, 'toggle_type' => 1, 'is_active' => $isActive ] );
+            [ 'name' => $name, 'release_id' => $releaseId, 'toggle_type' => 1, 'is_activatable' => $isActive ] );
     }
 }
