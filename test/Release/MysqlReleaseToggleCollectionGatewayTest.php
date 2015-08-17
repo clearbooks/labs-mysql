@@ -61,7 +61,7 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
 
         $returnedToggles = $this->gateway->getTogglesForRelease( $id );
 
-        // Teardown
+        // Teardown: Teardown is done before assert in order to keep DataBase clean in case of test failure
         $this->deleteAddedRelease( $id );
 
         $this->assertEquals( [ ], $returnedToggles );
@@ -85,7 +85,7 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
         $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
         $returnedToggles = $this->gateway->getTogglesForRelease( $id );
 
-        // Teardown
+        // Teardown: Teardown is done before assert in order to keep DataBase clean in case of test failure
         $this->deleteAddedToggle( $toggleId1 );
         $this->deleteAddedToggle( $toggleId2 );
         $this->deleteAddedRelease( $id );
@@ -123,7 +123,7 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
         $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
         $returnedToggles = $this->gateway->getTogglesForRelease( $id );
 
-        // Teardown
+        // Teardown: Teardown is done before assert in order to keep DataBase clean in case of test failure
         $this->deleteAddedToggle( $toggleId1 );
         $this->deleteAddedToggle( $toggleId2 );
         $this->deleteAddedToggle( $toggleId3 );
@@ -170,7 +170,7 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
     }
 
     /**
-     * @param stirng $name
+     * @param string $name
      * @param string $releaseId
      * @param bool $isActive
      * @return string
@@ -183,7 +183,7 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
 
     /**
      * @param string $name
-     * @param stirng $releaseId
+     * @param string $releaseId
      * @param bool $isActive
      * @return int
      */
