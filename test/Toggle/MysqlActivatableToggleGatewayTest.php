@@ -40,6 +40,12 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
         $this->gateway = new MysqlActivatableToggleGateway( $this->connection );
     }
 
+    public function tearDown()
+    {
+        $this->deleteAddedToggles();
+        $this->deleteAddedReleases();
+    }
+
     /**
      * @test
      */
@@ -58,13 +64,9 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
         $url = 'a helpful url';
         $id = $this->addRelease( $releaseName, $url );
 
-        $toggleId1 = $this->addToggle( "test1", $id );
+        $this->addToggle( "test1", $id );
 
         $returnedToggles = $this->gateway->getActivatableToggleByName( "test1" );
-
-        // Teardown: Teardown is done before assert in order to keep DataBase clean in case of test failure
-        $this->deleteAddedToggle( $toggleId1 );
-        $this->deleteAddedRelease( $id );
 
         $this->assertEquals( null, $returnedToggles );
     }
@@ -78,16 +80,12 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
         $url = 'a helpful url';
         $id = $this->addRelease( $releaseName, $url );
 
-        $toggleId1 = $this->addToggle( "test1", $id, true );
+        $this->addToggle( "test1", $id, true );
 
         $expectedToggle = new Toggle( "test1", $id, true );
 
         $expectedToggles = $expectedToggle;
         $returnedToggles = $this->gateway->getActivatableToggleByName( "test1" );
-
-        // Teardown: Teardown is done before assert in order to keep DataBase clean in case of test failure
-        $this->deleteAddedToggle( $toggleId1 );
-        $this->deleteAddedRelease( $id );
 
         $this->assertEquals( $expectedToggles, $returnedToggles );
     }
@@ -101,17 +99,12 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
         $url = 'a helpful url';
         $id = $this->addRelease( $releaseName, $url );
 
-        $toggleId1 = $this->addToggle( "test1", $id, true );
-        $toggleId2 = $this->addToggle( "test2", $id );
+        $this->addToggle( "test1", $id, true );
+        $this->addToggle( "test2", $id );
 
         $expectedToggle = new Toggle( "test1", $id, true );
 
         $returnedToggle = $this->gateway->getActivatableToggleByName( "test1" );
-
-        // Teardown: Teardown is done before assert in order to keep DataBase clean in case of test failure
-        $this->deleteAddedToggle( $toggleId1 );
-        $this->deleteAddedToggle( $toggleId2 );
-        $this->deleteAddedRelease( $id );
 
         $this->assertEquals( $expectedToggle, $returnedToggle );
         //testing isActive()
@@ -119,21 +112,19 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string $id
      * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
      */
-    private function deleteAddedRelease( $id )
+    private function deleteAddedReleases()
     {
-        $this->connection->delete( '`release`', [ 'id' => $id ] );
+        $this->connection->delete( '`release`', [ '*' ] );
     }
 
     /**
-     * @param string $id
      * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
      */
-    private function deleteAddedToggle( $id )
+    private function deleteAddedToggles()
     {
-        $this->connection->delete( '`toggle`', [ 'id' => $id ] );
+        $this->connection->delete( '`toggle`', [ '*' ] );
     }
 
     /**

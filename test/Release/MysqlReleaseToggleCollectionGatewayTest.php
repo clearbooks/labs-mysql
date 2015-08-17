@@ -41,6 +41,12 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
         $this->gateway = new MysqlReleaseToggleCollectionGateway( $this->connection );
     }
 
+    public function tearDown()
+    {
+        $this->deleteAddedToggles();
+        $this->deleteAddedReleases();
+    }
+
     /**
      * @test
      */
@@ -61,9 +67,6 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
 
         $returnedToggles = $this->gateway->getTogglesForRelease( $id );
 
-        // Teardown: Teardown is done before assert in order to keep DataBase clean in case of test failure
-        $this->deleteAddedRelease( $id );
-
         $this->assertEquals( [ ], $returnedToggles );
     }
 
@@ -76,19 +79,14 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
         $url = 'a helpful url';
         $id = $this->addRelease( $releaseName, $url );
 
-        $toggleId1 = $this->addToggle( "test1", $id );
-        $toggleId2 = $this->addToggle( "test2", $id );
+        $this->addToggle( "test1", $id );
+        $this->addToggle( "test2", $id );
 
         $expectedToggle = new Toggle( "test1", $id );
         $expectedToggle2 = new Toggle( "test2", $id );
 
         $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
         $returnedToggles = $this->gateway->getTogglesForRelease( $id );
-
-        // Teardown: Teardown is done before assert in order to keep DataBase clean in case of test failure
-        $this->deleteAddedToggle( $toggleId1 );
-        $this->deleteAddedToggle( $toggleId2 );
-        $this->deleteAddedRelease( $id );
 
         $this->assertEquals( $expectedToggles, $returnedToggles );
 
@@ -104,32 +102,24 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
      */
     public function givenExistentTogglesInDifferentReleases_ReleaseToggleColoction_ReturnsArrayOfExistentTogglesForRequestedRelease()
     {
-        $releaseName = 'Test release for toggle 3';
+        $releaseName = 'Test release for toggle 3.1';
         $url = 'a helpful url';
         $id = $this->addRelease( $releaseName, $url );
 
-        $releaseName2 = 'Test release for toggle 3';
+        $releaseName2 = 'Test release for toggle 3.2';
         $url2 = 'a helpful url2';
         $id2 = $this->addRelease( $releaseName2, $url2 );
 
-        $toggleId1 = $this->addToggle( "test1", $id );
-        $toggleId2 = $this->addToggle( "test2", $id );
-        $toggleId3 = $this->addToggle( "test3", $id2 );
-        $toggleId4 = $this->addToggle( "test4", $id2 );
+        $this->addToggle( "test1", $id );
+        $this->addToggle( "test2", $id );
+        $this->addToggle( "test3", $id2 );
+        $this->addToggle( "test4", $id2 );
 
         $expectedToggle = new Toggle( "test1", $id );
         $expectedToggle2 = new Toggle( "test2", $id );
 
         $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
         $returnedToggles = $this->gateway->getTogglesForRelease( $id );
-
-        // Teardown: Teardown is done before assert in order to keep DataBase clean in case of test failure
-        $this->deleteAddedToggle( $toggleId1 );
-        $this->deleteAddedToggle( $toggleId2 );
-        $this->deleteAddedToggle( $toggleId3 );
-        $this->deleteAddedToggle( $toggleId4 );
-        $this->deleteAddedRelease( $id );
-        $this->deleteAddedRelease( $id2 );
 
         $this->assertEquals( $expectedToggles, $returnedToggles );
 
@@ -141,21 +131,19 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
     }
 
     /**
-     * @param string $id
      * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
      */
-    private function deleteAddedRelease( $id )
+    private function deleteAddedReleases()
     {
-        $this->connection->delete( '`release`', [ 'id' => $id ] );
+        $this->connection->delete( '`release`', [ '*' ] );
     }
 
     /**
-     * @param string $id
      * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
      */
-    private function deleteAddedToggle( $id )
+    private function deleteAddedToggles()
     {
-        $this->connection->delete( '`toggle`', [ 'id' => $id ] );
+        $this->connection->delete( '`toggle`', [ '*' ] );
     }
 
     /**
