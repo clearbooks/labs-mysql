@@ -36,6 +36,6 @@ class MysqlUserToggleGateway extends MysqlGetAllTogglesGateway implements UserTo
     {
         $data = $this->connection->fetchAll( 'SELECT * FROM `toggle` JOIN `toggle_type` ON toggle.toggle_type = toggle_type.id WHERE type_name = ?',
             [ "user_toggle" ] );
-        return $this->getAllTogglesForGivenSqlStatement( $data );
+        return $this->getAllTogglesFromGivenSqlResult( $data );
     }
 }

@@ -17,7 +17,7 @@ abstract class MysqlGetAllTogglesGateway
      * @param array $data
      * @return array
      */
-    protected function getAllTogglesForGivenSqlStatement( array $data )
+    protected function getAllTogglesFromGivenSqlResult( array $data )
     {
         $toggles = [ ];
         foreach ( $data as $row ) {
