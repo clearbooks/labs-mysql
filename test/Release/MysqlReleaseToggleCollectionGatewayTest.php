@@ -100,6 +100,47 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
     }
 
     /**
+     * @test
+     */
+    public function givenExistentTogglesInDifferentReleases_ReleaseToggleColoction_ReturnsArrayOfExistentTogglesForRequestedRelease()
+    {
+        $releaseName = 'Test release for toggle 3';
+        $url = 'a helpful url';
+        $id = $this->addRelease( $releaseName, $url );
+
+        $releaseName2 = 'Test release for toggle 3';
+        $url2 = 'a helpful url2';
+        $id2 = $this->addRelease( $releaseName2, $url2 );
+
+        $toggleId1 = $this->addToggle( "test1", $id );
+        $toggleId2 = $this->addToggle( "test2", $id );
+        $toggleId3 = $this->addToggle( "test3", $id2 );
+        $toggleId4 = $this->addToggle( "test4", $id2 );
+
+        $expectedToggle = new Toggle( "test1", $id );
+        $expectedToggle2 = new Toggle( "test2", $id );
+
+        $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
+        $returnedToggles = $this->gateway->getTogglesForRelease( $id );
+
+        // Teardown
+        $this->deleteAddedToggle( $toggleId1 );
+        $this->deleteAddedToggle( $toggleId2 );
+        $this->deleteAddedToggle( $toggleId3 );
+        $this->deleteAddedToggle( $toggleId4 );
+        $this->deleteAddedRelease( $id );
+        $this->deleteAddedRelease( $id2 );
+
+        $this->assertEquals( $expectedToggles, $returnedToggles );
+
+        foreach ( $expectedToggles as $key => $value ) {
+            $this->assertGetters( $value, $returnedToggles[ $key ] );
+        }
+
+
+    }
+
+    /**
      * @param string $id
      * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
      */
@@ -149,7 +190,7 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
     public function addToggleToDatebase( $name, $releaseId, $isActive )
     {
         return $this->connection->insert( "`toggle`",
-            [ 'name' => $name, 'release_id' => $releaseId, 'toggle_type' => 1, 'is_active' => $isActive ] );
+            [ 'name' => $name, 'release_id' => $releaseId, 'toggle_type' => 1, 'is_activatable' => $isActive ] );
     }
 
     /**
