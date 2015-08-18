@@ -146,7 +146,7 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
      */
     private function addToggle( $name, $releaseId, $isActive = false )
     {
-        $this->addToggleToDatebase( $name, $releaseId, $isActive );
+        $this->addToggleToDatabase( $name, $releaseId, $isActive );
         return $this->connection->lastInsertId( "`toggle`" );
     }
 
@@ -156,7 +156,7 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
      * @param bool $isActive
      * @return int
      */
-    public function addToggleToDatebase( $name, $releaseId, $isActive )
+    public function addToggleToDatabase( $name, $releaseId, $isActive )
     {
         return $this->connection->insert( "`toggle`",
             [ 'name' => $name, 'release_id' => $releaseId, 'toggle_type' => 1, 'is_active' => $isActive ] );
