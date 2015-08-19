@@ -12,7 +12,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/clearbooks/labs.git",
-                "reference": "ab6fe76ae9388a9945d7797e5e11c96b263b6ca3"
+                "reference": "3abce76e600be04343e21b029970d5691398ba5a"
             },
             "require-dev": {
                 "codeclimate/php-test-reporter": "dev-master",
@@ -39,7 +39,7 @@
                 }
             ],
             "description": "Sensible releases",
-            "time": "2015-08-10 14:56:57"
+            "time": "2015-08-17 10:45:16"
         },
         {
             "name": "doctrine/annotations",
