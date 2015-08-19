@@ -1,12 +1,14 @@
 <?php
 
+namespace Clearbooks\LabsMysql\User;
 
 use Clearbooks\LabsMysql\Release\MysqlReleaseGateway;
+use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
 use Clearbooks\LabsMysql\Toggle\MysqlActivatableToggleGateway;
-use Clearbooks\LabsMysql\User\MysqlUserToggleService;
 use Doctrine\DBAL\Configuration;
-use Doctrine\DBAL\Driver\Connection;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use PHPUnit_Framework_TestCase;
 
 /**
  * Created by PhpStorm.
@@ -21,9 +23,12 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
      */
     private $connection;
 
+
     /**
-     * @throws \Doctrine\DBAL\DBALException
+     * @var MysqlUserToggleService
      */
+    private $gateway;
+
     public function setUp()
     {
         parent::setUp();
@@ -37,11 +42,12 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
         );
 
         $this->connection = DriverManager::getConnection( $connectionParams, new Configuration() );
-        $this->gateway = new MysqlActivatableToggleGateway( $this->connection );
+        $this->gateway = new MysqlUserToggleService( $this->connection );
     }
 
     public function tearDown()
     {
+        $this->deleteAddedUserActivatedToggles();
         $this->deleteAddedToggles();
         $this->deleteAddedReleases();
     }
@@ -49,61 +55,35 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenNoToggleAndNoUserFound_MysqlUserToggleService_ReturnsFalse()
+    public function givenNoToggleAndNoUserFound_DuringActivationAttempt_MysqlUserToggleService_ReturnsFalse()
     {
-        $response = (new MysqlUserToggleService())->activateToggle( "123", 123);
-        $this->assertEquals(false, $response);
+        $response = $this->gateway->activateToggle( "123", 1 );
+        $this->assertFalse( $response );
     }
 
     /**
      * @test
      */
-    public function givenNoToggleFoundButWithExistentUser_MysqlUserToggleService_ReturnsFalse()
+    public function givenNoToggleAndNoUserFound_DuringDeActivationAttempt_MysqlUserToggleService_ReturnsFalse()
+    {
+        $response = $this->gateway->deActivateToggle( "123", 1 );
+        $this->assertFalse( $response );
+    }
+
+    /**
+     * @test
+     */
+    public function givenExistentUserWithNotActivatedGivenExistentToggle_DuringDeActivationAttempt_MysqlUserToggleService_ReturnsFalse()
     {
         $releaseName = 'Test user toggle service 1';
         $url = 'a helpful url';
         $id = $this->addRelease( $releaseName, $url );
 
-        $this->addToggle( "test1", $id, true );
+        $toggle_id = $this->addToggle( "test1", $id, true );
+        //toggle exists but not in the user_activated_toggle table becuase it has not been activated yet
 
-        //TODO: creating a user and adding a different(wrong) toggle associated with this user
-
-        $response = (new MysqlUserToggleService())->activateToggle( "123", 123);
-        $this->assertEquals(false, $response);
-    }
-
-    /**
-     * @test
-     */
-    public function givenNoUserFoundButWithExistentToggle_MysqlUserToggleService_ReturnsFalse()
-    {
-        $releaseName = 'Test user toggle service 2';
-        $url = 'a helpful url';
-        $id = $this->addRelease( $releaseName, $url );
-
-        $this->addToggle( "test1", $id, true );
-
-        //TODO: adding a toggle to the UserToggle(name needs to be changed) table in the database.
-
-        $response = (new MysqlUserToggleService())->activateToggle( "123", 123);
-        $this->assertEquals(false, $response);
-    }
-
-    /**
-     * @test
-     */
-    public function givenExistentUserWithNotActivatedGivenExistentToggle_DuringDeactivationAttempt_MysqlUserToggleService_ReturnsFalse()
-    {
-        $releaseName = 'Test user toggle service 3';
-        $url = 'a helpful url';
-        $id = $this->addRelease( $releaseName, $url );
-
-        $this->addToggle( "test1", $id, true );
-
-        //TODO: create a user and add it together with not activated toggle to the UserToggle table, attempt deactivating it.
-
-        $response = (new MysqlUserToggleService())->activateToggle( "123", 123);
-        $this->assertEquals(false, $response);
+        $response = $this->gateway->deActivateToggle($toggle_id, 1);
+        $this->assertFalse( $response );
     }
 
     /**
@@ -111,16 +91,14 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
      */
     public function givenExistentUserWithNotActivatedGivenExistentToggle_DuringActivationAttempt_MysqlUserToggleService_ReturnsTrue()
     {
-        $releaseName = 'Test user toggle service 4';
+        $releaseName = 'Test user toggle service 2';
         $url = 'a helpful url';
         $id = $this->addRelease( $releaseName, $url );
 
-        $this->addToggle( "test1", $id, true );
+        $toggle_id = $this->addToggle( "test2", $id, true );
 
-        //TODO: Create a user and not activated Toggle and attempt to activate it.
-
-        $response = (new MysqlUserToggleService())->activateToggle( "123", 123);
-        $this->assertEquals(false, $response);
+        $response = $this->gateway->activateToggle( $toggle_id, 1 );
+        $this->assertTrue( $response );
     }
 
     /**
@@ -128,39 +106,38 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
      */
     public function givenExistentUserWithActivatedGivenExistentToggle_DuringActivationAttempt_MysqlUserToggleService_ReturnsFalse()
     {
-        $releaseName = 'Test user toggle service 5';
+        $releaseName = 'Test user toggle service 3';
         $url = 'a helpful url';
         $id = $this->addRelease( $releaseName, $url );
 
-        $this->addToggle( "test1", $id, true );
+        $toggle_id = $this->addToggle( "test3", $id, true );
 
-        //TODO: Create a user and activated Toggle and attempt to activate it.
+        $this->addUserActivatedToggle($toggle_id, 1);
 
-        $response = (new MysqlUserToggleService())->activateToggle( "123", 123);
-        $this->assertEquals(false, $response);
+        $response = $this->gateway->activateToggle( $toggle_id, 1 );
+        $this->assertFalse( $response );
     }
 
     /**
      * @test
      */
-    public function givenExistentUserWithActivatedGivenExistentToggle_DuringDeactivationAttempt_MysqlUserToggleService_ReturnsTrue()
+    public function givenExistentUserWithActivatedGivenExistentToggle_DuringDeActivationAttempt_MysqlUserToggleService_ReturnsTrue()
     {
-        $releaseName = 'Test user toggle service 6';
+        $releaseName = 'Test user toggle service 4';
         $url = 'a helpful url';
         $id = $this->addRelease( $releaseName, $url );
 
-        $this->addToggle( "test1", $id, true );
+        $toggle_id = $this->addToggle( "test4", $id, true );
 
-        //TODO: Create a user and activated Toggle and attempt to deactivate it.
+        $this->addUserActivatedToggle($toggle_id, 1);
 
-        $response = (new MysqlUserToggleService())->activateToggle( "123", 123);
-        $this->assertEquals(false, $response);
+        $response = $this->gateway->deActivateToggle( $toggle_id, 1 );
+        $this->assertTrue( $response );
+
     }
 
-    //TODO: Create deleteAddedUsers()
-
     /**
-     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     private function deleteAddedReleases()
     {
@@ -168,14 +145,20 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     private function deleteAddedToggles()
     {
         $this->connection->delete( '`toggle`', [ '*' ] );
     }
 
-    //TODO: Create AddUsers()
+    /**
+     * @throws InvalidArgumentException
+     */
+    private function deleteAddedUserActivatedToggles()
+    {
+        $this->connection->delete( '`user_activated_toggle`', [ '*' ] );
+    }
 
     /**
      * @param string $releaseName
@@ -212,5 +195,10 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
     {
         return $this->connection->insert( "`toggle`",
             [ 'name' => $name, 'release_id' => $releaseId, 'toggle_type' => $toggle_type, 'is_active' => $isActive ] );
+    }
+
+    private function addUserActivatedToggle( $toggle_id, $user_id )
+    {
+        $this->connection->insert( "`user_activated_toggle`", [ 'user_id' => $user_id, 'toggle_id' => $toggle_id ] );
     }
 }
