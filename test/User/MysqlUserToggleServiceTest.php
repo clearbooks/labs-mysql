@@ -82,7 +82,7 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
         $toggle_id = $this->addToggle( "test1", $id, true );
         //toggle exists but not in the user_activated_toggle table becuase it has not been activated yet
 
-        $response = $this->gateway->deActivateToggle($toggle_id, 1);
+        $response = $this->gateway->deActivateToggle( $toggle_id, 1 );
         $this->assertFalse( $response );
     }
 
@@ -112,7 +112,7 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
 
         $toggle_id = $this->addToggle( "test3", $id, true );
 
-        $this->addUserActivatedToggle($toggle_id, 1);
+        $this->addUserActivatedToggle( $toggle_id, 1 );
 
         $response = $this->gateway->activateToggle( $toggle_id, 1 );
         $this->assertFalse( $response );
@@ -129,7 +129,7 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
 
         $toggle_id = $this->addToggle( "test4", $id, true );
 
-        $this->addUserActivatedToggle($toggle_id, 1);
+        $this->addUserActivatedToggle( $toggle_id, 1 );
 
         $response = $this->gateway->deActivateToggle( $toggle_id, 1 );
         $this->assertTrue( $response );
