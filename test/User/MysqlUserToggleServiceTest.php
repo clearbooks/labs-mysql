@@ -45,6 +45,7 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
         $this->gateway = new MysqlUserToggleService( $this->connection );
     }
 
+    //tearsdown all the database data created during run time.
     public function tearDown()
     {
         $this->deleteAddedUserActivatedToggles();
