@@ -110,7 +110,7 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
             $user_id );
 
         $this->assertTrue( $response );
-        $this->assertIncertedDatabaseData($toggle_id, $user_id, true);
+        $this->assertIncertedDatabaseData( $toggle_id, $user_id, true );
     }
 
     /**
@@ -118,7 +118,7 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
      */
     public function givenValidParameters_AndAUserWithUnsetGivenToggle_DuringActivationAttempt_TogetherWithOtherEntries_MysqlToggleStatusModifierService_DoesNotChangeOtherEntries()
     {
-        $releaseName = 'Test ToggleStatusModifierService 1';
+        $releaseName = 'Test ToggleStatusModifierService 1.1';
         $url = 'a helpful url';
         $id = $this->addRelease( $releaseName, $url );
 
@@ -138,12 +138,10 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
             $user_id );
 
         $this->assertTrue( $response );
-        $this->assertIncertedDatabaseData($toggle_id, $user_id, true);
-        $this->assertIncertedDatabaseData($toggle_id2, $user2_id, false);
-        $this->assertIncertedDatabaseData($toggle_id3, $user3_id, false);
-        $this->assertIncertedDatabaseData($toggle_id3, $user4_id, true);
-
-        echo "this End!!";
+        $this->assertIncertedDatabaseData( $toggle_id, $user_id, true );
+        $this->assertIncertedDatabaseData( $toggle_id2, $user2_id, false );
+        $this->assertIncertedDatabaseData( $toggle_id3, $user3_id, false );
+        $this->assertIncertedDatabaseData( $toggle_id3, $user4_id, true );
     }
 
     /**
@@ -163,7 +161,7 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
         $response = $this->gateway->setToggleStatusForUser( $toggle_id, ToggleStatusModifier::TOGGLE_STATUS_ACTIVE,
             $user_id );
         $this->assertTrue( $response );
-        $this->assertIncertedDatabaseData($toggle_id, $user_id, true);
+        $this->assertIncertedDatabaseData( $toggle_id, $user_id, true );
     }
 
     /**
@@ -171,13 +169,13 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
      */
     public function givenValidParameters_AndAUserWithActivatedGivenToggle_DuringActivationAttempt_TogetherWithOtherEntries_MysqlToggleStatusModifierService_DoesNotChangeOtherEntries()
     {
-        $releaseName = 'Test ToggleStatusModifierService 2';
+        $releaseName = 'Test ToggleStatusModifierService 2.1';
         $url = 'a helpful url';
         $id = $this->addRelease( $releaseName, $url );
 
-        $toggle_id = $this->addToggle( "test1.1", $id, true );
-        $toggle_id2 = $this->addToggle( "test1.2", $id, true );
-        $toggle_id3 = $this->addToggle( "test1.3", $id, true );
+        $toggle_id = $this->addToggle( "test2.1", $id, true );
+        $toggle_id2 = $this->addToggle( "test2.2", $id, true );
+        $toggle_id3 = $this->addToggle( "test2.3", $id, true );
         $user_id = 1;
         $user2_id = 2;
         $user3_id = 3;
@@ -191,12 +189,10 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
         $response = $this->gateway->setToggleStatusForUser( $toggle_id, ToggleStatusModifier::TOGGLE_STATUS_ACTIVE,
             $user_id );
         $this->assertTrue( $response );
-        $this->assertIncertedDatabaseData($toggle_id, $user_id, true);
-        $this->assertIncertedDatabaseData($toggle_id2, $user2_id, false);
-        $this->assertIncertedDatabaseData($toggle_id3, $user3_id, false);
-        $this->assertIncertedDatabaseData($toggle_id3, $user4_id, true);
-
-        echo "this is end 2!!";
+        $this->assertIncertedDatabaseData( $toggle_id, $user_id, true );
+        $this->assertIncertedDatabaseData( $toggle_id2, $user2_id, false );
+        $this->assertIncertedDatabaseData( $toggle_id3, $user3_id, false );
+        $this->assertIncertedDatabaseData( $toggle_id3, $user4_id, true );
     }
 
     /**
@@ -216,13 +212,44 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
         $response = $this->gateway->setToggleStatusForUser( $toggle_id, ToggleStatusModifier::TOGGLE_STATUS_ACTIVE,
             $user_id );
         $this->assertTrue( $response );
-        $this->assertIncertedDatabaseData($toggle_id, $user_id, true);
+        $this->assertIncertedDatabaseData( $toggle_id, $user_id, true );
+    }
+
+    /**
+     * @test
+     */
+    public function givenValidParameters_AndAUserWithDeactivatedGivenToggle_DuringActivationAttempt_TogetherWithOtherEntries_MysqlToggleStatusModifierService_DoesNotChangeOtherEntries()
+    {
+        $releaseName = 'Test ToggleStatusModifierService 3.1';
+        $url = 'a helpful url';
+        $id = $this->addRelease( $releaseName, $url );
+
+        $toggle_id = $this->addToggle( "test3.1", $id, true );
+        $toggle_id2 = $this->addToggle( "test3.2", $id, true );
+        $toggle_id3 = $this->addToggle( "test3.3", $id, true );
+        $user_id = 1;
+        $user2_id = 2;
+        $user3_id = 3;
+        $user4_id = 4;
+
+        $this->addUserActivatedToggle( $toggle_id, 1 );
+        $this->addUserActivatedToggle( $toggle_id2, $user2_id, false );
+        $this->addUserActivatedToggle( $toggle_id3, $user3_id, false );
+        $this->addUserActivatedToggle( $toggle_id3, $user4_id, true );
+
+        $response = $this->gateway->setToggleStatusForUser( $toggle_id, ToggleStatusModifier::TOGGLE_STATUS_ACTIVE,
+            $user_id );
+        $this->assertTrue( $response );
+        $this->assertIncertedDatabaseData( $toggle_id, $user_id, true );
+        $this->assertIncertedDatabaseData( $toggle_id2, $user2_id, false );
+        $this->assertIncertedDatabaseData( $toggle_id3, $user3_id, false );
+        $this->assertIncertedDatabaseData( $toggle_id3, $user4_id, true );
     }
 
     //-------------------DEACTIVATION-------------------//
 
     /**
-     *
+     * @test
      * toggle is NOT activated NOR created in user_activated_toggle table
      */
     public function givenValidParameters_AndAUserWithUnsetGivenToggle_DuringDeactivationAttempt_MysqlToggleStatusModifierService_ReturnsTrue()
@@ -237,6 +264,37 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
         $response = $this->gateway->setToggleStatusForUser( $toggle_id, ToggleStatusModifier::TOGGLE_STATUS_INACTIVE,
             $user_id );
         $this->assertTrue( $response );
+        $this->assertIncertedDatabaseData( "", null, false );
+    }
+
+    /**
+     * @test
+     */
+    public function givenValidParameters_AndAUserWithUnsetGivenToggle_DuringDeactivationAttempt_TogetherWithOtherEntries_MysqlToggleStatusModifierService_DoesNotChangeOtherEntries()
+    {
+        $releaseName = 'Test ToggleStatusModifierService 4.1';
+        $url = 'a helpful url';
+        $id = $this->addRelease( $releaseName, $url );
+
+        $toggle_id = $this->addToggle( "test4.1", $id, true );
+        $toggle_id2 = $this->addToggle( "test4.2", $id, true );
+        $toggle_id3 = $this->addToggle( "test4.3", $id, true );
+        $user_id = 1;
+        $user2_id = 2;
+        $user3_id = 3;
+        $user4_id = 4;
+
+        $this->addUserActivatedToggle( $toggle_id2, $user2_id, false );
+        $this->addUserActivatedToggle( $toggle_id3, $user3_id, false );
+        $this->addUserActivatedToggle( $toggle_id3, $user4_id, true );
+
+        $response = $this->gateway->setToggleStatusForUser( $toggle_id, ToggleStatusModifier::TOGGLE_STATUS_INACTIVE,
+            $user_id );
+        $this->assertTrue( $response );
+        $this->assertIncertedDatabaseData( "", null, false );
+        $this->assertIncertedDatabaseData( $toggle_id2, $user2_id, false );
+        $this->assertIncertedDatabaseData( $toggle_id3, $user3_id, false );
+        $this->assertIncertedDatabaseData( $toggle_id3, $user4_id, true );
     }
 
     /**
@@ -256,6 +314,37 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
         $response = $this->gateway->setToggleStatusForUser( $toggle_id, ToggleStatusModifier::TOGGLE_STATUS_INACTIVE,
             $user_id );
         $this->assertTrue( $response );
+    }
+
+    /**
+     * @test
+     */
+    public function givenValidParameters_AndAUserWithActivatedGivenToggle_DuringDeactivationAttempt_TogetherWithOtherEntries_MysqlToggleStatusModifierService_DoesNotChangeOtherEntries()
+    {
+        $releaseName = 'Test ToggleStatusModifierService 5.1';
+        $url = 'a helpful url';
+        $id = $this->addRelease( $releaseName, $url );
+
+        $toggle_id = $this->addToggle( "test5", $id, true );
+        $toggle_id2 = $this->addToggle( "test4.2", $id, true );
+        $toggle_id3 = $this->addToggle( "test4.3", $id, true );
+        $user_id = 1;
+        $user2_id = 2;
+        $user3_id = 3;
+        $user4_id = 4;
+
+        $this->addUserActivatedToggle( $toggle_id, 1, true );
+        $this->addUserActivatedToggle( $toggle_id2, $user2_id, false );
+        $this->addUserActivatedToggle( $toggle_id3, $user3_id, false );
+        $this->addUserActivatedToggle( $toggle_id3, $user4_id, true );
+
+        $response = $this->gateway->setToggleStatusForUser( $toggle_id, ToggleStatusModifier::TOGGLE_STATUS_INACTIVE,
+            $user_id );
+        $this->assertTrue( $response );
+        $this->assertIncertedDatabaseData( $toggle_id, $user_id, false );
+        $this->assertIncertedDatabaseData( $toggle_id2, $user2_id, false );
+        $this->assertIncertedDatabaseData( $toggle_id3, $user3_id, false );
+        $this->assertIncertedDatabaseData( $toggle_id3, $user4_id, true );
     }
 
     public function givenValidParameters_AndAUserWithDeactivatedGivenToggle_DuringDeactivationAttempt_MysqlToggleStatusModifierService_ReturnsTrue()
@@ -362,14 +451,19 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
         return $entery;
     }
 
-    private function assertIncertedDatabaseData($toggle_id, $user_id, $isActive = false)
+    private function assertIncertedDatabaseData( $toggle_id = "", $user_id = null, $isActive = false )
     {
-        $expectedEntry = [1=> $toggle_id, 2=> $user_id, 3=> (int)$isActive];
+        $expectedEntry = [ 1 => $toggle_id, 2 => $user_id, 3 => (int) $isActive ];
+        if ( empty( $toggle_id ) && empty( $user_id ) ) {
+            $expectedEntry = [ ];
+        }
         $actualEntry = $this->getUserActivatedToggleEntry( $toggle_id, $user_id );
+        /*
         echo "Expected: ";
         print_r($expectedEntry);
         echo "Actual: ";
         print_r($actualEntry);
-        $this->assertEquals($expectedEntry, $actualEntry);
+        */
+        $this->assertEquals( $expectedEntry, $actualEntry );
     }
 }

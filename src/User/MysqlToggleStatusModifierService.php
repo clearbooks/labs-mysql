@@ -85,8 +85,8 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
                 $queryBuilder
                     ->update('user_activated_toggle')
                     ->set('is_active', 1)
-                    ->where('toggle_id', '?')
-                    ->andWhere('user_id', '?')
+                    ->where('toggle_id = ?')
+                    ->andWhere('user_id = ?')
                     ->setParameter(0, $toggleIdentifier)
                     ->setParameter(1, $userIdentifier);
                 $queryBuilder->execute();
@@ -97,8 +97,8 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
             $queryBuilder
                 ->update('user_activated_toggle')
                 ->set('is_active', 0)
-                ->where('toggle_id', '?')
-                ->andWhere('user_id', '?')
+                ->where('toggle_id = ?')
+                ->andWhere('user_id = ?')
                 ->setParameter(0, $toggleIdentifier)
                 ->setParameter(1, $userIdentifier);
             $queryBuilder->execute();
