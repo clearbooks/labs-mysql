@@ -35,7 +35,7 @@ CREATE TABLE `toggle`
 CREATE TABLE `user_activated_toggle` (
 	`user_id` BIGINT(20) UNSIGNED NOT NULL,
 	`toggle_id` INT(11) NOT NULL,
-	`is_active` BINARY(50) NOT NULL,
+	`is_active` TINYINT(4) NOT NULL,
 	PRIMARY KEY (`user_id`, `toggle_id`),
 	INDEX `FK__toggle` (`toggle_id`),
 	CONSTRAINT `FK__toggle` FOREIGN KEY (`toggle_id`) REFERENCES `toggle` (`id`)
