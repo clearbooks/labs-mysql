@@ -33,12 +33,13 @@ CREATE TABLE `toggle`
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `user_activated_toggle` (
-  `user_id` BIGINT(20) UNSIGNED NOT NULL,
-  `toggle_id` INT(11) NOT NULL,
-  PRIMARY KEY (`user_id`, `toggle_id`),
-  INDEX `FK__toggle` (`toggle_id`),
-  CONSTRAINT `FK__toggle` FOREIGN KEY (`toggle_id`) REFERENCES `toggle` (`id`)
+	`user_id` BIGINT(20) UNSIGNED NOT NULL,
+	`toggle_id` INT(11) NOT NULL,
+	`is_active` BINARY(50) NOT NULL,
+	PRIMARY KEY (`user_id`, `toggle_id`),
+	INDEX `FK__toggle` (`toggle_id`),
+	CONSTRAINT `FK__toggle` FOREIGN KEY (`toggle_id`) REFERENCES `toggle` (`id`)
 )
-  COLLATE='utf8mb4_unicode_ci'
-  ENGINE=InnoDB
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB
 ;
