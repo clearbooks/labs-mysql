@@ -11,7 +11,7 @@ namespace Clearbooks\LabsMysql\Toggle;
 
 use Clearbooks\Labs\Toggle\Entity\UserToggle;
 use Clearbooks\Labs\Toggle\Gateway\UserToggleGateway;
-use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
+use Doctrine\DBAL\Connection;
 
 class MysqlUserToggleGateway extends MysqlGetAllTogglesGateway implements UserToggleGateway
 {
@@ -22,9 +22,9 @@ class MysqlUserToggleGateway extends MysqlGetAllTogglesGateway implements UserTo
 
     /**
      * MysqlUserToggleGateway constructor.
-     * @param \Doctrine\DBAL\Connection|Connection $connection
+     * @param Connection $connection
      */
-    public function __construct( $connection )
+    public function __construct( Connection $connection )
     {
         $this->connection = $connection;
     }
