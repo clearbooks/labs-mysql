@@ -4,6 +4,7 @@ namespace Clearbooks\LabsMysql\Toggle;
 use Clearbooks\Labs\Toggle\Gateway\ActivatableToggleGateway;
 use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
 
 /**
  * Created by PhpStorm.
@@ -33,8 +34,15 @@ class MysqlActivatableToggleGateway implements ActivatableToggleGateway
      */
     public function getActivatableToggleByName( $name )
     {
-        $data = $this->connection->fetchAssoc( 'SELECT * FROM `toggle` WHERE name = ? AND is_active = ?',
-            [ $name, true ] );
+        $queryBuilder = new QueryBuilder($this->connection);
+        $queryBuilder
+            ->select('*')
+            ->from('toggle')
+            ->where('toggle.name = ?', 'u_a_t.is_active = ?')
+            ->join('toggle', 'user_activated_toggle', 'u_a_t', 'toggle.id = u_a_t.toggle_id')
+            ->setParameter(0, $name)
+            ->setParameter(1, true);
+        $data = $queryBuilder->execute()->fetch();
         if ( empty( $data ) ) {
             return null;
         }

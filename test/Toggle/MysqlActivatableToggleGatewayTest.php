@@ -5,6 +5,7 @@ use Clearbooks\LabsMysql\Toggle\MysqlActivatableToggleGateway;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception\InvalidArgumentException;
 
 /**
  * Created by PhpStorm.
@@ -24,6 +25,20 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
      */
     private $connection;
 
+    /**
+     * @throws InvalidArgumentException
+     */
+    private function deleteAddedUserActivatedToggles()
+    {
+        $this->connection->delete( '`user_activated_toggle`', [ '*' ] );
+    }
+
+    private function addUserActivatedToggle( $toggle_id, $user_id, $status = false )
+    {
+        $this->connection->insert( "`user_activated_toggle`",
+            [ 'user_id' => $user_id, 'toggle_id' => $toggle_id, 'is_active' => $status ] );
+    }
+
     public function setUp()
     {
         parent::setUp();
@@ -42,6 +57,7 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        $this->deleteAddedUserActivatedToggles();
         $this->deleteAddedToggles();
         $this->deleteAddedReleases();
     }
@@ -58,13 +74,16 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenExistentToggleButNotActivatable_MysqlActivatableToggleGateway_ReturnsNull()
+    public function givenExistentToggleButNotActivated_MysqlActivatableToggleGateway_ReturnsNull()
     {
         $releaseName = 'Test activatable toggle 1';
         $url = 'a helpful url';
         $id = $this->addRelease( $releaseName, $url );
 
-        $this->addToggle( "test1", $id );
+        $toggle_id = $this->addToggle( "test1", $id );
+        $user_id = 1;
+
+        $this->addUserActivatedToggle($toggle_id, $user_id, false);
 
         $returnedToggles = $this->gateway->getActivatableToggleByName( "test1" );
 
@@ -74,13 +93,16 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenExistentActivatableToggle_MysqlActivatableToggleGateway_ReturnsExistentToggle()
+    public function givenExistentActivatedToggle_MysqlActivatableToggleGateway_ReturnsExistentToggle()
     {
         $releaseName = 'Test activatable toggle 2';
         $url = 'a helpful url';
         $id = $this->addRelease( $releaseName, $url );
 
-        $this->addToggle( "test1", $id, true );
+        $toggle_id = $this->addToggle( "test1", $id, true );
+        $user_id = 1;
+
+        $this->addUserActivatedToggle($toggle_id, $user_id, true);
 
         $expectedToggle = new Toggle( "test1", $id, true );
 
@@ -99,8 +121,12 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
         $url = 'a helpful url';
         $id = $this->addRelease( $releaseName, $url );
 
-        $this->addToggle( "test1", $id, true );
+        $toggle_id = $this->addToggle( "test1", $id, true );
+        $user_id = 1;
+
         $this->addToggle( "test2", $id );
+
+        $this->addUserActivatedToggle($toggle_id, $user_id, true);
 
         $expectedToggle = new Toggle( "test1", $id, true );
 
@@ -112,7 +138,7 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     private function deleteAddedReleases()
     {
@@ -120,7 +146,7 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     private function deleteAddedToggles()
     {
