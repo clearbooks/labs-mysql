@@ -81,29 +81,42 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
                 $this->connection->insert( "`user_activated_toggle`",
                     [ 'user_id' => $userIdentifier, 'toggle_id' => $toggleIdentifier, 'is_active' => 1 ] );
             } catch ( \Exception $e ) {
-                $queryBuilder = new QueryBuilder($this->connection);
+                $queryBuilder = new QueryBuilder( $this->connection );
                 $queryBuilder
-                    ->update('user_activated_toggle')
-                    ->set('is_active', 1)
-                    ->where('toggle_id = ?')
-                    ->andWhere('user_id = ?')
-                    ->setParameter(0, $toggleIdentifier)
-                    ->setParameter(1, $userIdentifier);
+                    ->update( 'user_activated_toggle' )
+                    ->set( 'is_active', 1 )
+                    ->where( 'toggle_id = ?' )
+                    ->andWhere( 'user_id = ?' )
+                    ->setParameter( 0, $toggleIdentifier )
+                    ->setParameter( 1, $userIdentifier );
                 $queryBuilder->execute();
             }
             return true;
-        } else if ($toggleStatus === ToggleStatusModifier::TOGGLE_STATUS_INACTIVE) {
-            $queryBuilder = new QueryBuilder($this->connection);
+        } else if ( $toggleStatus === ToggleStatusModifier::TOGGLE_STATUS_INACTIVE ) {
+            $queryBuilder = new QueryBuilder( $this->connection );
             $queryBuilder
-                ->update('user_activated_toggle')
-                ->set('is_active', 0)
-                ->where('toggle_id = ?')
-                ->andWhere('user_id = ?')
-                ->setParameter(0, $toggleIdentifier)
-                ->setParameter(1, $userIdentifier);
+                ->update( 'user_activated_toggle' )
+                ->set( 'is_active', 0 )
+                ->where( 'toggle_id = ?' )
+                ->andWhere( 'user_id = ?' )
+                ->setParameter( 0, $toggleIdentifier )
+                ->setParameter( 1, $userIdentifier );
             $queryBuilder->execute();
+
             return true;
-        } else if ($toggleStatus === ToggleStatusModifier::TOGGLE_STATUS_UNSET) {
+        } else if ( $toggleStatus === ToggleStatusModifier::TOGGLE_STATUS_UNSET ) {
+            try {
+                $queryBuilder = new QueryBuilder( $this->connection );
+                $queryBuilder
+                    ->delete( 'user_activated_toggle' )
+                    ->where( 'toggle_id = ?' )
+                    ->andWhere( 'user_id = ?' )
+                    ->setParameter( 0, $toggleIdentifier )
+                    ->setParameter( 1, $userIdentifier );
+                $queryBuilder->execute();
+            } catch ( \Exception $e ) {
+                return false;
+            }
             return true;
         } else {
             return false;
