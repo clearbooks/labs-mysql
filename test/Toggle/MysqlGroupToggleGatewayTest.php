@@ -27,80 +27,6 @@ class MysqlGroupToggleGatewayTest extends \PHPUnit_Framework_TestCase
      */
     private $connection;
 
-    public function setUp()
-    {
-        parent::setUp();
-
-        $connectionParams = array(
-            'dbname' => 'labs',
-            'user' => 'root',
-            'password' => '',
-            'host' => 'localhost',
-            'driver' => 'pdo_mysql',
-        );
-
-        $this->connection = DriverManager::getConnection( $connectionParams, new Configuration() );
-        $this->gateway = new MysqlGroupToggleGateway( $this->connection );
-    }
-
-    public function tearDown()
-    {
-        $this->deleteAddedToggles();
-        $this->deleteAddedReleases();
-    }
-
-    /**
-     * @test
-     */
-    public function givenNoGroupTogglesFound_MysqlGroupToggleGateway_ReturnsEmptyArray()
-    {
-        $returnedToggle = $this->gateway->getAllGroupToggles();
-        $this->assertEquals( [ ], $returnedToggle );
-    }
-
-    /**
-     * @test
-     */
-    public function givenExistentGroupTogglesFound_MysqlGroupToggleGateway_ReturnsArrayOfGroupToggles()
-    {
-        $releaseName = 'Test group toggle 1';
-        $url = 'a helpful url';
-        $id = $this->addRelease( $releaseName, $url );
-
-        $this->addToggle( "test1", $id, true );
-
-        $expectedToggle = new Toggle( "test1", $id, true );
-
-        $expectedToggles[] = $expectedToggle;
-        $returnedToggles = $this->gateway->getAllGroupToggles();
-
-        $this->assertEquals( $expectedToggles, $returnedToggles );
-    }
-
-    /**
-     * @test
-     */
-    public function givenExistentGroupTogglesAndNonGroupTogglesFound_MysqlGroupToggleGateway_ReturnsArrayOfGroupTogglesOnly()
-    {
-        $releaseName = 'Test group toggle 2';
-        $url = 'a helpful url';
-        $id = $this->addRelease( $releaseName, $url );
-
-        //Parameters: name, release_id, is_activatable, toggle_type
-        $this->addToggle( "test1", $id, true, 2 );
-        $this->addToggle( "test2", $id, true, 2 );
-        $this->addToggle( "test3", $id, true, 1 );
-        $this->addToggle( "test4", $id, true, 1 );
-
-        $expectedToggle = new Toggle( "test1", $id, true );
-        $expectedToggle2 = new Toggle( "test2", $id, true );
-
-        $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
-        $returnedToggles = $this->gateway->getAllGroupToggles();
-
-        $this->assertEquals( $expectedToggles, $returnedToggles );
-    }
-
     /**
      * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
      */
@@ -152,5 +78,75 @@ class MysqlGroupToggleGatewayTest extends \PHPUnit_Framework_TestCase
     {
         return $this->connection->insert( "`toggle`",
             [ 'name' => $name, 'release_id' => $releaseId, 'toggle_type' => $toggle_type, 'is_active' => $isActive ] );
+    }
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $connectionParams = array(
+            'dbname' => 'labs',
+            'user' => 'root',
+            'password' => '',
+            'host' => 'localhost',
+            'driver' => 'pdo_mysql',
+        );
+
+        $this->connection = DriverManager::getConnection( $connectionParams, new Configuration() );
+        $this->gateway = new MysqlGroupToggleGateway( $this->connection );
+    }
+
+    public function tearDown()
+    {
+        $this->deleteAddedToggles();
+        $this->deleteAddedReleases();
+    }
+
+    /**
+     * @test
+     */
+    public function givenNoGroupTogglesFound_MysqlGroupToggleGateway_ReturnsEmptyArray()
+    {
+        $returnedToggle = $this->gateway->getAllGroupToggles();
+        $this->assertEquals( [ ], $returnedToggle );
+    }
+
+    /**
+     * @test
+     */
+    public function givenExistentGroupTogglesFound_MysqlGroupToggleGateway_ReturnsArrayOfGroupToggles()
+    {
+        $id = $this->addRelease( 'Test group toggle 1', 'a helpful url' );
+
+        $this->addToggle( "test1", $id, true );
+
+        $expectedToggle = new Toggle( "test1", $id, true );
+
+        $expectedToggles[] = $expectedToggle;
+        $returnedToggles = $this->gateway->getAllGroupToggles();
+
+        $this->assertEquals( $expectedToggles, $returnedToggles );
+    }
+
+    /**
+     * @test
+     */
+    public function givenExistentGroupTogglesAndNonGroupTogglesFound_MysqlGroupToggleGateway_ReturnsArrayOfGroupTogglesOnly()
+    {
+        $id = $this->addRelease( 'Test group toggle 2', 'a helpful url' );
+
+        //Parameters: name, release_id, is_activatable, toggle_type
+        $this->addToggle( "test1", $id, true, 2 );
+        $this->addToggle( "test2", $id, true, 2 );
+        $this->addToggle( "test3", $id, true, 1 );
+        $this->addToggle( "test4", $id, true, 1 );
+
+        $expectedToggle = new Toggle( "test1", $id, true );
+        $expectedToggle2 = new Toggle( "test2", $id, true );
+
+        $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
+        $returnedToggles = $this->gateway->getAllGroupToggles();
+
+        $this->assertEquals( $expectedToggles, $returnedToggles );
     }
 }
