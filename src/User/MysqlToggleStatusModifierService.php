@@ -60,9 +60,9 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     /**
      * @param $toggleIdentifier
      * @param $userIdentifier
-     * @param $is_active
+     * @param $isActive
      */
-    private function updateUserToggleStatus( $toggleIdentifier, $userIdentifier, $is_active )
+    private function updateUserToggleStatus( $toggleIdentifier, $userIdentifier, $isActive )
     {
         $queryBuilder = new QueryBuilder( $this->connection );
         $queryBuilder
@@ -70,7 +70,7 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
             ->set( 'is_active', '?' )
             ->where( 'toggle_id = ?' )
             ->andWhere( 'user_id = ?' )
-            ->setParameter( 0, $is_active )
+            ->setParameter( 0, $isActive )
             ->setParameter( 1, $toggleIdentifier )
             ->setParameter( 2, $userIdentifier );
         $queryBuilder->execute();
@@ -105,20 +105,20 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     /**
      * @param $toggleIdentifier
      * @param $groupIdentifier
-     * @param $is_active
+     * @param $isActive
      */
-    private function insertGroupActivatedToggle( $toggleIdentifier, $groupIdentifier, $is_active )
+    private function insertGroupActivatedToggle( $toggleIdentifier, $groupIdentifier, $isActive )
     {
         $this->connection->insert( "`group_activated_toggle`",
-            [ 'group_id' => $groupIdentifier, 'toggle_id' => $toggleIdentifier, 'active' => $is_active ] );
+            [ 'group_id' => $groupIdentifier, 'toggle_id' => $toggleIdentifier, 'active' => $isActive ] );
     }
 
     /**
      * @param $toggleIdentifier
      * @param $groupIdentifier
-     * @param $is_active
+     * @param $isActive
      */
-    private function updateGroupActivatedToggle( $toggleIdentifier, $groupIdentifier, $is_active )
+    private function updateGroupActivatedToggle( $toggleIdentifier, $groupIdentifier, $isActive )
     {
         $queryBuilder = new QueryBuilder( $this->connection );
         $queryBuilder
@@ -126,7 +126,7 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
             ->set( 'active', '?' )
             ->where( 'toggle_id = ?' )
             ->andWhere( 'group_id = ?' )
-            ->setParameter( 0, $is_active )
+            ->setParameter( 0, $isActive )
             ->setParameter( 1, $toggleIdentifier )
             ->setParameter( 2, $groupIdentifier );
         $queryBuilder->execute();
