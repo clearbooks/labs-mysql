@@ -38,10 +38,9 @@ class MysqlActivatableToggleGateway implements ActivatableToggleGateway
         $queryBuilder
             ->select('*')
             ->from('toggle')
-            ->where('toggle.name = ?', 'u_a_t.is_active = ?')
+            ->where('toggle.name = ?')
             ->join('toggle', 'user_activated_toggle', 'u_a_t', 'toggle.id = u_a_t.toggle_id')
-            ->setParameter(0, $name)
-            ->setParameter(1, true);
+            ->setParameter(0, $name);
         $data = $queryBuilder->execute()->fetch();
         if ( empty( $data ) ) {
             return null;
