@@ -2,40 +2,39 @@
 /**
  * Created by PhpStorm.
  * User: Volodymyr
- * Date: 14/08/2015
- * Time: 15:29
+ * Date: 19/08/2015
+ * Time: 14:51
  */
 
 namespace Clearbooks\LabsMysql\Toggle;
 
 
-use Clearbooks\Labs\Toggle\Entity\UserToggle;
-use Clearbooks\Labs\Toggle\Gateway\UserToggleGateway;
+use Clearbooks\Labs\Toggle\Gateway\GroupToggleGateway;
 use Doctrine\DBAL\Connection;
 
-class MysqlUserToggleGateway extends MysqlGetAllTogglesGateway implements UserToggleGateway
+class MysqlGroupToggleGateway extends MysqlGetAllTogglesGateway implements  GroupToggleGateway
 {
     /**
-     * @var Connection|\Doctrine\DBAL\Connection
+     * @var Connection
      */
     private $connection;
 
     /**
-     * MysqlUserToggleGateway constructor.
+     * MysqlGroupToggleGateway constructor.
      * @param Connection $connection
      */
-    public function __construct( Connection $connection )
+    public function __construct(Connection $connection )
     {
         $this->connection = $connection;
     }
 
     /**
-     * @return UserToggle[]
+     * @return GroupToggle[]
      */
-    public function getAllUserToggles()
+    public function getAllGroupToggles()
     {
         $data = $this->connection->fetchAll( 'SELECT * FROM `toggle` JOIN `toggle_type` ON toggle.toggle_type = toggle_type.id WHERE type_name = ?',
-            [ "user_toggle" ] );
+            [ "group_toggle" ] );
         return $this->getAllTogglesFromGivenSqlResult( $data );
     }
 }

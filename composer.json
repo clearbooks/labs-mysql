@@ -9,10 +9,7 @@
     }
   ],
   "autoload": {
-    "psr-4": {"Clearbooks\\LabsMysql\\": "src/"}
-  },
-  "autoload-dev": {
-    "psr-4": {"Clearbooks\\LabsMysql\\": "test/"}
+    "psr-4": {"Clearbooks\\LabsMysql\\": ["src/", "test/"]}
   },
   "repositories": [
     {
