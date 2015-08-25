@@ -70,7 +70,6 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
 
             return true;
         } else if ( $toggleStatus === ToggleStatusModifier::TOGGLE_STATUS_UNSET ) {
-            try {
                 $queryBuilder = new QueryBuilder( $this->connection );
                 $queryBuilder
                     ->delete( 'user_activated_toggle' )
@@ -79,9 +78,6 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
                     ->setParameter( 0, $toggleIdentifier )
                     ->setParameter( 1, $userIdentifier );
                 $queryBuilder->execute();
-            } catch ( \Exception $e ) {
-                return false;
-            }
             return true;
         } else {
             return false;
@@ -135,7 +131,6 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
             }
             return true;
         } else if ( $toggleStatus === ToggleStatusModifier::TOGGLE_STATUS_UNSET ) {
-            try {
                 $queryBuilder = new QueryBuilder( $this->connection );
                 $queryBuilder
                     ->delete( 'group_activated_toggle' )
@@ -144,9 +139,6 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
                     ->setParameter( 0, $toggleIdentifier )
                     ->setParameter( 1, $groupIdentifier );
                 $queryBuilder->execute();
-            } catch ( \Exception $e ) {
-                return false;
-            }
             return true;
         } else {
             return false;
