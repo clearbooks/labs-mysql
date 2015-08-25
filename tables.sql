@@ -30,4 +30,16 @@ CREATE TABLE `toggle`
  KEY `toggle_fi_2` (`toggle_type`),
  CONSTRAINT `toggle_fk_1` FOREIGN KEY (`release_id`) REFERENCES `release` (`id`),
  CONSTRAINT `toggle_fk_2` FOREIGN KEY (`toggle_type`) REFERENCES `toggle_type` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `user_activated_toggle` (
+	`user_id` BIGINT(20) UNSIGNED NOT NULL,
+	`toggle_id` INT(11) NOT NULL,
+	`is_active` TINYINT(4) NOT NULL,
+	PRIMARY KEY (`user_id`, `toggle_id`),
+	INDEX `FK__toggle` (`toggle_id`),
+	CONSTRAINT `FK__toggle` FOREIGN KEY (`toggle_id`) REFERENCES `toggle` (`id`)
+)
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB
+;
