@@ -5,7 +5,7 @@ CREATE TABLE `release` (
 	PRIMARY KEY (`id`)
 )
 COLLATE='utf8mb4_unicode_ci'
-ENGINE=InnoDB
+ENGINE=InnoDB;
 
 CREATE TABLE `toggle_type` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
@@ -13,7 +13,7 @@ CREATE TABLE `toggle_type` (
 	PRIMARY KEY (`id`)
 )
 COLLATE='utf8mb4_unicode_ci'
-ENGINE=InnoDB
+ENGINE=InnoDB;
 
 INSERT INTO `toggle_type` (`id`, `type_name`) VALUES
 (NULL , 'user_toggle'),
@@ -33,7 +33,7 @@ CREATE TABLE `toggle` (
 	CONSTRAINT `toggle_fk_2` FOREIGN KEY (`toggle_type`) REFERENCES `toggle_type` (`id`)
 )
 COLLATE='utf8mb4_unicode_ci'
-ENGINE=InnoDB
+ENGINE=InnoDB;
 
 CREATE TABLE `user_activated_toggle` (
 	`user_id` BIGINT(20) UNSIGNED NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE `user_activated_toggle` (
 	CONSTRAINT `FK__toggle` FOREIGN KEY (`toggle_id`) REFERENCES `toggle` (`id`)
 )
 COLLATE='utf8mb4_unicode_ci'
-ENGINE=InnoDB
+ENGINE=InnoDB;
 
 CREATE TABLE `group_activated_toggle` (
 	`group_id` BIGINT(20) UNSIGNED NOT NULL,
