@@ -42,4 +42,15 @@ CREATE TABLE `user_activated_toggle` (
 )
 COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB
+
+CREATE TABLE `group_activated_toggle` (
+	`group_id` BIGINT(20) UNSIGNED NOT NULL,
+	`toggle_id` INT(11) NOT NULL,
+	`active` TINYINT(4) NOT NULL,
+	PRIMARY KEY (`group_id`, `toggle_id`),
+	INDEX `FK__toggle` (`toggle_id`),
+	CONSTRAINT `FK__toggle` FOREIGN KEY (`toggle_id`) REFERENCES `toggle` (`id`)
+)
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB
 ;

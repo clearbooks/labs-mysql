@@ -132,6 +132,59 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
      */
     public function setToggleStatusForGroup( $toggleIdentifier, $toggleStatus, $groupIdentifier, $actingUserIdentifier )
     {
-        // TODO: Implement setToggleStatusForGroup() method.
+        //Here we should check for $actingUserIdentifier to be a group admin. But for now we asume that everyone is the admin.
+
+        if ( empty( $toggleIdentifier ) || empty( $groupIdentifier ) || empty( $actingUserIdentifier ) ) {
+            return false;
+        }
+        if ( $toggleStatus === ToggleStatusModifier::TOGGLE_STATUS_ACTIVE ) {
+            try {
+                $this->connection->insert( "`group_activated_toggle`",
+                    [ 'group_id' => $groupIdentifier, 'toggle_id' => $toggleIdentifier, 'active' => 1 ] );
+            } catch ( \Exception $e ) {
+                $queryBuilder = new QueryBuilder( $this->connection );
+                $queryBuilder
+                    ->update( 'group_activated_toggle' )
+                    ->set( 'active', 1 )
+                    ->where( 'toggle_id = ?' )
+                    ->andWhere( 'group_id = ?' )
+                    ->setParameter( 0, $toggleIdentifier )
+                    ->setParameter( 1, $groupIdentifier );
+                $queryBuilder->execute();
+            }
+            return true;
+        } else if ( $toggleStatus === ToggleStatusModifier::TOGGLE_STATUS_INACTIVE ) {
+            try {
+                $this->connection->insert( "`group_activated_toggle`",
+                    [ 'group_id' => $groupIdentifier, 'toggle_id' => $toggleIdentifier, 'active' => 0 ] );
+            } catch ( \Exception $e ) {
+                $queryBuilder = new QueryBuilder( $this->connection );
+                $queryBuilder
+                    ->update( 'group_activated_toggle' )
+                    ->set( 'active', 0 )
+                    ->where( 'toggle_id = ?' )
+                    ->andWhere( 'group_id = ?' )
+                    ->setParameter( 0, $toggleIdentifier )
+                    ->setParameter( 1, $groupIdentifier );
+                $queryBuilder->execute();
+            }
+            return true;
+        } else if ( $toggleStatus === ToggleStatusModifier::TOGGLE_STATUS_UNSET ) {
+            try {
+                $queryBuilder = new QueryBuilder( $this->connection );
+                $queryBuilder
+                    ->delete( 'group_activated_toggle' )
+                    ->where( 'toggle_id = ?' )
+                    ->andWhere( 'group_id = ?' )
+                    ->setParameter( 0, $toggleIdentifier )
+                    ->setParameter( 1, $groupIdentifier );
+                $queryBuilder->execute();
+            } catch ( \Exception $e ) {
+                return false;
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 }
