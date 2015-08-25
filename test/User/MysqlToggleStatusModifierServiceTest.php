@@ -259,7 +259,7 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenNullPassedAsAToggleIndentifierIntoSetToggleStatusForUser__MysqlToggleStatusModifierService_ReturnsFalse()
+    public function givenNullPassedAsAToggleIndentifier__MysqlToggleStatusModifierService_ReturnsFalse()
     {
         $response = $this->gateway->setToggleStatusForUser( null, ToggleStatusModifier::TOGGLE_STATUS_ACTIVE, 1 );
         $this->assertFalse( $response );
@@ -268,7 +268,7 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenEmptyStringPassedAsAToggleIndentifierIntoSetToggleStatusForUser__MysqlToggleStatusModifierService_ReturnsFalse()
+    public function givenEmptyStringPassedAsAToggleIndentifier__MysqlToggleStatusModifierService_ReturnsFalse()
     {
         $response = $this->gateway->setToggleStatusForUser( "", ToggleStatusModifier::TOGGLE_STATUS_ACTIVE, 1 );
         $this->assertFalse( $response );
@@ -277,7 +277,7 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenNullPassedAsAUserIndentifierIntoSetToggleStatusForUser__MysqlToggleStatusModifierService_ReturnsFalse()
+    public function givenNullPassedAsAUserIndentifier__MysqlToggleStatusModifierService_ReturnsFalse()
     {
         $response = $this->gateway->setToggleStatusForUser( "test", ToggleStatusModifier::TOGGLE_STATUS_ACTIVE, null );
         $this->assertFalse( $response );
