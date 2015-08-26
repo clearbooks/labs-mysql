@@ -31,7 +31,7 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     }
 
     /**
-     * @param $toggleStatus
+     * @param string $toggleStatus
      * @return bool
      */
     private function toggleStatusUnset( $toggleStatus )
@@ -40,7 +40,7 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     }
 
     /**
-     * @param $toggleStatus
+     * @param string $toggleStatus
      * @return bool
      */
     private function toggleStatusInactive( $toggleStatus )
@@ -49,7 +49,7 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     }
 
     /**
-     * @param $toggleStatus
+     * @param string $toggleStatus
      * @return bool
      */
     private function toggleStatusActive( $toggleStatus )
@@ -60,7 +60,7 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     /**
      * @param QueryBuilder $queryBuilder
      * @param sting $param1
-     * @param int $param2
+     * @param string $param2
      */
     private function deleteToggle( QueryBuilder $queryBuilder, $param1, $param2 )
     {
@@ -71,8 +71,8 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     }
 
     /**
-     * @param $toggleIdentifier
-     * @param $userIdentifier
+     * @param string $toggleIdentifier
+     * @param string $userIdentifier
      */
     private function insertActiveUserActivatedToggle( $toggleIdentifier, $userIdentifier )
     {
@@ -81,9 +81,9 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     }
 
     /**
-     * @param $toggleIdentifier
-     * @param $groupIdentifier
-     * @param $isActive
+     * @param string $toggleIdentifier
+     * @param string $groupIdentifier
+     * @param bool $isActive
      */
     private function insertGroupActivatedToggle( $toggleIdentifier, $groupIdentifier, $isActive )
     {
@@ -92,37 +92,68 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     }
 
     /**
-     * @param $toggleIdentifier
-     * @param $userIdentifier
-     * @param $isActive
+     * @return QueryBuilder
      */
-    private function updateUserToggleStatus( $toggleIdentifier, $userIdentifier, $isActive )
+    private function generateQueryBuilderForUserToggleUpdate()
     {
         $queryBuilder = new QueryBuilder( $this->connection );
         $queryBuilder
             ->update( 'user_activated_toggle' )
             ->set( 'is_active', '?' )
             ->where( 'toggle_id = ?' )
-            ->andWhere( 'user_id = ?' )
-            ->setParameter( 0, $isActive )
-            ->setParameter( 1, $toggleIdentifier )
-            ->setParameter( 2, $userIdentifier );
-        $queryBuilder->execute();
+            ->andWhere( 'user_id = ?' );
+        return $queryBuilder;
     }
 
     /**
-     * @param $toggleIdentifier
-     * @param $groupIdentifier
-     * @param $isActive
+     * @return QueryBuilder
      */
-    private function updateGroupActivatedToggle( $toggleIdentifier, $groupIdentifier, $isActive )
+    private function generateQueryBuilderFroGroupToggleUpdate()
     {
         $queryBuilder = new QueryBuilder( $this->connection );
         $queryBuilder
             ->update( 'group_activated_toggle' )
             ->set( 'active', '?' )
             ->where( 'toggle_id = ?' )
-            ->andWhere( 'group_id = ?' )
+            ->andWhere( 'group_id = ?' );
+        return $queryBuilder;
+    }
+
+    /**
+     * @return QueryBuilder
+     */
+    private function generateQueryBuilderForUserToggleDelete()
+    {
+        $queryBuilder = new QueryBuilder( $this->connection );
+        $queryBuilder
+            ->delete( 'user_activated_toggle' )
+            ->where( 'toggle_id = ?' )
+            ->andWhere( 'user_id = ?' );
+        return $queryBuilder;
+    }
+
+    /**
+     * @return QueryBuilder
+     */
+    private function generateQueryBuilderForGroupToggleDelete()
+    {
+        $queryBuilder = new QueryBuilder( $this->connection );
+        $queryBuilder
+            ->delete( 'group_activated_toggle' )
+            ->where( 'toggle_id = ?' )
+            ->andWhere( 'group_id = ?' );
+        return $queryBuilder;
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param string $toggleIdentifier
+     * @param string $groupIdentifier
+     * @param bool $isActive
+     */
+    private function updateToggle( QueryBuilder $queryBuilder, $toggleIdentifier, $groupIdentifier, $isActive )
+    {
+        $queryBuilder
             ->setParameter( 0, $isActive )
             ->setParameter( 1, $toggleIdentifier )
             ->setParameter( 2, $groupIdentifier );
@@ -132,7 +163,7 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     /**
      * @param string $toggleIdentifier
      * @param string $toggleStatus
-     * @param int $userIdentifier
+     * @param string $userIdentifier
      * @return bool
      */
     public function setToggleStatusForUser( $toggleIdentifier, $toggleStatus, $userIdentifier )
@@ -144,18 +175,16 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
             try {
                 $this->insertActiveUserActivatedToggle( $toggleIdentifier, $userIdentifier );
             } catch ( \Exception $e ) {
-                $this->updateUserToggleStatus( $toggleIdentifier, $userIdentifier, true );
+                $queryBuilder = $this->generateQueryBuilderForUserToggleUpdate();
+                $this->updateToggle($queryBuilder, $toggleIdentifier, $userIdentifier, true );
             }
             return true;
         } else if ( $this->toggleStatusInactive( $toggleStatus ) ) {
-            $this->updateUserToggleStatus( $toggleIdentifier, $userIdentifier, false );
+            $queryBuilder = $this->generateQueryBuilderForUserToggleUpdate();
+            $this->updateToggle($queryBuilder, $toggleIdentifier, $userIdentifier, false );
             return true;
         } else if ( $this->toggleStatusUnset( $toggleStatus ) ) {
-            $queryBuilder = new QueryBuilder( $this->connection );
-            $queryBuilder
-                ->delete( 'user_activated_toggle' )
-                ->where( 'toggle_id = ?' )
-                ->andWhere( 'user_id = ?' );
+            $queryBuilder = $this->generateQueryBuilderForUserToggleDelete();
             $this->deleteToggle($queryBuilder, $toggleIdentifier, $userIdentifier);
             return true;
         } else {
@@ -166,8 +195,8 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     /**
      * @param string $toggleIdentifier
      * @param string $toggleStatus
-     * @param int $groupIdentifier
-     * @param int $actingUserIdentifier
+     * @param string $groupIdentifier
+     * @param string $actingUserIdentifier
      * @return bool
      */
     public function setToggleStatusForGroup( $toggleIdentifier, $toggleStatus, $groupIdentifier, $actingUserIdentifier )
@@ -181,22 +210,20 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
             try {
                 $this->insertGroupActivatedToggle( $toggleIdentifier, $groupIdentifier, true );
             } catch ( \Exception $e ) {
-                $this->updateGroupActivatedToggle( $toggleIdentifier, $groupIdentifier, true );
+                $queryBuilder = $this->generateQueryBuilderFroGroupToggleUpdate();
+                $this->updateToggle($queryBuilder, $toggleIdentifier, $groupIdentifier, true );
             }
             return true;
         } else if ( $this->toggleStatusInactive( $toggleStatus ) ) {
             try {
                 $this->insertGroupActivatedToggle( $toggleIdentifier, $groupIdentifier, false );
             } catch ( \Exception $e ) {
-                $this->updateGroupActivatedToggle( $toggleIdentifier, $groupIdentifier, false );;
+                $queryBuilder = $this->generateQueryBuilderFroGroupToggleUpdate();
+                $this->updateToggle($queryBuilder, $toggleIdentifier, $groupIdentifier, false );
             }
             return true;
         } else if ( $this->toggleStatusUnset( $toggleStatus ) ) {
-            $queryBuilder = new QueryBuilder( $this->connection );
-            $queryBuilder
-                ->delete( 'group_activated_toggle' )
-                ->where( 'toggle_id = ?' )
-                ->andWhere( 'group_id = ?' );
+            $queryBuilder = $this->generateQueryBuilderForGroupToggleDelete();
             $this->deleteToggle($queryBuilder, $toggleIdentifier, $groupIdentifier );
             return true;
         } else {
