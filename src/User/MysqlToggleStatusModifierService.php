@@ -211,6 +211,57 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     }
 
     /**
+     * @param $toggleIdentifier
+     * @param $userOrGroupIdentifier
+     * @param $isGroup
+     * @return bool
+     */
+    private function tryInsertElseUpdateToggleToActiveState( $toggleIdentifier, $userOrGroupIdentifier, $isGroup )
+    {
+        if ( !$isGroup ) {
+            $this->tryInsertElseUpdateUserToggleToActiveState( $toggleIdentifier, $userOrGroupIdentifier );
+        } else {
+            $this->tryInsertElseUpdateGroupToggleToAGivenState( $toggleIdentifier, $userOrGroupIdentifier, true );
+        }
+        return true;
+    }
+
+    /**
+     * @param $toggleIdentifier
+     * @param $userOrGroupIdentifier
+     * @param $isGroup
+     * @return bool
+     */
+    private function tryInsertElseUpdateToggleToInactiveState( $toggleIdentifier, $userOrGroupIdentifier, $isGroup )
+    {
+        if ( !$isGroup ) {
+            $queryBuilder = $this->generateQueryBuilderForUserToggleUpdate();
+            $this->updateToggle( $queryBuilder, $toggleIdentifier, $userOrGroupIdentifier, false );
+        } else {
+            $this->tryInsertElseUpdateGroupToggleToAGivenState( $toggleIdentifier, $userOrGroupIdentifier, false );
+        }
+        return true;
+    }
+
+    /**
+     * @param $toggleIdentifier
+     * @param $userOrGroupIdentifier
+     * @param $isGroup
+     * @return bool
+     */
+    private function unsetToggle( $toggleIdentifier, $userOrGroupIdentifier, $isGroup )
+    {
+        if ( !$isGroup ) {
+            $queryBuilder = $this->generateQueryBuilderForUserToggleDelete();
+            $this->deleteToggle( $queryBuilder, $toggleIdentifier, $userOrGroupIdentifier );
+        } else {
+            $queryBuilder = $this->generateQueryBuilderForGroupToggleDelete();
+            $this->deleteToggle( $queryBuilder, $toggleIdentifier, $userOrGroupIdentifier );
+        }
+        return true;
+    }
+
+    /**
      * @param string $toggleIdentifier
      * @param string $toggleStatus
      * @param string $userOrGroupIdentifier
@@ -220,29 +271,12 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     private function setToggleStatus( $toggleIdentifier, $toggleStatus, $userOrGroupIdentifier, $isGroup = false )
     {
         if ( $this->toggleStatusActive( $toggleStatus ) ) {
-            if ( !$isGroup ) {
-                $this->tryInsertElseUpdateUserToggleToActiveState( $toggleIdentifier, $userOrGroupIdentifier );
-            } else {
-                $this->tryInsertElseUpdateGroupToggleToAGivenState( $toggleIdentifier, $userOrGroupIdentifier, true );
-            }
-            return true;
+            return $this->tryInsertElseUpdateToggleToActiveState( $toggleIdentifier, $userOrGroupIdentifier, $isGroup );
         } else if ( $this->toggleStatusInactive( $toggleStatus ) ) {
-            if ( !$isGroup ) {
-                $queryBuilder = $this->generateQueryBuilderForUserToggleUpdate();
-                $this->updateToggle( $queryBuilder, $toggleIdentifier, $userOrGroupIdentifier, false );
-            } else {
-                $this->tryInsertElseUpdateGroupToggleToAGivenState( $toggleIdentifier, $userOrGroupIdentifier, false );
-            }
-            return true;
+            return $this->tryInsertElseUpdateToggleToInactiveState( $toggleIdentifier, $userOrGroupIdentifier,
+                $isGroup );
         } else if ( $this->toggleStatusUnset( $toggleStatus ) ) {
-            if ( !$isGroup ) {
-                $queryBuilder = $this->generateQueryBuilderForUserToggleDelete();
-                $this->deleteToggle( $queryBuilder, $toggleIdentifier, $userOrGroupIdentifier );
-            } else {
-                $queryBuilder = $this->generateQueryBuilderForGroupToggleDelete();
-                $this->deleteToggle( $queryBuilder, $toggleIdentifier, $userOrGroupIdentifier );
-            }
-            return true;
+            return $this->unsetToggle( $toggleIdentifier, $userOrGroupIdentifier, $isGroup );
         } else {
             return false;
         }
