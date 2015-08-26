@@ -134,8 +134,8 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
         if ( empty( $data ) ) {
             return [ ];
         }
-        $entery = [ 1 => $data[ 'toggle_id' ], 2 => $data[ 'user_id' ], 3 => $data[ 'is_active' ] ];
-        return $entery;
+        $entry = [ 1 => $data[ 'toggle_id' ], 2 => $data[ 'user_id' ], 3 => $data[ 'is_active' ] ];
+        return $entry;
     }
 
     /**
@@ -150,8 +150,8 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
         if ( empty( $data ) ) {
             return [ ];
         }
-        $entery = [ 1 => $data[ 'toggle_id' ], 2 => $data[ 'group_id' ], 3 => $data[ 'active' ] ];
-        return $entery;
+        $entry = [ 1 => $data[ 'toggle_id' ], 2 => $data[ 'group_id' ], 3 => $data[ 'active' ] ];
+        return $entry;
     }
 
     /**
