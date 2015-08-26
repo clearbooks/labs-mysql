@@ -161,6 +161,27 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     }
 
     /**
+     * @param $toggleIdentifier
+     * @param $groupIdentifier
+     * @param $actingUserIdentifier
+     * @return bool
+     */
+    private function validateSetToggleStatusForGroupParameters( $toggleIdentifier, $groupIdentifier, $actingUserIdentifier )
+    {
+        return empty( $toggleIdentifier ) || empty( $groupIdentifier ) || empty( $actingUserIdentifier );
+    }
+
+    /**
+     * @param $toggleIdentifier
+     * @param $userIdentifier
+     * @return bool
+     */
+    private function validateSetToggleStatusForUserParameters( $toggleIdentifier, $userIdentifier )
+    {
+        return empty( $toggleIdentifier ) || empty( $userIdentifier );
+    }
+
+    /**
      * @param string $toggleIdentifier
      * @param string $toggleStatus
      * @param string $userIdentifier
@@ -168,7 +189,7 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
      */
     public function setToggleStatusForUser( $toggleIdentifier, $toggleStatus, $userIdentifier )
     {
-        if ( empty( $toggleIdentifier ) || empty( $userIdentifier ) ) {
+        if ( $this->validateSetToggleStatusForUserParameters( $toggleIdentifier, $userIdentifier ) ) {
             return false;
         }
         if ( $this->toggleStatusActive( $toggleStatus ) ) {
@@ -203,7 +224,7 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     {
         //Here we should check for $actingUserIdentifier to be a group admin. But for now we asume that everyone is the admin.
 
-        if ( empty( $toggleIdentifier ) || empty( $groupIdentifier ) || empty( $actingUserIdentifier ) ) {
+        if ( $this->validateSetToggleStatusForGroupParameters( $toggleIdentifier, $groupIdentifier, $actingUserIdentifier ) ) {
             return false;
         }
         if ( $this->toggleStatusActive( $toggleStatus ) ) {
