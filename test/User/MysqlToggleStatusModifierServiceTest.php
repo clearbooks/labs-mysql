@@ -216,10 +216,10 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
      * @param string $toggle_id
      * @param string $user_id
      * @param string $toggle_id2
-     * @param string  $user2_id
+     * @param string $user2_id
      * @param string $toggle_id3
-     * @param string  $user3_id
-     * @param string  $user4_id
+     * @param string $user3_id
+     * @param string $user4_id
      * @param bool $toggle_status
      * @param bool $isEmpty
      */
