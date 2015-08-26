@@ -59,7 +59,7 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param sting $param1
+     * @param string $param1
      * @param string $param2
      */
     private function deleteToggle( QueryBuilder $queryBuilder, $param1, $param2 )
