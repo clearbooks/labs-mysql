@@ -31,9 +31,9 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     }
 
     /**
-     * @param $toggleIdentifier
-     * @param $groupIdentifier
-     * @param $actingUserIdentifier
+     * @param string $toggleIdentifier
+     * @param string $groupIdentifier
+     * @param string $actingUserIdentifier
      * @return bool
      */
     private function validateSetToggleStatusForGroupParameters( $toggleIdentifier, $groupIdentifier,
@@ -43,8 +43,8 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     }
 
     /**
-     * @param $toggleIdentifier
-     * @param $userIdentifier
+     * @param string $toggleIdentifier
+     * @param string $userIdentifier
      * @return bool
      */
     private function validateSetToggleStatusForUserParameters( $toggleIdentifier, $userIdentifier )
@@ -170,8 +170,8 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     }
 
     /**
-     * @param $toggleIdentifier
-     * @param $userIdentifier
+     * @param string $toggleIdentifier
+     * @param string $userIdentifier
      */
     private function tryInsertElseUpdateUserToggleToActiveState( $toggleIdentifier, $userIdentifier )
     {
@@ -184,8 +184,8 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     }
 
     /**
-     * @param $toggleIdentifier
-     * @param $groupIdentifier
+     * @param string $toggleIdentifier
+     * @param string $groupIdentifier
      */
     private function tryInsertElseUpdateGroupToggleToAGivenState( $toggleIdentifier, $groupIdentifier, $isActive )
     {
@@ -211,9 +211,9 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     }
 
     /**
-     * @param $toggleIdentifier
-     * @param $userOrGroupIdentifier
-     * @param $isGroup
+     * @param string $toggleIdentifier
+     * @param string $userOrGroupIdentifier
+     * @param bool $isGroup
      * @return bool
      */
     private function tryInsertElseUpdateToggleToActiveState( $toggleIdentifier, $userOrGroupIdentifier, $isGroup )
@@ -227,9 +227,9 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     }
 
     /**
-     * @param $toggleIdentifier
-     * @param $userOrGroupIdentifier
-     * @param $isGroup
+     * @param string $toggleIdentifier
+     * @param string $userOrGroupIdentifier
+     * @param bool $isGroup
      * @return bool
      */
     private function tryInsertElseUpdateToggleToInactiveState( $toggleIdentifier, $userOrGroupIdentifier, $isGroup )
@@ -244,9 +244,9 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     }
 
     /**
-     * @param $toggleIdentifier
-     * @param $userOrGroupIdentifier
-     * @param $isGroup
+     * @param string $toggleIdentifier
+     * @param string $userOrGroupIdentifier
+     * @param bool $isGroup
      * @return bool
      */
     private function unsetToggle( $toggleIdentifier, $userOrGroupIdentifier, $isGroup )

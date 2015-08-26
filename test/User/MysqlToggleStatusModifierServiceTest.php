@@ -102,7 +102,7 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
 
     /**
      * @param string $toggle_id
-     * @param int $user_id
+     * @param string $user_id
      * @param bool $status
      */
     private function addUserActivatedToggle( $toggle_id, $user_id, $status = false )
@@ -113,7 +113,7 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
 
     /**
      * @param string $toggle_id
-     * @param int $user_id
+     * @param string $user_id
      * @param bool $status
      */
     private function addGroupActivatedToggle( $toggle_id, $user_id, $status = false )
@@ -124,7 +124,7 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
 
     /**
      * @param string $toggle_id
-     * @param int $user_id
+     * @param string $user_id
      * @return array
      */
     private function getUserActivatedToggleEntry( $toggle_id, $user_id )
@@ -140,7 +140,7 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
 
     /**
      * @param string $toggle_id
-     * @param int $group_id
+     * @param string $group_id
      * @return array
      */
     private function getGroupActivatedToggleEntry( $toggle_id, $group_id )
@@ -156,7 +156,7 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
 
     /**
      * @param string $toggle_id
-     * @param int $user_id
+     * @param string $user_id
      * @param bool $isActive
      * @param bool $isEmpty
      * @param bool $isGroup
@@ -214,12 +214,12 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
 
     /**
      * @param string $toggle_id
-     * @param int $user_id
+     * @param string $user_id
      * @param string $toggle_id2
-     * @param int $user2_id
+     * @param string  $user2_id
      * @param string $toggle_id3
-     * @param int $user3_id
-     * @param int $user4_id
+     * @param string  $user3_id
+     * @param string  $user4_id
      * @param bool $toggle_status
      * @param bool $isEmpty
      */
