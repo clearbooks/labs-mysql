@@ -55,4 +55,5 @@ CREATE TABLE `group_activated_toggle` (
 	CONSTRAINT `FK__toggle_group` FOREIGN KEY (`toggle_id`) REFERENCES `toggle` (`id`)
 )
 COLLATE='utf8mb4_unicode_ci'
-ENGINE=InnoDB;
+ENGINE=InnoDB
+;
