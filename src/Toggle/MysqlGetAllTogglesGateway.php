@@ -14,41 +14,6 @@ use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
 abstract class MysqlGetAllTogglesGateway
 {
     /**
-     * @param array $data
-     * @return Toggle[]
-     */
-    protected function getAllTogglesFromGivenSqlResult( array $data )
-    {
-        $toggles = [ ];
-        foreach ( $data as $row ) {
-
-            list(
-                $screenshotUrl,
-                $descriptionOfToggle,
-                $descriptionOfFunctionality,
-                $descriptionOfImplementationReason,
-                $descriptionOfLocation,
-                $guideUrl,
-                $appNotificationCopyText
-                ) = $this->setDefaultMarketingInformationForToggle( $row );
-
-            $toggles[] = new Toggle(
-                $row[ 'name' ],
-                $row[ 'release_id' ],
-                (bool) $row[ 'is_active' ],
-                $screenshotUrl,
-                $descriptionOfToggle,
-                $descriptionOfFunctionality,
-                $descriptionOfImplementationReason,
-                $descriptionOfLocation,
-                $guideUrl,
-                $appNotificationCopyText
-            );
-        }
-        return $toggles;
-    }
-
-    /**
      * @param $row
      * @return string[]
      */
@@ -133,6 +98,51 @@ abstract class MysqlGetAllTogglesGateway
     {
         $appNotificationCopyText = isset( $row[ 'app_notification_copy_text' ] ) ? $row[ 'app_notification_copy_text' ] : null;
         return $appNotificationCopyText;
+    }
+
+    /**
+     * @param $row
+     * @param $toggles
+     * @return array
+     */
+    protected function getToggleFromRow( $row, $toggles )
+    {
+        list(
+            $screenshotUrl,
+            $descriptionOfToggle,
+            $descriptionOfFunctionality,
+            $descriptionOfImplementationReason,
+            $descriptionOfLocation,
+            $guideUrl,
+            $appNotificationCopyText
+            ) = $this->setDefaultMarketingInformationForToggle( $row );
+
+        $toggles[] = new Toggle(
+            $row[ 'name' ],
+            $row[ 'release_id' ],
+            (bool) $row[ 'is_active' ],
+            $screenshotUrl,
+            $descriptionOfToggle,
+            $descriptionOfFunctionality,
+            $descriptionOfImplementationReason,
+            $descriptionOfLocation,
+            $guideUrl,
+            $appNotificationCopyText
+        );
+        return $toggles;
+    }
+
+    /**
+     * @param array $data
+     * @return Toggle[]
+     */
+    protected function getAllTogglesFromGivenSqlResult( array $data )
+    {
+        $toggles = [ ];
+        foreach ( $data as $row ) {
+            $toggles = $this->getToggleFromRow( $row, $toggles );
+        }
+        return $toggles;
     }
 
 }
