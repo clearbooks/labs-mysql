@@ -102,22 +102,13 @@ abstract class MysqlGetAllTogglesGateway
 
     /**
      * @param $row
-     * @param $toggles
      * @return array
+     * @internal param $toggles
      */
-    protected function getToggleFromRow( $row, $toggles )
+    protected function getToggleFromRow( $row )
     {
-        list(
-            $screenshotUrl,
-            $descriptionOfToggle,
-            $descriptionOfFunctionality,
-            $descriptionOfImplementationReason,
-            $descriptionOfLocation,
-            $guideUrl,
-            $appNotificationCopyText
-            ) = $this->setDefaultMarketingInformationForToggle( $row );
-
-        $toggles[] = new Toggle(
+        list( $screenshotUrl, $descriptionOfToggle, $descriptionOfFunctionality, $descriptionOfImplementationReason, $descriptionOfLocation, $guideUrl, $appNotificationCopyText ) = $this->setDefaultMarketingInformationForToggle( $row );
+        return new Toggle(
             $row[ 'name' ],
             $row[ 'release_id' ],
             (bool) $row[ 'is_active' ],
@@ -129,7 +120,6 @@ abstract class MysqlGetAllTogglesGateway
             $guideUrl,
             $appNotificationCopyText
         );
-        return $toggles;
     }
 
     /**
@@ -140,7 +130,7 @@ abstract class MysqlGetAllTogglesGateway
     {
         $toggles = [ ];
         foreach ( $data as $row ) {
-            $toggles = $this->getToggleFromRow( $row, $toggles );
+            $toggles[] = $this->getToggleFromRow( $row );
         }
         return $toggles;
     }
