@@ -51,7 +51,8 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
             'name' => $releaseName,
             'info' => $url
         );
-        $this->assertEquals( $expectedRelease, $this->connection->fetchAssoc( 'SELECT * FROM `release` WHERE `id` = ?', [ $id ] ) );
+        $this->assertEquals( $expectedRelease,
+            $this->connection->fetchAssoc( 'SELECT * FROM `release` WHERE `id` = ?', [ $id ] ) );
 
         // Teardown
         $this->deleteAddedRelease( $id );
@@ -85,7 +86,7 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
         $id = $this->addRelease( $releaseName, $url );
 
         $release = $this->gateway->getRelease( $id );
-        $expectedRelease = new Release( $releaseName, $url, new \DateTime() );
+        $expectedRelease = new Release( 1 ,$releaseName, $url, new \DateTime() );
 
         $this->assertReleasesMatch( $expectedRelease, $release );
 
@@ -97,7 +98,7 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
      */
     public function givenNoReleases_getAllReleasesReturnsEmptyArray()
     {
-        $this->assertEquals( [], $this->gateway->getAllReleases() );
+        $this->assertEquals( [ ], $this->gateway->getAllReleases() );
     }
 
     /**
@@ -109,10 +110,10 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
         $url = 'a helpful url';
         $id = $this->addRelease( $releaseName, $url );
 
-        $expectedRelease = new Release( $releaseName, $url, new \DateTime() );
-        $releases =  $this->gateway->getAllReleases();
+        $expectedRelease = new Release( 1, $releaseName, $url, new \DateTime() );
+        $releases = $this->gateway->getAllReleases();
 
-        $this->assertReleasesMatch( $expectedRelease, $releases[0] );
+        $this->assertReleasesMatch( $expectedRelease, $releases[ 0 ] );
 
         $this->deleteAddedRelease( $id );
     }
@@ -126,27 +127,27 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
          * @var Release[] $expectedReleases
          */
         $expectedReleases = array(
-            new Release( 'Test release 1', 'a helpful url', new \DateTime() ),
-            new Release( 'Test release 2', 'another helpful url', new \DateTime() ),
-            new Release( 'Test release 3', 'a third helpful url', new \DateTime() )
+            new Release( 1, 'Test release 1', 'a helpful url', new \DateTime() ),
+            new Release( 2, 'Test release 2', 'another helpful url', new \DateTime() ),
+            new Release( 3, 'Test release 3', 'a third helpful url', new \DateTime() )
         );
 
         $releasesToDelete = array();
 
-        foreach ($expectedReleases as $expectedRelease ){
+        foreach ( $expectedReleases as $expectedRelease ) {
             $releasesToDelete[] = $this->addRelease( $expectedRelease->getReleaseName(),
                 $expectedRelease->getReleaseInfoUrl() );
         }
 
-        $releases =  $this->gateway->getAllReleases();
+        $releases = $this->gateway->getAllReleases();
 
         $this->assertCount( 3, $releases );
 
-        foreach( $expectedReleases as $index => $expectedRelease ){
-            $this->assertReleasesMatch( $expectedRelease, $releases[$index] );
+        foreach ( $expectedReleases as $index => $expectedRelease ) {
+            $this->assertReleasesMatch( $expectedRelease, $releases[ $index ] );
         }
 
-        foreach ( $releasesToDelete as $id ){
+        foreach ( $releasesToDelete as $id ) {
             $this->deleteAddedRelease( $id );
         }
     }
