@@ -85,7 +85,7 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
         $id = $this->addRelease( $releaseName, $url );
 
         $release = $this->gateway->getRelease( $id );
-        $expectedRelease = new Release( $releaseName, $url, new \DateTime() );
+        $expectedRelease = new Release( $id, $releaseName, $url, new \DateTime() );
 
         $this->assertReleasesMatch( $expectedRelease, $release );
 
@@ -109,7 +109,7 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
         $url = 'a helpful url';
         $id = $this->addRelease( $releaseName, $url );
 
-        $expectedRelease = new Release( $releaseName, $url, new \DateTime() );
+        $expectedRelease = new Release( $id, $releaseName, $url, new \DateTime() );
         $releases =  $this->gateway->getAllReleases();
 
         $this->assertReleasesMatch( $expectedRelease, $releases[0] );
@@ -125,17 +125,20 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
         /**
          * @var Release[] $expectedReleases
          */
-        $expectedReleases = array(
-            new Release( 'Test release 1', 'a helpful url', new \DateTime() ),
-            new Release( 'Test release 2', 'another helpful url', new \DateTime() ),
-            new Release( 'Test release 3', 'a third helpful url', new \DateTime() )
+        $releaseInfo = array(
+            [ 'Test release 1', 'a helpful url', new \DateTime() ],
+            [ 'Test release 2', 'another helpful url', new \DateTime() ],
+            [ 'Test release 3', 'a third helpful url', new \DateTime() ]
         );
 
         $releasesToDelete = array();
 
-        foreach ($expectedReleases as $expectedRelease ){
-            $releasesToDelete[] = $this->addRelease( $expectedRelease->getReleaseName(),
-                $expectedRelease->getReleaseInfoUrl() );
+        foreach ($releaseInfo as $info ){
+            $id = $this->addRelease( $info[0],
+                $info[1] );
+            $releasesToDelete[] = $id;
+            $expectedReleases[] = new Release($id, $info[0], $info[1], $info[2]);
+
         }
 
         $releases =  $this->gateway->getAllReleases();
