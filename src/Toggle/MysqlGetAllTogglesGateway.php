@@ -13,28 +13,12 @@ use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
 
 abstract class MysqlGetAllTogglesGateway
 {
-    /**
-     * @param $row
-     * @return string[]
-     */
-    protected function setDefaultMarketingInformationForToggle( $row )
-    {
-        $screenshotUrl = $this->setDefaultForScreenshotUrl( $row );
-        $descriptionOfToggle = $this->setDefaultForDescriptionOfToggle( $row );
-        $descriptionOfFunctionality = $this->setDefaultForDescriptionOfFunctionality( $row );
-        $descriptionOfImplementationReason = $this->setDefaultForDescriptionOfImplementationReason( $row );
-        $descriptionOfLocation = $this->setDefaultForDescriptionOfLocation( $row );
-        $guideUrl = $this->setDefaultForGuideUrl( $row );
-        $appNotificationCopyText = $this->setDefaultForAppNotificationCopyText( $row );
-
-        return array( $screenshotUrl, $descriptionOfToggle, $descriptionOfFunctionality, $descriptionOfImplementationReason, $descriptionOfLocation, $guideUrl, $appNotificationCopyText );
-    }
 
     /**
      * @param $row
      * @return string
      */
-    protected function setDefaultForScreenshotUrl( $row )
+    protected function getDefaultForScreenshotUrl( $row )
     {
         $screenshotUrl = isset( $row[ 'screenshot_urls' ] ) ? $row[ 'screenshot_urls' ] : null;
         return $screenshotUrl;
@@ -44,7 +28,7 @@ abstract class MysqlGetAllTogglesGateway
      * @param $row
      * @return string
      */
-    protected function setDefaultForDescriptionOfToggle( $row )
+    protected function getDefaultForDescriptionOfToggle( $row )
     {
         $descriptionOfToggle = isset( $row[ 'description_of_toggle' ] ) ? $row[ 'description_of_toggle' ] : null;
         return $descriptionOfToggle;
@@ -54,7 +38,7 @@ abstract class MysqlGetAllTogglesGateway
      * @param $row
      * @return string
      */
-    protected function setDefaultForDescriptionOfFunctionality( $row )
+    protected function getDefaultForDescriptionOfFunctionality( $row )
     {
         $descriptionOfFunctionality = isset( $row[ 'description_of_functionality' ] ) ? $row[ 'description_of_functionality' ] : null;
         return $descriptionOfFunctionality;
@@ -64,7 +48,7 @@ abstract class MysqlGetAllTogglesGateway
      * @param $row
      * @return string
      */
-    protected function setDefaultForDescriptionOfImplementationReason( $row )
+    protected function getDefaultForDescriptionOfImplementationReason( $row )
     {
         $descriptionOfImplementationReason = isset( $row[ 'description_of_implementation_reason' ] ) ? $row[ 'description_of_implementation_reason' ] : null;
         return $descriptionOfImplementationReason;
@@ -74,7 +58,7 @@ abstract class MysqlGetAllTogglesGateway
      * @param $row
      * @return string
      */
-    protected function setDefaultForDescriptionOfLocation( $row )
+    protected function getDefaultForDescriptionOfLocation( $row )
     {
         $descriptionOfLocation = isset( $row[ 'description_of_location' ] ) ? $row[ 'description_of_location' ] : null;
         return $descriptionOfLocation;
@@ -84,7 +68,7 @@ abstract class MysqlGetAllTogglesGateway
      * @param $row
      * @return string
      */
-    protected function setDefaultForGuideUrl( $row )
+    protected function getDefaultForGuideUrl( $row )
     {
         $guideUrl = isset( $row[ 'guide_url' ] ) ? $row[ 'guide_url' ] : null;
         return $guideUrl;
@@ -94,7 +78,7 @@ abstract class MysqlGetAllTogglesGateway
      * @param $row
      * @return string
      */
-    protected function setDefaultForAppNotificationCopyText( $row )
+    protected function getDefaultForAppNotificationCopyText( $row )
     {
         $appNotificationCopyText = isset( $row[ 'app_notification_copy_text' ] ) ? $row[ 'app_notification_copy_text' ] : null;
         return $appNotificationCopyText;
@@ -107,18 +91,17 @@ abstract class MysqlGetAllTogglesGateway
      */
     protected function getToggleFromRow( $row )
     {
-        list( $screenshotUrl, $descriptionOfToggle, $descriptionOfFunctionality, $descriptionOfImplementationReason, $descriptionOfLocation, $guideUrl, $appNotificationCopyText ) = $this->setDefaultMarketingInformationForToggle( $row );
         return new Toggle(
             $row[ 'name' ],
             $row[ 'release_id' ],
             (bool) $row[ 'is_active' ],
-            $screenshotUrl,
-            $descriptionOfToggle,
-            $descriptionOfFunctionality,
-            $descriptionOfImplementationReason,
-            $descriptionOfLocation,
-            $guideUrl,
-            $appNotificationCopyText
+            $this->getDefaultForScreenshotUrl( $row ),
+            $this->getDefaultForDescriptionOfToggle( $row ),
+            $this->getDefaultForDescriptionOfFunctionality( $row ),
+            $this->getDefaultForDescriptionOfImplementationReason( $row ),
+            $this->getDefaultForDescriptionOfLocation( $row ),
+            $this->getDefaultForGuideUrl( $row ),
+            $this->getDefaultForAppNotificationCopyText( $row )
         );
     }
 
