@@ -15,7 +15,7 @@ abstract class MysqlGetAllTogglesGateway
 {
     /**
      * @param array $data
-     * @return array
+     * @return Toggle[]
      */
     protected function getAllTogglesFromGivenSqlResult( array $data )
     {
@@ -50,7 +50,7 @@ abstract class MysqlGetAllTogglesGateway
 
     /**
      * @param $row
-     * @return array
+     * @return string[]
      */
     protected function setDefaultMarketingInformationForToggle( $row )
     {
@@ -67,7 +67,7 @@ abstract class MysqlGetAllTogglesGateway
 
     /**
      * @param $row
-     * @return array
+     * @return string
      */
     protected function setDefaultForScreenshotUrl( $row )
     {
@@ -77,7 +77,7 @@ abstract class MysqlGetAllTogglesGateway
 
     /**
      * @param $row
-     * @return array
+     * @return string
      */
     protected function setDefaultForDescriptionOfToggle( $row )
     {
@@ -87,7 +87,7 @@ abstract class MysqlGetAllTogglesGateway
 
     /**
      * @param $row
-     * @return array
+     * @return string
      */
     protected function setDefaultForDescriptionOfFunctionality( $row )
     {
@@ -97,7 +97,7 @@ abstract class MysqlGetAllTogglesGateway
 
     /**
      * @param $row
-     * @return array
+     * @return string
      */
     protected function setDefaultForDescriptionOfImplementationReason( $row )
     {
@@ -107,7 +107,7 @@ abstract class MysqlGetAllTogglesGateway
 
     /**
      * @param $row
-     * @return array
+     * @return string
      */
     protected function setDefaultForDescriptionOfLocation( $row )
     {
@@ -117,7 +117,7 @@ abstract class MysqlGetAllTogglesGateway
 
     /**
      * @param $row
-     * @return array
+     * @return string
      */
     protected function setDefaultForGuideUrl( $row )
     {
@@ -127,7 +127,7 @@ abstract class MysqlGetAllTogglesGateway
 
     /**
      * @param $row
-     * @return array
+     * @return string
      */
     protected function setDefaultForAppNotificationCopyText( $row )
     {
