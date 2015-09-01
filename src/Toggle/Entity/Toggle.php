@@ -105,7 +105,7 @@ class Toggle implements \Clearbooks\Labs\Toggle\Entity\MarketableToggle, UserTog
      */
     public function isActive()
     {
-        return $this->releaseId;
+        return (bool) $this->isActive;
     }
 
     /**
