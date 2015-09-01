@@ -9,17 +9,32 @@
     }
   ],
   "autoload": {
-    "psr-4": {"Clearbooks\\LabsMysql\\": ["src/", "test/"]}
+    "psr-4": {
+      "Clearbooks\\LabsMysql\\": [
+        "src/",
+        "test/"
+      ]
+    }
   },
   "repositories": [
     {
       "url": "https://github.com/clearbooks/labs.git",
       "type": "git"
+    },
+    {
+      "url": "https://github.com/clearbooks/labs-php-client.git",
+      "type": "git"
+    },
+    {
+      "url": "https://github.com/clearbooks/labs-php-client-mysql.git",
+      "type": "git"
     }
   ],
-  "require":{
+  "require": {
     "doctrine/dbal": "2.5.1",
-    "clearbooks/labs": "dev-master"
+    "clearbooks/labs": "dev-master",
+    "clearbooks/labs-php-client": "dev-master",
+    "clearbooks/labs-php-client-mysql": "dev-master"
   },
   "require-dev": {
     "phpunit/phpunit": "4.7.*"
