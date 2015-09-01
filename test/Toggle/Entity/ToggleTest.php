@@ -31,7 +31,7 @@ class ToggleTest extends \PHPUnit_Framework_TestCase
             'locationDesc' => '',
             'guideUrl' => '',
             'notificationCopy' => ''
-        );;
+        );
     }
 
     /**
