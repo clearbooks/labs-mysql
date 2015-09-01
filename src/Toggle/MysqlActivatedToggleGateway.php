@@ -8,7 +8,7 @@
 
 namespace Clearbooks\LabsMysql\Toggle;
 
-
+use Clearbooks\Labs\Client\Toggle\UseCase\IsToggleActive;
 use Clearbooks\Labs\Toggle\Entity\ActivatableToggle;
 use Clearbooks\Labs\Toggle\Gateway\ActivatedToggleGateway;
 use Doctrine\DBAL\Connection;
@@ -20,15 +20,21 @@ class MysqlActivatedToggleGateway extends MysqlGetAllTogglesGateway implements A
      * @var Connection
      */
     private $connection;
+    /**
+     * @var ToggleChecker
+     */
+    private $toggleChecker;
 
     /**
      * MysqlActivatedToggleGateway constructor.
      * @param Connection $connection
+     * @param IsToggleActive $toggleChecker
      */
-    public function __construct( Connection $connection )
+    public function __construct( Connection $connection, IsToggleActive $toggleChecker )
     {
 
         $this->connection = $connection;
+        $this->toggleChecker = $toggleChecker;
     }
 
     /**
@@ -37,33 +43,20 @@ class MysqlActivatedToggleGateway extends MysqlGetAllTogglesGateway implements A
      */
     public function getAllMyActivatedToggles( $userIdentifier )
     {
-        //TODO: This gateway uses user_id as a group_id for group_activated_toggle. Later this has to be modified to get user with user_id and find his group_id and then get his grout_activated_toggle
+        $activatedToggles = [];
 
         $queryBuilder = new QueryBuilder( $this->connection );
         $queryBuilder
             ->select( '*' )
-            ->from( 'toggle' )
-            ->where( 'u_a_t.user_id = ?' )
-            ->andWhere( 'u_a_t.is_active = ?' )
-            ->join( 'toggle', 'user_activated_toggle', 'u_a_t', 'toggle.id = u_a_t.toggle_id' )
-            ->setParameter( 0, $userIdentifier )
-            ->setParameter( 1, 1 );
+            ->from( 'toggle' );
         $data = $queryBuilder->execute()->fetchAll();
+        $toggles = $this->getAllTogglesFromGivenSqlResult( $data );
 
-        $activatedToggles = $this->getAllTogglesFromGivenSqlResult( $data );
-
-        $queryBuilder2 = new QueryBuilder( $this->connection );
-        $queryBuilder2
-            ->select( '*' )
-            ->from( 'toggle' )
-            ->where( 'g_a_t.group_id = ?' )
-            ->andWhere( 'g_a_t.active = ?' )
-            ->join( 'toggle', 'group_activated_toggle', 'g_a_t', 'toggle.id = g_a_t.toggle_id' )
-            ->setParameter( 0, $userIdentifier )
-            ->setParameter( 1, 1 );
-        $data2 = $queryBuilder2->execute()->fetchAll();
-
-        $activatedToggles = array_merge( $activatedToggles, $this->getAllTogglesFromGivenSqlResult( $data2 ) );
+        foreach ( $toggles as $toggle ) {
+            if ( $this->toggleChecker->isToggleActive( $toggle->getName() ) ){
+                $activatedToggles[] = $toggle;
+            }
+        }
 
         return $activatedToggles;
     }
