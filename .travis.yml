@@ -8,6 +8,7 @@ php:
 
 install: composer install --dev
 before_script:
+  - cp config/db-config.sample.php config/db-config.php
   - mysql -e 'create database labs;'
 script:
   - cat db/*.sql | mysql -uroot labs
