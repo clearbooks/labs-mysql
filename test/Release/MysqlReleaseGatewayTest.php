@@ -49,7 +49,9 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
         $expectedRelease = array(
             'id' => $id,
             'name' => $releaseName,
-            'info' => $url
+            'info' => $url,
+            'visibility' => 1,
+            'release_date' => null
         );
         $this->assertEquals( $expectedRelease,
             $this->connection->fetchAssoc( 'SELECT * FROM `release` WHERE `id` = ?', [ $id ] ) );
