@@ -1,0 +1,2 @@
+ALTER TABLE `release` ADD `visibility` TINYINT(1) NOT NULL DEFAULT 1;
+ALTER TABLE `release` ADD `release_date` DATE NULL DEFAULT NULL ;
