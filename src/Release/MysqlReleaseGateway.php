@@ -50,7 +50,7 @@ class MysqlReleaseGateway implements ReleaseGateway
             return null;
         }
 
-        return new Release( $releaseArray['name'], $releaseArray['info'], new \DateTime() );
+        return new Release( $releaseArray['id'], $releaseArray['name'], $releaseArray['info'], new \DateTime() );
     }
 
     /**
@@ -60,7 +60,7 @@ class MysqlReleaseGateway implements ReleaseGateway
     {
         $releases = [];
         foreach ( $this->connection->fetchAll( 'SELECT * FROM `release`' ) as $row ){
-            $releases[] = new Release( $row['name'], $row['info'], new \DateTime() );
+            $releases[] = new Release( $row['id'], $row['name'], $row['info'], new \DateTime() );
         }
         return $releases;
     }
