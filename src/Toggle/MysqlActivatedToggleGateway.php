@@ -21,7 +21,7 @@ class MysqlActivatedToggleGateway extends MysqlGetAllTogglesGateway implements A
      */
     private $connection;
     /**
-     * @var ToggleChecker
+     * @var IsToggleActive
      */
     private $toggleChecker;
 
