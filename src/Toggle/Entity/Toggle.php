@@ -2,6 +2,7 @@
 namespace Clearbooks\LabsMysql\Toggle\Entity;
 
 use Clearbooks\Labs\Toggle\Entity\ActivatableToggle;
+use Clearbooks\Labs\Toggle\Entity\MarketableToggle;
 use Clearbooks\Labs\Toggle\Entity\UserToggle;
 
 /**
@@ -10,7 +11,7 @@ use Clearbooks\Labs\Toggle\Entity\UserToggle;
  * Date: 12/08/2015
  * Time: 14:14
  */
-class Toggle implements \Clearbooks\Labs\Toggle\Entity\MarketableToggle, UserToggle, ActivatableToggle
+class Toggle implements MarketableToggle, UserToggle, ActivatableToggle
 {
     /**
      * @var string
@@ -31,19 +32,19 @@ class Toggle implements \Clearbooks\Labs\Toggle\Entity\MarketableToggle, UserTog
     /**
      * @var string
      */
-    private $toggleDesc;
+    private $descriptionOfToggle;
     /**
      * @var string
      */
-    private $functionalityDes;
+    private $descriptionOfFunctionality;
     /**
      * @var string
      */
-    private $reasonWhyDesc;
+    private $descriptionOfImplementationReason;
     /**
      * @var string
      */
-    private $locationDesc;
+    private $descriptionOfLocation;
     /**
      * @var string
      */
@@ -51,7 +52,7 @@ class Toggle implements \Clearbooks\Labs\Toggle\Entity\MarketableToggle, UserTog
     /**
      * @var string
      */
-    private $notificationCopy;
+    private $appNotificationCopyText;
 
     /**
      * Toggle constructor.
@@ -59,28 +60,27 @@ class Toggle implements \Clearbooks\Labs\Toggle\Entity\MarketableToggle, UserTog
      * @param string $releaseId
      * @param bool $isActive
      * @param string $screenshotUrl
-     * @param string $toggleDesc
-     * @param string $functionalityDes
-     * @param string $reasonWhyDesc
-     * @param string $locationDesc
+     * @param string $descriptionOfToggle
+     * @param string $descriptionOfFunctionality
+     * @param string $descriptionOfImplementationReason
+     * @param string $descriptionOfLocation
      * @param string $guideUrl
-     * @param string $notificationCopy
+     * @param string $appNotificationCopyText
      */
-    public function __construct( $name, $releaseId, $isActive = false,
-                                 $screenshotUrl = '', $toggleDesc = '',
-                                 $functionalityDes = '', $reasonWhyDesc = '',
-                                 $locationDesc = '', $guideUrl = '', $notificationCopy = '' )
+    public function __construct( $name, $releaseId, $isActive = false, $screenshotUrl = "", $descriptionOfToggle = "",
+                                 $descriptionOfFunctionality = "", $descriptionOfImplementationReason = "",
+                                 $descriptionOfLocation = "", $guideUrl = "", $appNotificationCopyText = "" )
     {
         $this->name = $name;
         $this->releaseId = $releaseId;
         $this->isActive = $isActive;
         $this->screenshotUrl = $screenshotUrl;
-        $this->toggleDesc = $toggleDesc;
-        $this->functionalityDes = $functionalityDes;
-        $this->reasonWhyDesc = $reasonWhyDesc;
-        $this->locationDesc = $locationDesc;
+        $this->descriptionOfToggle = $descriptionOfToggle;
+        $this->descriptionOfFunctionality = $descriptionOfFunctionality;
+        $this->descriptionOfImplementationReason = $descriptionOfImplementationReason;
+        $this->descriptionOfLocation = $descriptionOfLocation;
         $this->guideUrl = $guideUrl;
-        $this->notificationCopy = $notificationCopy;
+        $this->appNotificationCopyText = $appNotificationCopyText;
     }
 
 
@@ -105,7 +105,7 @@ class Toggle implements \Clearbooks\Labs\Toggle\Entity\MarketableToggle, UserTog
      */
     public function isActive()
     {
-        return (bool) $this->isActive;
+        return $this->isActive;
     }
 
     /**
@@ -121,7 +121,7 @@ class Toggle implements \Clearbooks\Labs\Toggle\Entity\MarketableToggle, UserTog
      */
     public function getDescriptionOfToggle()
     {
-        return $this->toggleDesc;
+        return $this->descriptionOfToggle;
     }
 
     /**
@@ -129,7 +129,7 @@ class Toggle implements \Clearbooks\Labs\Toggle\Entity\MarketableToggle, UserTog
      */
     public function getDescriptionOfFunctionality()
     {
-        return $this->functionalityDes;
+        return $this->descriptionOfFunctionality;
     }
 
     /**
@@ -137,15 +137,15 @@ class Toggle implements \Clearbooks\Labs\Toggle\Entity\MarketableToggle, UserTog
      */
     public function getDescriptionOfImplementationReason()
     {
-        return $this->reasonWhyDesc;
+        return $this->descriptionOfImplementationReason;
     }
 
     /**
      * @return string
      */
-    public function getDescriptionOfLocation()
+    public function  getDescriptionOfLocation()
     {
-        return $this->locationDesc;
+        return $this->descriptionOfLocation;
     }
 
     /**
@@ -161,6 +161,6 @@ class Toggle implements \Clearbooks\Labs\Toggle\Entity\MarketableToggle, UserTog
      */
     public function getAppNotificationCopyText()
     {
-        return $this->notificationCopy;
+        return $this->appNotificationCopyText;
     }
 }

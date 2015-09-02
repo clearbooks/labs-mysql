@@ -8,6 +8,7 @@ php:
 
 install: composer install --dev
 before_script:
+  - cp vendor/clearbooks/labs-php-client-mysql/config/db-config.sample.php vendor/clearbooks/labs-php-client-mysql/config/db-config.php
   - mysql -e 'create database labs;'
 script:
   - cat db/*.sql | mysql -uroot labs
