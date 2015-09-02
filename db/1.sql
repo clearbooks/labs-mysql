@@ -71,5 +71,5 @@ CREATE TABLE `toggle_marketing_information` (
 	INDEX `FK_toggle_marketing_information_toggle` (`toggle_id`),
 	CONSTRAINT `FK_toggle_marketing_information_toggle` FOREIGN KEY (`toggle_id`) REFERENCES `toggle` (`id`)
 )
-COLLATE='latin1_swedish_ci'
+COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;

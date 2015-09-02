@@ -105,7 +105,7 @@ class Toggle implements MarketableToggle, UserToggle, ActivatableToggle
      */
     public function isActive()
     {
-        return $this->releaseId;
+        return $this->isActive;
     }
 
     /**

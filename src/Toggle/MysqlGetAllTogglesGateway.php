@@ -20,8 +20,7 @@ abstract class MysqlGetAllTogglesGateway
      */
     protected function getDefaultForScreenshotUrl( $row )
     {
-        $screenshotUrl = isset( $row[ 'screenshot_urls' ] ) ? $row[ 'screenshot_urls' ] : null;
-        return $screenshotUrl;
+        return isset( $row[ 'screenshot_urls' ] ) ? $row[ 'screenshot_urls' ] : null;
     }
 
     /**
@@ -30,8 +29,7 @@ abstract class MysqlGetAllTogglesGateway
      */
     protected function getDefaultForDescriptionOfToggle( $row )
     {
-        $descriptionOfToggle = isset( $row[ 'description_of_toggle' ] ) ? $row[ 'description_of_toggle' ] : null;
-        return $descriptionOfToggle;
+        return isset( $row[ 'description_of_toggle' ] ) ? $row[ 'description_of_toggle' ] : null;
     }
 
     /**
@@ -40,8 +38,7 @@ abstract class MysqlGetAllTogglesGateway
      */
     protected function getDefaultForDescriptionOfFunctionality( $row )
     {
-        $descriptionOfFunctionality = isset( $row[ 'description_of_functionality' ] ) ? $row[ 'description_of_functionality' ] : null;
-        return $descriptionOfFunctionality;
+        return isset( $row[ 'description_of_functionality' ] ) ? $row[ 'description_of_functionality' ] : null;
     }
 
     /**
@@ -50,8 +47,7 @@ abstract class MysqlGetAllTogglesGateway
      */
     protected function getDefaultForDescriptionOfImplementationReason( $row )
     {
-        $descriptionOfImplementationReason = isset( $row[ 'description_of_implementation_reason' ] ) ? $row[ 'description_of_implementation_reason' ] : null;
-        return $descriptionOfImplementationReason;
+        return isset( $row[ 'description_of_implementation_reason' ] ) ? $row[ 'description_of_implementation_reason' ] : null;
     }
 
     /**
@@ -60,8 +56,7 @@ abstract class MysqlGetAllTogglesGateway
      */
     protected function getDefaultForDescriptionOfLocation( $row )
     {
-        $descriptionOfLocation = isset( $row[ 'description_of_location' ] ) ? $row[ 'description_of_location' ] : null;
-        return $descriptionOfLocation;
+        return isset( $row[ 'description_of_location' ] ) ? $row[ 'description_of_location' ] : null;
     }
 
     /**
@@ -70,8 +65,7 @@ abstract class MysqlGetAllTogglesGateway
      */
     protected function getDefaultForGuideUrl( $row )
     {
-        $guideUrl = isset( $row[ 'guide_url' ] ) ? $row[ 'guide_url' ] : null;
-        return $guideUrl;
+        return isset( $row[ 'guide_url' ] ) ? $row[ 'guide_url' ] : null;
     }
 
     /**
@@ -80,8 +74,7 @@ abstract class MysqlGetAllTogglesGateway
      */
     protected function getDefaultForAppNotificationCopyText( $row )
     {
-        $appNotificationCopyText = isset( $row[ 'app_notification_copy_text' ] ) ? $row[ 'app_notification_copy_text' ] : null;
-        return $appNotificationCopyText;
+        return isset( $row[ 'app_notification_copy_text' ] ) ? $row[ 'app_notification_copy_text' ] : null;
     }
 
     /**

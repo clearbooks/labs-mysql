@@ -9,8 +9,9 @@
 namespace Clearbooks\LabsMysql\Release;
 
 
-use Doctrine\DBAL\Configuration;
-use Doctrine\DBAL\DriverManager;
+use Clearbooks\Labs\Bootstrap;
+use Clearbooks\Labs\Db\DbDIDefinitionProvider;
+use Doctrine\DBAL\Connection;
 use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
 
 class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCase
@@ -29,23 +30,21 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
     {
         parent::setUp();
 
-        $connectionParams = array(
-            'dbname' => 'labs',
-            'user' => 'root',
-            'password' => '',
-            'host' => 'localhost',
-            'driver' => 'pdo_mysql',
-        );
+        parent::setUp();
+        $bootstrap = new Bootstrap();
+        $bootstrap->init( [ DbDIDefinitionProvider::class ] );
+        $this->connection = $bootstrap->getDIContainer()
+            ->get( Connection::class );
 
-        $this->connection = DriverManager::getConnection( $connectionParams, new Configuration() );
+        $this->connection->beginTransaction();
+        $this->connection->setRollbackOnly();
         $this->gateway = new MysqlReleaseToggleCollectionGateway( $this->connection );
     }
 
     public function tearDown()
     {
-        $this->deleteAddedTogglesMarketingInformation();
-        $this->deleteAddedToggles();
-        $this->deleteAddedReleases();
+        parent::tearDown();
+        $this->connection->rollBack();
     }
 
     /**
