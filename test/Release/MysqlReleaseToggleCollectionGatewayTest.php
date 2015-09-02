@@ -10,7 +10,6 @@ namespace Clearbooks\LabsMysql\Release;
 
 
 use Clearbooks\Labs\Bootstrap;
-use Clearbooks\Labs\Db\DbDIDefinitionProvider;
 use Doctrine\DBAL\Connection;
 use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
 
@@ -137,13 +136,12 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
     {
         parent::setUp();
 
-        $bootstrap = new Bootstrap();
-        $bootstrap->init( [ DbDIDefinitionProvider::class ] );
-        $this->connection = $bootstrap->getDIContainer()
+        $this->connection = Bootstrap::getInstance()->getDIContainer()
             ->get( Connection::class );
 
         $this->connection->beginTransaction();
         $this->connection->setRollbackOnly();
+
         $this->gateway = new MysqlReleaseToggleCollectionGateway( $this->connection );
     }
 
