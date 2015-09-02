@@ -2,13 +2,10 @@
 
 namespace Clearbooks\LabsMysql\User;
 
+use Clearbooks\Labs\Bootstrap;
 use Clearbooks\LabsMysql\Release\MysqlReleaseGateway;
-use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
-use Clearbooks\LabsMysql\Toggle\MysqlActivatableToggleGateway;
 use Clearbooks\Labs\User\UseCase\ToggleStatusModifier;
-use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -29,39 +26,6 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
      * @var MysqlToggleStatusModifierService
      */
     private $gateway;
-
-    /**
-     * @throws InvalidArgumentException
-     */
-    private function deleteAddedReleases()
-    {
-        $this->connection->delete( '`release`', [ '*' ] );
-    }
-
-    /**
-     * @throws InvalidArgumentException
-     */
-    private function deleteAddedToggles()
-    {
-        $this->connection->delete( '`toggle`', [ '*' ] );
-    }
-
-    /**
-     * @throws InvalidArgumentException
-     */
-    private function deleteAddedUserActivatedToggles()
-    {
-        $this->connection->delete( '`user_activated_toggle`', [ '*' ] );
-    }
-
-
-    /**
-     * @throws InvalidArgumentException
-     */
-    private function deleteAddedGroupActivatedToggles()
-    {
-        $this->connection->delete( '`group_activated_toggle`', [ '*' ] );
-    }
 
     /**
      * @param string $releaseName
@@ -237,24 +201,18 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $connectionParams = array(
-            'dbname' => 'labs',
-            'user' => 'root',
-            'password' => '',
-            'host' => 'localhost',
-            'driver' => 'pdo_mysql',
-        );
+        $this->connection = Bootstrap::getInstance()->getDIContainer()
+            ->get( Connection::class );
 
-        $this->connection = DriverManager::getConnection( $connectionParams, new Configuration() );
+        $this->connection->beginTransaction();
+        $this->connection->setRollbackOnly();
         $this->gateway = new MysqlToggleStatusModifierService( $this->connection );
     }
 
     public function tearDown()
     {
-        $this->deleteAddedGroupActivatedToggles();
-        $this->deleteAddedUserActivatedToggles();
-        $this->deleteAddedToggles();
-        $this->deleteAddedReleases();
+        parent::tearDown();
+        $this->connection->rollBack();
     }
 
     /**
