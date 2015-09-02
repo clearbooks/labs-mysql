@@ -119,20 +119,7 @@ class MysqlActivatedToggleGatewayTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenExistentActivatedUserToggles_MysqlActivatedToggleGateway_ReturnsArrayOfUserActivatedToggles()
-    {
-        $id = $this->addDataToDatabase();
-
-        $expectedResult = [ new Toggle( "test1", $id, true ), new Toggle( "test3", $id, true ) ];
-        $response = $this->gateway->getAllMyActivatedToggles( self::USER_ID );
-
-        $this->assertEquals( $expectedResult, $response );
-    }
-
-    /**
-     * @test
-     */
-    public function givenExistentActivatedUserAndGroupToggles_MysqlActivatedToggleGateway_ReturnsArrayOfUserAndGroupActivatedToggles()
+    public function givenExistentActivatedToggles_MysqlActivatedToggleGateway_ReturnsArrayOfActivatedToggles()
     {
         $id = $this->addDataToDatabase();
 

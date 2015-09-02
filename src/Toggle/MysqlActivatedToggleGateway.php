@@ -43,7 +43,7 @@ class MysqlActivatedToggleGateway extends MysqlGetAllTogglesGateway implements A
      */
     public function getAllMyActivatedToggles( $userIdentifier )
     {
-        $activatedToggles = [];
+        $activatedToggles = [ ];
 
         $queryBuilder = new QueryBuilder( $this->connection );
         $queryBuilder
@@ -53,7 +53,7 @@ class MysqlActivatedToggleGateway extends MysqlGetAllTogglesGateway implements A
         $toggles = $this->getAllTogglesFromGivenSqlResult( $data );
 
         foreach ( $toggles as $toggle ) {
-            if ( $this->toggleChecker->isToggleActive( $toggle->getName() ) ){
+            if ( $this->toggleChecker->isToggleActive( $toggle->getName() ) ) {
                 $activatedToggles[] = $toggle;
             }
         }
