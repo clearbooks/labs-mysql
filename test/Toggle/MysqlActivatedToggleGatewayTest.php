@@ -9,13 +9,13 @@
 namespace Clearbooks\LabsMysql\Toggle;
 
 
+use Clearbooks\Labs\Bootstrap;
+use Clearbooks\Labs\Db\DbDIDefinitionProvider;
 use Clearbooks\LabsMysql\Release\MysqlReleaseGateway;
 use Clearbooks\LabsMysql\Toggle\Entity\GroupStub;
 use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
 use Clearbooks\LabsMysql\Toggle\Entity\UserStub;
-use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
 
 class MysqlActivatedToggleGatewayTest extends \PHPUnit_Framework_TestCase
 {
@@ -30,22 +30,6 @@ class MysqlActivatedToggleGatewayTest extends \PHPUnit_Framework_TestCase
     private $gateway;
 
     CONST USER_ID = "userTest";
-
-    /**
-     * @throws InvalidArgumentException
-     */
-    private function deleteAddedReleases()
-    {
-        $this->connection->delete( '`release`', [ '*' ] );
-    }
-
-    /**
-     * @throws InvalidArgumentException
-     */
-    private function deleteAddedToggles()
-    {
-        $this->connection->delete( '`toggle`', [ '*' ] );
-    }
 
     /**
      * @param string $releaseName
@@ -103,27 +87,24 @@ class MysqlActivatedToggleGatewayTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
+        $bootstrap = new Bootstrap();
+        $bootstrap->init( [ DbDIDefinitionProvider::class ] );
+        $this->connection = $bootstrap->getDIContainer()
+            ->get( Connection::class );
 
-        parent::setUp();
-        $connectionParams = array(
-            'dbname' => 'labs',
-            'user' => 'root',
-            'password' => '',
-            'host' => 'localhost',
-            'driver' => 'pdo_mysql',
-        );
-
-        $this->connection = DriverManager::getConnection( $connectionParams, new Configuration() );
+        $this->connection->beginTransaction();
+        $this->connection->setRollbackOnly();
 
         $activatedToggles = [ "test1" => true, "test2" => false, "test3" => true ];
-        $this->gateway = new MysqlActivatedToggleGateway( $this->connection, new ToggleCheckerMock( self::USER_ID, $activatedToggles ) );
+        $this->gateway = new MysqlActivatedToggleGateway( $this->connection,
+            new ToggleCheckerMock( self::USER_ID, $activatedToggles ) );
 
     }
 
     public function tearDown()
     {
-        $this->deleteAddedToggles();
-        $this->deleteAddedReleases();
+        parent::tearDown();
+        $this->connection->rollBack();
     }
 
     /**
@@ -142,10 +123,10 @@ class MysqlActivatedToggleGatewayTest extends \PHPUnit_Framework_TestCase
     {
         $id = $this->addDataToDatabase();
 
-        $expectedResult = [ new Toggle( "test1", $id, true ) ];
+        $expectedResult = [ new Toggle( "test1", $id, true ), new Toggle( "test3", $id, true ) ];
         $response = $this->gateway->getAllMyActivatedToggles( self::USER_ID );
 
-        $this->assertEquals( $expectedResult[ 0 ], $response[ 0 ] );
+        $this->assertEquals( $expectedResult, $response );
     }
 
     /**
