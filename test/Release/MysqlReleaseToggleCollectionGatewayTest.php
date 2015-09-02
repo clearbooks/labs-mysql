@@ -26,161 +26,6 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
      */
     private $connection;
 
-    public function setUp()
-    {
-        parent::setUp();
-
-        parent::setUp();
-        $bootstrap = new Bootstrap();
-        $bootstrap->init( [ DbDIDefinitionProvider::class ] );
-        $this->connection = $bootstrap->getDIContainer()
-            ->get( Connection::class );
-
-        $this->connection->beginTransaction();
-        $this->connection->setRollbackOnly();
-        $this->gateway = new MysqlReleaseToggleCollectionGateway( $this->connection );
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->connection->rollBack();
-    }
-
-    /**
-     * @test
-     */
-    public function givenNoExistentRelease_ReleaseToggleCollection_ReturnsEmptyArray()
-    {
-        $returnedToggles = $this->gateway->getTogglesForRelease( 'bloop' );
-        $this->assertEquals( [ ], $returnedToggles );
-    }
-
-    /**
-     * @test
-     */
-    public function givenNoExistentTogglesInTheExistentRelase_ReleaseToggleCollection_ReturnsEmptyArray()
-    {
-        $releaseName = 'Test release for toggle 1';
-        $url = 'a helpful url';
-        $id = $this->addRelease( $releaseName, $url );
-
-        $returnedToggles = $this->gateway->getTogglesForRelease( $id );
-
-        $this->assertEquals( [ ], $returnedToggles );
-    }
-
-    /**
-     * @test
-     */
-    public function givenExistentTogglesInTheExistentRelease_ReleaseToggleCollection_ReturnsArrayOfExistentToggles()
-    {
-        $releaseName = 'Test release for toggle 2';
-        $url = 'a helpful url';
-        $id = $this->addRelease( $releaseName, $url );
-
-        $this->addToggle( "test1", $id );
-        $this->addToggle( "test2", $id );
-
-        $expectedToggle = new Toggle( "test1", $id );
-        $expectedToggle2 = new Toggle( "test2", $id );
-
-        $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
-        $returnedToggles = $this->gateway->getTogglesForRelease( $id );
-
-        $this->assertEquals( $expectedToggles, $returnedToggles );
-
-        foreach ( $expectedToggles as $key => $value ) {
-            $this->assertGetters( $value, $returnedToggles[ $key ] );
-        }
-
-
-    }
-
-    /**
-     * @test
-     */
-    public function givenExistentTogglesInTheExistentReleaseWithMarketingInformation_ReleaseToggleCollection_ReturnsArrayOfExistentTogglesWithMarketingInformation()
-    {
-        $releaseName = 'Test release for toggle 2';
-        $url = 'a helpful url';
-        $id = $this->addRelease( $releaseName, $url );
-
-        $this->addToggle( "test1", $id, false, "this", "is", "a", "test", "of", "marketing", "information" );
-        $this->addToggle( "test2", $id );
-
-        $expectedToggle = new Toggle( "test1", $id, false, "this", "is", "a", "test", "of", "marketing",
-            "information" );
-        $expectedToggle2 = new Toggle( "test2", $id );
-
-        $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
-        $returnedToggles = $this->gateway->getTogglesForRelease( $id );
-
-        $this->assertEquals( $expectedToggles, $returnedToggles );
-
-        foreach ( $expectedToggles as $key => $value ) {
-            $this->assertGetters( $value, $returnedToggles[ $key ] );
-        }
-
-    }
-
-    /**
-     * @test
-     */
-    public function givenExistentTogglesInDifferentReleases_ReleaseToggleCollection_ReturnsArrayOfExistentTogglesForRequestedRelease()
-    {
-        $releaseName = 'Test release for toggle 3.1';
-        $url = 'a helpful url';
-        $id = $this->addRelease( $releaseName, $url );
-
-        $releaseName2 = 'Test release for toggle 3.2';
-        $url2 = 'a helpful url2';
-        $id2 = $this->addRelease( $releaseName2, $url2 );
-
-        $this->addToggle( "test1", $id );
-        $this->addToggle( "test2", $id );
-        $this->addToggle( "test3", $id2 );
-        $this->addToggle( "test4", $id2 );
-
-        $expectedToggle = new Toggle( "test1", $id );
-        $expectedToggle2 = new Toggle( "test2", $id );
-
-        $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
-        $returnedToggles = $this->gateway->getTogglesForRelease( $id );
-
-        $this->assertEquals( $expectedToggles, $returnedToggles );
-
-        foreach ( $expectedToggles as $key => $value ) {
-            $this->assertGetters( $value, $returnedToggles[ $key ] );
-        }
-
-
-    }
-
-    /**
-     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
-     */
-    private function deleteAddedReleases()
-    {
-        $this->connection->delete( '`release`', [ '*' ] );
-    }
-
-    /**
-     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
-     */
-    private function deleteAddedToggles()
-    {
-        $this->connection->delete( '`toggle`', [ '*' ] );
-    }
-
-    /**
-     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
-     */
-    private function deleteAddedTogglesMarketingInformation()
-    {
-        $this->connection->delete( '`toggle_marketing_information`', [ '*' ] );
-    }
-
     /**
      * @param string $releaseName
      * @param string $url
@@ -286,5 +131,121 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
             'description_of_location' => $descriptionOfLocation, 'guide_url' => $guideUrl,
             'app_notification_copy_text' => $appNotificationCopyText
         ] );
+    }
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $bootstrap = new Bootstrap();
+        $bootstrap->init( [ DbDIDefinitionProvider::class ] );
+        $this->connection = $bootstrap->getDIContainer()
+            ->get( Connection::class );
+
+        $this->connection->beginTransaction();
+        $this->connection->setRollbackOnly();
+        $this->gateway = new MysqlReleaseToggleCollectionGateway( $this->connection );
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+        $this->connection->rollBack();
+    }
+
+    /**
+     * @test
+     */
+    public function givenNoExistentRelease_ReturnEmptyArray()
+    {
+        $returnedToggles = $this->gateway->getTogglesForRelease( 'bloop' );
+        $this->assertEquals( [ ], $returnedToggles );
+    }
+
+    /**
+     * @test
+     */
+    public function givenNoExistentTogglesInTheExistentRelase_ReturnEmptyArray()
+    {
+        $id = $this->addRelease( 'Test release for toggle 1', 'a helpful url' );
+
+        $returnedToggles = $this->gateway->getTogglesForRelease( $id );
+
+        $this->assertEquals( [ ], $returnedToggles );
+    }
+
+    /**
+     * @test
+     */
+    public function givenExistentTogglesInTheExistentRelease_ReturnArrayOfExistentToggles()
+    {
+        $id = $this->addRelease( 'Test release for toggle 2', 'a helpful url' );
+
+        $this->addToggle( "test1", $id );
+        $this->addToggle( "test2", $id );
+
+        $expectedToggle = new Toggle( "test1", $id );
+        $expectedToggle2 = new Toggle( "test2", $id );
+
+        $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
+        $returnedToggles = $this->gateway->getTogglesForRelease( $id );
+
+        $this->assertEquals( $expectedToggles, $returnedToggles );
+
+        foreach ( $expectedToggles as $key => $value ) {
+            $this->assertGetters( $value, $returnedToggles[ $key ] );
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function givenExistentTogglesInTheExistentReleaseWithMarketingInformation_ReturnArrayOfExistentTogglesWithValidMarketingInformation()
+    {
+        $id = $this->addRelease( 'Test release for toggle 2', 'a helpful url' );
+
+        $this->addToggle( "test1", $id, false, "this", "is", "a", "test", "of", "marketing", "information" );
+        $this->addToggle( "test2", $id );
+
+        $expectedToggle = new Toggle( "test1", $id, false, "this", "is", "a", "test", "of", "marketing",
+            "information" );
+        $expectedToggle2 = new Toggle( "test2", $id );
+
+        $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
+        $returnedToggles = $this->gateway->getTogglesForRelease( $id );
+
+        $this->assertEquals( $expectedToggles, $returnedToggles );
+
+        foreach ( $expectedToggles as $key => $value ) {
+            $this->assertGetters( $value, $returnedToggles[ $key ] );
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function givenExistentTogglesInDifferentReleasesWithDifferentMarketingInformation_ReturnArrayOfExistentTogglesForRequestedReleaseWithValidMarketingInformation()
+    {
+        $id = $this->addRelease( 'Test release for toggle 3.1', 'a helpful url' );
+        $id2 = $this->addRelease( 'Test release for toggle 3.2', 'a helpful url2' );
+
+        $this->addToggle( "test1", $id, true, "this", "is", "a", "test", "of", "marketing",
+            "information" );
+        $this->addToggle( "test2", $id, true );
+        $this->addToggle( "test3", $id2, true );
+        $this->addToggle( "test4", $id2, true );
+
+        $expectedToggle = new Toggle( "test1", $id, true, "this", "is", "a", "test", "of", "marketing",
+            "information" );
+        $expectedToggle2 = new Toggle( "test2", $id, true );
+
+        $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
+        $returnedToggles = $this->gateway->getTogglesForRelease( $id );
+
+        $this->assertEquals( $expectedToggles, $returnedToggles );
+
+        foreach ( $expectedToggles as $key => $value ) {
+            $this->assertGetters( $value, $returnedToggles[ $key ] );
+        }
     }
 }
