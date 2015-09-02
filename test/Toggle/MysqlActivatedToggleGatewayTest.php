@@ -10,7 +10,6 @@ namespace Clearbooks\LabsMysql\Toggle;
 
 
 use Clearbooks\Labs\Bootstrap;
-use Clearbooks\Labs\Db\DbDIDefinitionProvider;
 use Clearbooks\LabsMysql\Release\MysqlReleaseGateway;
 use Clearbooks\LabsMysql\Toggle\Entity\GroupStub;
 use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
@@ -87,9 +86,7 @@ class MysqlActivatedToggleGatewayTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $bootstrap = new Bootstrap();
-        $bootstrap->init( [ DbDIDefinitionProvider::class ] );
-        $this->connection = $bootstrap->getDIContainer()
+        $this->connection = Bootstrap::getInstance()->getDIContainer()
             ->get( Connection::class );
 
         $this->connection->beginTransaction();
