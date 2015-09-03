@@ -1,6 +1,7 @@
 <?php
 use Clearbooks\Labs\AutoSubscribe\Gateway\AutoSubscriberProvider;
 use Clearbooks\Labs\Bootstrap;
+use Clearbooks\LabsMysql\AutoSubscribe\Entity\User;
 use Clearbooks\LabsMysql\AutoSubscribe\MysqlAutoSubscriberProvider;
 use Doctrine\DBAL\Connection;
 
@@ -21,6 +22,14 @@ class MysqlAutoSubscriberProviderTest extends PHPUnit_Framework_TestCase
      * @var AutoSubscriberProvider
      */
     private $gateway;
+
+    /**
+     * @param string $name
+     */
+    private function addNewSubscriber( $name )
+    {
+        $this->connection->insert( '`subscribers`', [ 'user_id' => $name ] );
+    }
 
     public function setUp()
     {
@@ -56,5 +65,20 @@ class MysqlAutoSubscriberProviderTest extends PHPUnit_Framework_TestCase
     {
         $response = $this->gateway->getSubscribers();
         $this->assertEquals( [ ], $response );
+    }
+
+    /**
+     * @test
+     */
+    public function givenExistentSubsctibers_ReturnsArrayOfUsers()
+    {
+        $this->addNewSubscriber( "user1" );
+        $this->addNewSubscriber( "user2" );
+        $this->addNewSubscriber( "brolli" );
+
+        $expectedSubscribers = [ new User( "user1" ), new User( "user2" ), new User( "brolli" ) ];
+        $response = $this->gateway->getSubscribers();
+
+        $this->assertEquals( $expectedSubscribers, $response );
     }
 }

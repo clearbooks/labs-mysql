@@ -1,7 +1,7 @@
 <?php
 namespace Clearbooks\LabsMysql\AutoSubscribe;
 
-use Clearbooks\Labs\AutoSubscribe\Entity\User;
+use Clearbooks\LabsMysql\AutoSubscribe\Entity\User;
 use Clearbooks\Labs\AutoSubscribe\Gateway\AutoSubscriberProvider;
 use Doctrine\DBAL\Connection;
 
@@ -32,6 +32,12 @@ class MysqlAutoSubscriberProvider implements AutoSubscriberProvider
      */
     public function getSubscribers()
     {
-        return [ ];
+        $subscribers = [ ];
+        $data = $this->connection->fetchAll( 'SELECT * FROM `subscribers`' );
+
+        foreach ( $data as $subscriber ) {
+            $subscribers[] = new User( $subscriber[ 'user_id' ] );
+        }
+        return $subscribers;
     }
 }
