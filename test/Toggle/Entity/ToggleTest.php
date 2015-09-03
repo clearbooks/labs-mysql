@@ -55,6 +55,9 @@ class ToggleTest extends \PHPUnit_Framework_TestCase
         $this->assertToggleGettersMatchExpectedToggleData( $toggle, $toggleData );
     }
 
+    /**
+     * @test
+     */
     public function givenAllDataSet_AllGettersReturnCorrectValues()
     {
         $toggleData = array(
