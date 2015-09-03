@@ -11,6 +11,7 @@ namespace Clearbooks\LabsMysql\AutoSubscribe;
 
 use Clearbooks\Labs\AutoSubscribe\Entity\User;
 use Clearbooks\Labs\AutoSubscribe\Gateway\AutoSubscriptionProvider;
+use Doctrine\DBAL\Connection;
 
 class MysqlAutoSubscriptionProvider implements AutoSubscriptionProvider
 {
@@ -23,7 +24,7 @@ class MysqlAutoSubscriptionProvider implements AutoSubscriptionProvider
      * MysqlAutoSubscriptionProvider constructor.
      * @param Connection $connection
      */
-    public function __construct( $connection )
+    public function __construct( Connection $connection )
     {
         $this->connection = $connection;
     }
@@ -34,6 +35,15 @@ class MysqlAutoSubscriptionProvider implements AutoSubscriptionProvider
      */
     public function updateSubscription( User $user, $subscribe )
     {
+        if ( $subscribe ) {
+            if ( !$this->isSubscribed( $user ) ) {
+                $this->connection->insert( '`subscribers`', [ 'user_id' => $user->getId() ] );
+            }
+        } else {
+            if ( $this->isSubscribed( $user ) ) {
+                $this->connection->delete( '`subscribers`', [ 'user_id' => $user->getId() ] );
+            }
+        }
     }
 
     /**
@@ -42,6 +52,15 @@ class MysqlAutoSubscriptionProvider implements AutoSubscriptionProvider
      */
     public function isSubscribed( $user )
     {
-        return null;
+        return !empty( $this->getIsUserSubscribed( $user ) );
+    }
+
+    /**
+     * @param User $user
+     * @return array
+     */
+    protected function getIsUserSubscribed( User $user )
+    {
+        return $this->connection->fetchAssoc( 'SELECT * FROM `subscribers` WHERE user_id = ?', [ $user->getId() ] );
     }
 }
