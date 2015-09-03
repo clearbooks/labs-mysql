@@ -24,14 +24,6 @@ class MysqlAutoSubscriptionProviderTest extends PHPUnit_Framework_TestCase
     private $gateway;
 
     /**
-     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
-     */
-    private function deleteAllSubscribers()
-    {
-        $this->connection->delete( '`subscribers`', [ '*' ] );
-    }
-
-    /**
      * @param User $user
      */
     private function addNewSubscriber( User $user )
