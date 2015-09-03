@@ -70,15 +70,25 @@ class MysqlAutoSubscriberProviderTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenExistentSubsctibers_ReturnsArrayOfUsers()
+    public function givenExistentSubscribers_ReturnsArrayOfUsers()
     {
+        $this->addNewSubscriber( "brolli" );
         $this->addNewSubscriber( "user1" );
         $this->addNewSubscriber( "user2" );
-        $this->addNewSubscriber( "brolli" );
 
-        $expectedSubscribers = [ new User( "user1" ), new User( "user2" ), new User( "brolli" ) ];
+        $expectedSubscribers = [ new User( "brolli" ), new User( "user1" ), new User( "user2" ) ];
         $response = $this->gateway->getSubscribers();
 
         $this->assertEquals( $expectedSubscribers, $response );
+    }
+
+    /**
+     * @test
+     */
+    public function givenExistentSubscribers_whenGettingCallingGetID_ReturnsCorrectId()
+    {
+        $subscriberName = "TheSubscribes";
+        $subscriber = new User( $subscriberName );
+        $this->assertEquals( $subscriberName, $subscriber->getId() );
     }
 }
