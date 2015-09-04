@@ -11,14 +11,14 @@ namespace Clearbooks\LabsMysql\Toggle;
 use Clearbooks\LabsMysql\Release\MysqlReleaseGateway;
 use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
 use Doctrine\DBAL\Configuration;
-use Doctrine\DBAL\Driver\Connection;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use PHPUnit_Framework_TestCase;
 
 class MysqlGroupToggleGatewayTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var MysqlUserToggleGateway
+     * @var MysqlGroupToggleGateway
      */
     private $gateway;
 
@@ -41,6 +41,11 @@ class MysqlGroupToggleGatewayTest extends \PHPUnit_Framework_TestCase
     private function deleteAddedToggles()
     {
         $this->connection->delete( '`toggle`', [ '*' ] );
+    }
+
+    private function deleteAddedMarketingInfo()
+    {
+        $this->connection->delete( '`toggle_marketing_information`', [ '*' ] );
     }
 
     /**
@@ -98,6 +103,7 @@ class MysqlGroupToggleGatewayTest extends \PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        $this->deleteAddedMarketingInfo();
         $this->deleteAddedToggles();
         $this->deleteAddedReleases();
     }
@@ -145,6 +151,42 @@ class MysqlGroupToggleGatewayTest extends \PHPUnit_Framework_TestCase
         $expectedToggle2 = new Toggle( "test2", $id, true );
 
         $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
+        $returnedToggles = $this->gateway->getAllGroupToggles();
+
+        $this->assertEquals( $expectedToggles, $returnedToggles );
+    }
+
+    /**
+     * @test
+     */
+    public function givenGroupToggleWithMarketingInfo_GetAllGroupTogglesReturnsToggleWithMarketingInfo()
+    {
+        $id = $this->addRelease( 'Release name', 'url' );
+
+        $toggleName = "marketing";
+        $toggleId = $this->addToggle( $toggleName, $id, true );
+        $marketingInfo = array(
+            'toggle_id' => $toggleId,
+            'screenshot_urls' => 'url',
+            'description_of_toggle' => 'togggle',
+            'description_of_functionality' => 'does this',
+            'description_of_implementation_reason' => 'because this',
+            'description_of_location' => 'find it there',
+            'guide_url' => 'here is some help',
+            'app_notification_copy_text' => 'look a new thing',
+        );
+        $this->connection->insert( '`toggle_marketing_information`', $marketingInfo );
+
+        $expectedToggle = new Toggle( $toggleName, $id, true,
+            $marketingInfo['screenshot_urls'],
+            $marketingInfo['description_of_toggle'],
+            $marketingInfo['description_of_functionality'],
+            $marketingInfo['description_of_implementation_reason'],
+            $marketingInfo['description_of_location'],
+            $marketingInfo['guide_url'],
+            $marketingInfo['app_notification_copy_text']);
+
+        $expectedToggles[] = $expectedToggle;
         $returnedToggles = $this->gateway->getAllGroupToggles();
 
         $this->assertEquals( $expectedToggles, $returnedToggles );
