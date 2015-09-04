@@ -11,14 +11,14 @@ namespace Clearbooks\LabsMysql\Toggle;
 use Clearbooks\LabsMysql\Release\MysqlReleaseGateway;
 use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
 use Doctrine\DBAL\Configuration;
-use Doctrine\DBAL\Driver\Connection;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use PHPUnit_Framework_TestCase;
 
 class MysqlGroupToggleGatewayTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var MysqlUserToggleGateway
+     * @var MysqlGroupToggleGateway
      */
     private $gateway;
 
@@ -120,9 +120,8 @@ class MysqlGroupToggleGatewayTest extends \PHPUnit_Framework_TestCase
 
         $toggleId = $this->addToggle( "test1", $id, true );
 
-        $expectedToggle = new Toggle( $toggleId, "test1", $id, true );
+        $expectedToggles = [new Toggle( $toggleId, "test1", $id, true )];
 
-        $expectedToggles[] = $expectedToggle;
         $returnedToggles = $this->gateway->getAllGroupToggles();
 
         $this->assertEquals( $expectedToggles, $returnedToggles );
@@ -141,10 +140,7 @@ class MysqlGroupToggleGatewayTest extends \PHPUnit_Framework_TestCase
         $this->addToggle( "test3", $id, true, 1 );
         $this->addToggle( "test4", $id, true, 1 );
 
-        $expectedToggle = new Toggle( $toggleId, "test1", $id, true );
-        $expectedToggle2 = new Toggle( $toggleId2, "test2", $id, true );
-
-        $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
+        $expectedToggles = [ new Toggle( $toggleId, "test1", $id, true ), new Toggle( $toggleId2, "test2", $id, true ) ];
         $returnedToggles = $this->gateway->getAllGroupToggles();
 
         $this->assertEquals( $expectedToggles, $returnedToggles );
