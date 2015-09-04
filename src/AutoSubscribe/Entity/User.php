@@ -13,13 +13,13 @@ use Clearbooks\Labs\AutoSubscribe\Entity\User as IUser;
 class User implements IUser
 {
     /**
-     * @var
+     * @var string
      */
     private $userId;
 
     /**
      * User constructor.
-     * @param $userId
+     * @param string $userId
      */
     public function __construct( $userId )
     {
@@ -28,7 +28,7 @@ class User implements IUser
 
 
     /**
-     * @return int
+     * @return string
      */
     public function getId()
     {

@@ -53,15 +53,7 @@ class MysqlAutoSubscriberProviderTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function duringConstructionOfGateway_GatewayIsNotNull()
-    {
-        $this->assertNotNull( $this->gateway );
-    }
-
-    /**
-     * @test
-     */
-    public function givenNoSuscribers_ReturnEmptyArray()
+    public function givenNoSubscribers_ReturnEmptyArray()
     {
         $response = $this->gateway->getSubscribers();
         $this->assertEquals( [ ], $response );
@@ -80,15 +72,5 @@ class MysqlAutoSubscriberProviderTest extends PHPUnit_Framework_TestCase
         $response = $this->gateway->getSubscribers();
 
         $this->assertEquals( $expectedSubscribers, $response );
-    }
-
-    /**
-     * @test
-     */
-    public function givenExistentSubscribers_whenGettingCallingGetID_ReturnsCorrectId()
-    {
-        $subscriberName = "TheSubscribes";
-        $subscriber = new User( $subscriberName );
-        $this->assertEquals( $subscriberName, $subscriber->getId() );
     }
 }
