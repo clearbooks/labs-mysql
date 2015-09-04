@@ -16,7 +16,7 @@ use Doctrine\DBAL\Connection;
 class MysqlUserToggleGateway extends MysqlGetAllTogglesGateway implements UserToggleGateway
 {
     /**
-     * @var Connection|\Doctrine\DBAL\Connection
+     * @var Connection
      */
     private $connection;
 
@@ -34,7 +34,7 @@ class MysqlUserToggleGateway extends MysqlGetAllTogglesGateway implements UserTo
      */
     public function getAllUserToggles()
     {
-        $data = $this->connection->fetchAll( 'SELECT * FROM `toggle` JOIN `toggle_type` ON toggle.toggle_type = toggle_type.id WHERE type_name = ?',
+        $data = $this->connection->fetchAll( 'SELECT * FROM `toggle` JOIN `toggle_type` ON toggle.toggle_type = toggle_type.id LEFT JOIN `toggle_marketing_information` ON toggle.id = toggle_marketing_information.toggle_id WHERE type_name = ?',
             [ "user_toggle" ] );
         return $this->getAllTogglesFromGivenSqlResult( $data );
     }
