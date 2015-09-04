@@ -86,9 +86,9 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
         $this->addUserActivatedToggle( $toggleId2, $userId, false );
         $this->addUserActivatedToggle( $toggleId3, $userId, true );
 
-        $expectedToggle = new Toggle( "test1", $id, true );
-        $expectedToggle2 = new Toggle( "test2", $id, false );
-        $expectedToggle3 = new Toggle( "test3", $id2, true );
+        $expectedToggle = new Toggle( $toggleId, "test1", $id, true );
+        $expectedToggle2 = new Toggle( $toggleId2, "test2", $id, false );
+        $expectedToggle3 = new Toggle( $toggleId3, "test3", $id2, true );
         return array( $expectedToggle, $expectedToggle2, $expectedToggle3 );
     }
 
@@ -156,7 +156,7 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
 
         $toggleId = $this->addToggle( "test1", $id );
         $userId = 1;
-        $expectedToggle = new Toggle( "test1", $id );
+        $expectedToggle = new Toggle( $toggleId, "test1", $id );
 
         $this->addUserActivatedToggle( $toggleId, $userId, false );
 
@@ -178,7 +178,7 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
 
         $this->addUserActivatedToggle( $toggleId, $userId, true );
 
-        $expectedToggle = new Toggle( "test1", $id, true );
+        $expectedToggle = new Toggle( $toggleId, "test1", $id, true );
 
         $returnedToggle = $this->gateway->getActivatableToggleByName( "test1" );
 
@@ -200,7 +200,7 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
 
         $this->addUserActivatedToggle( $toggleId, $userId, true );
 
-        $expectedToggle = new Toggle( "test1", $id, true );
+        $expectedToggle = new Toggle( $toggleId, "test1", $id, true );
 
         $returnedToggle = $this->gateway->getActivatableToggleByName( "test1" );
 

@@ -14,6 +14,10 @@ use Clearbooks\Labs\Toggle\Entity\UserToggle;
 class Toggle implements MarketableToggle, UserToggle, ActivatableToggle
 {
     /**
+     * @var
+     */
+    private $id;
+    /**
      * @var string
      */
     private $name;
@@ -56,6 +60,7 @@ class Toggle implements MarketableToggle, UserToggle, ActivatableToggle
 
     /**
      * Toggle constructor.
+     * @param $id
      * @param string $name
      * @param string $releaseId
      * @param bool $isActive
@@ -67,10 +72,12 @@ class Toggle implements MarketableToggle, UserToggle, ActivatableToggle
      * @param string $guideUrl
      * @param string $appNotificationCopyText
      */
-    public function __construct( $name, $releaseId, $isActive = false, $screenshotUrl = "", $descriptionOfToggle = "",
-                                 $descriptionOfFunctionality = "", $descriptionOfImplementationReason = "",
-                                 $descriptionOfLocation = "", $guideUrl = "", $appNotificationCopyText = "" )
+    public function __construct( $id, $name, $releaseId, $isActive = false, $screenshotUrl = "",
+                                 $descriptionOfToggle = "", $descriptionOfFunctionality = "",
+                                 $descriptionOfImplementationReason = "", $descriptionOfLocation = "", $guideUrl = "",
+                                 $appNotificationCopyText = "" )
     {
+        $this->id = $id;
         $this->name = $name;
         $this->releaseId = $releaseId;
         $this->isActive = $isActive;
@@ -80,9 +87,16 @@ class Toggle implements MarketableToggle, UserToggle, ActivatableToggle
         $this->descriptionOfImplementationReason = $descriptionOfImplementationReason;
         $this->descriptionOfLocation = $descriptionOfLocation;
         $this->guideUrl = $guideUrl;
-        $this->appNotificationCopyText = $appNotificationCopyText;
+        $this->appNotificationCopyText = $appNotificationCopyText;;
     }
 
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * @return string

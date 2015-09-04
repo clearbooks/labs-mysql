@@ -118,9 +118,9 @@ class MysqlGroupToggleGatewayTest extends \PHPUnit_Framework_TestCase
     {
         $id = $this->addRelease( 'Test group toggle 1', 'a helpful url' );
 
-        $this->addToggle( "test1", $id, true );
+        $toggleId = $this->addToggle( "test1", $id, true );
 
-        $expectedToggle = new Toggle( "test1", $id, true );
+        $expectedToggle = new Toggle( $toggleId, "test1", $id, true );
 
         $expectedToggles[] = $expectedToggle;
         $returnedToggles = $this->gateway->getAllGroupToggles();
@@ -136,13 +136,13 @@ class MysqlGroupToggleGatewayTest extends \PHPUnit_Framework_TestCase
         $id = $this->addRelease( 'Test group toggle 2', 'a helpful url' );
 
         //Parameters: name, release_id, is_activatable, toggle_type
-        $this->addToggle( "test1", $id, true, 2 );
-        $this->addToggle( "test2", $id, true, 2 );
+        $toggleId = $this->addToggle( "test1", $id, true, 2 );
+        $toggleId2 = $this->addToggle( "test2", $id, true, 2 );
         $this->addToggle( "test3", $id, true, 1 );
         $this->addToggle( "test4", $id, true, 1 );
 
-        $expectedToggle = new Toggle( "test1", $id, true );
-        $expectedToggle2 = new Toggle( "test2", $id, true );
+        $expectedToggle = new Toggle( $toggleId, "test1", $id, true );
+        $expectedToggle2 = new Toggle( $toggleId2, "test2", $id, true );
 
         $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
         $returnedToggles = $this->gateway->getAllGroupToggles();
