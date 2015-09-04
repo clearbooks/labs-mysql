@@ -47,7 +47,7 @@ class MysqlActivatedToggleGateway extends MysqlGetAllTogglesGateway implements A
 
         $queryBuilder = new QueryBuilder( $this->connection );
         $queryBuilder
-            ->select( '*' )
+            ->select( '*, toggle.id as toggleId' )
             ->from( 'toggle' );
         $data = $queryBuilder->execute()->fetchAll();
         $toggles = $this->getAllTogglesFromGivenSqlResult( $data );

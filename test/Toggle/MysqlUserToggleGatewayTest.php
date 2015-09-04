@@ -5,7 +5,7 @@ namespace Clearbooks\LabsMysql\Toggle;
 use Clearbooks\LabsMysql\Release\MysqlReleaseGateway;
 use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
 use Doctrine\DBAL\Configuration;
-use Doctrine\DBAL\Driver\Connection;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use PHPUnit_Framework_TestCase;
 
@@ -67,9 +67,9 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
         $url = 'a helpful url';
         $id = $this->addRelease( $releaseName, $url );
 
-        $this->addToggle( "test1", $id, true );
+        $toggleId = $this->addToggle( "test1", $id, true );
 
-        $expectedToggle = new Toggle( "test1", $id, true );
+        $expectedToggle = new Toggle( $toggleId, "test1", $id, true );
 
         $expectedToggles[] = $expectedToggle;
         $returnedToggles = $this->gateway->getAllUserToggles();
@@ -86,16 +86,12 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
         $url = 'a helpful url';
         $id = $this->addRelease( $releaseName, $url );
 
-        //Parameters: name, release_id, is_activatable, toggle_type
-        $this->addToggle( "test1", $id, true, 1 );
-        $this->addToggle( "test2", $id, true, 1 );
+        $toggleId = $this->addToggle( "test1", $id, true, 1 );
+        $toggleId2 = $this->addToggle( "test2", $id, true, 1 );
         $this->addToggle( "test3", $id, true, 2 );
         $this->addToggle( "test4", $id, true, 2 );
 
-        $expectedToggle = new Toggle( "test1", $id, true );
-        $expectedToggle2 = new Toggle( "test2", $id, true );
-
-        $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
+        $expectedToggles = [ new Toggle( $toggleId, "test1", $id, true ), new Toggle( $toggleId2, "test2", $id, true ) ];
         $returnedToggles = $this->gateway->getAllUserToggles();
 
         $this->assertEquals( $expectedToggles, $returnedToggles );

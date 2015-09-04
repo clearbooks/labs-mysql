@@ -45,7 +45,7 @@ class MysqlActivatableToggleGateway implements ActivatableToggleGateway
         if ( empty( $data ) ) {
             return null;
         }
-        $toggle = new Toggle( $data[ 'name' ], $data[ 'release_id' ], (bool) $data[ 'is_active' ] );
+        $toggle = new Toggle( $data[ 'id' ], $data[ 'name' ], $data[ 'release_id' ], (bool)$data[ 'is_active' ] );
 
         return $toggle;
     }

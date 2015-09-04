@@ -37,7 +37,7 @@ class MysqlReleaseToggleCollectionGateway extends MysqlGetAllTogglesGateway impl
      */
     public function getTogglesForRelease( $releaseId )
     {
-        $data = $this->connection->fetchAll( 'SELECT * FROM `toggle` LEFT JOIN `toggle_marketing_information` ON toggle.id = toggle_marketing_information.toggle_id WHERE release_id = ?',
+        $data = $this->connection->fetchAll( 'SELECT *, toggle.id as toggleId FROM `toggle` LEFT JOIN `toggle_marketing_information` ON toggle.id = toggle_marketing_information.toggle_id WHERE release_id = ?',
             [ $releaseId ] );
         return $this->getAllTogglesFromGivenSqlResult( $data );
     }
