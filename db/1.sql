@@ -58,7 +58,6 @@ COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;
 
 CREATE TABLE `toggle_marketing_information` (
-	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`toggle_id` INT(11) NOT NULL,
 	`screenshot_urls` VARCHAR(128) NULL DEFAULT NULL,
 	`description_of_toggle` TEXT NULL,
@@ -67,9 +66,9 @@ CREATE TABLE `toggle_marketing_information` (
 	`description_of_location` TEXT NULL,
 	`guide_url` VARCHAR(128) NULL DEFAULT NULL,
 	`app_notification_copy_text` TEXT NULL,
-	PRIMARY KEY (`id`),
-	INDEX `FK_toggle_marketing_information_toggle` (`toggle_id`),
+	PRIMARY KEY (`toggle_id`),
 	CONSTRAINT `FK_toggle_marketing_information_toggle` FOREIGN KEY (`toggle_id`) REFERENCES `toggle` (`id`)
 )
 COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;
+

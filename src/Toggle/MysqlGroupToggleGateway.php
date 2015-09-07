@@ -33,7 +33,7 @@ class MysqlGroupToggleGateway extends MysqlGetAllTogglesGateway implements  Grou
      */
     public function getAllGroupToggles()
     {
-        $data = $this->connection->fetchAll( 'SELECT * FROM `toggle` JOIN `toggle_type` ON toggle.toggle_type = toggle_type.id WHERE type_name = ?',
+        $data = $this->connection->fetchAll( 'SELECT *, toggle.id as toggleId FROM `toggle` JOIN `toggle_type` ON toggle.toggle_type = toggle_type.id WHERE type_name = ?',
             [ "group_toggle" ] );
         return $this->getAllTogglesFromGivenSqlResult( $data );
     }

@@ -68,17 +68,17 @@ class MysqlActivatedToggleGatewayTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return void
+     * @return array
      */
     private function addDataToDatabase()
     {
-        $id = $this->addRelease( 'Test ActivatedToggleGateway', 'a helpful url' );
+        $releaseId = $this->addRelease( 'Test ActivatedToggleGateway', 'a helpful url' );
 
-        $this->addToggle( "test1", $id, true );
-        $this->addToggle( "test2", $id, true );
-        $this->addToggle( "test3", $id, true );
+        $activeToggleId = $this->addToggle( "test1", $releaseId, true );
+        $this->addToggle( "test2", $releaseId, true );
+        $activeToggleId2 = $this->addToggle( "test3", $releaseId, true );
 
-        return $id;
+        return array( $releaseId, $activeToggleId, $activeToggleId2 );
     }
 
 
@@ -118,9 +118,9 @@ class MysqlActivatedToggleGatewayTest extends \PHPUnit_Framework_TestCase
      */
     public function givenExistentActivatedToggles_MysqlActivatedToggleGateway_ReturnsArrayOfActivatedToggles()
     {
-        $id = $this->addDataToDatabase();
+        list( $releaseId, $toggleId, $toggleId2 ) = $this->addDataToDatabase();
 
-        $expectedResult = [ new Toggle( "test1", $id, true ), new Toggle( "test3", $id, true ) ];
+        $expectedResult = [ new Toggle( $toggleId, "test1", $releaseId, true ), new Toggle( $toggleId2, "test3", $releaseId, true ) ];
         $response = $this->gateway->getAllMyActivatedToggles( self::USER_ID );
 
         $this->assertEquals( $expectedResult, $response );
