@@ -38,14 +38,24 @@ class MysqlMarketableToggleGateway implements MarketableToggleGateway
             $data = $this->connection->fetchAssoc( 'SELECT * FROM `toggle_marketing_information` WHERE toggle_id = ?',
                 [ $toggleId ] );
             if ( $data !== false ) {
-                foreach ( $marketingInformation as $marketingKey => $marketingInfo ) {
-                    if ( !empty( $marketingInfo ) ) {
-                        $this->connection->update( "`toggle_marketing_information`",
-                            [ $marketingKey => $marketingInfo ], [ 'toggle_id' => $toggleId ] );
-                    }
-                }
+                $this->updateMarketingInformationForToggle( $toggleId, $marketingInformation );
             } else {
-                $this->connection->insert( "`toggle_marketing_information`", array_merge([ 'toggle_id' => $toggleId ], $marketingInformation) );
+                $this->connection->insert( "`toggle_marketing_information`",
+                    array_merge( [ 'toggle_id' => $toggleId ], $marketingInformation ) );
+            }
+        }
+    }
+
+    /**
+     * @param $toggleId
+     * @param $marketingInformation
+     */
+    private function updateMarketingInformationForToggle( $toggleId, $marketingInformation )
+    {
+        foreach ( $marketingInformation as $marketingKey => $marketingInfo ) {
+            if ( !empty( $marketingInfo ) ) {
+                $this->connection->update( "`toggle_marketing_information`",
+                    [ $marketingKey => $marketingInfo ], [ 'toggle_id' => $toggleId ] );
             }
         }
     }
