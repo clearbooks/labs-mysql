@@ -8,33 +8,52 @@
 
 namespace Clearbooks\LabsMysql\Toggle;
 
-use Clearbooks\Labs\Client\Toggle\UseCase\IsToggleActive;
+use Clearbooks\Labs\Client\Toggle\Entity\Group;
+use Clearbooks\Labs\Client\Toggle\Entity\User;
+use Clearbooks\Labs\Client\Toggle\UseCase\ToggleChecker;
 use Clearbooks\Labs\Toggle\Entity\ActivatableToggle;
 use Clearbooks\Labs\Toggle\Gateway\ActivatedToggleGateway;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 
-class MysqlActivatedToggleGateway extends MysqlGetAllTogglesGateway implements ActivatedToggleGateway
+class MysqlActivatedToggleGateway implements ActivatedToggleGateway
 {
+
+    use ToggleHelperMethods;
+
     /**
      * @var Connection
      */
     private $connection;
     /**
-     * @var IsToggleActive
+     * @var ToggleChecker
      */
     private $toggleChecker;
 
     /**
+     * @var Group
+     */
+    private $group;
+
+    /**
+     * @var User
+     */
+    private $user;
+
+    /**
      * MysqlActivatedToggleGateway constructor.
      * @param Connection $connection
-     * @param IsToggleActive $toggleChecker
+     * @param ToggleChecker $toggleChecker
+     * @param User $user
+     * @param Group $group
      */
-    public function __construct( Connection $connection, IsToggleActive $toggleChecker )
+    public function __construct( Connection $connection, ToggleChecker $toggleChecker, User $user, Group $group )
     {
 
         $this->connection = $connection;
         $this->toggleChecker = $toggleChecker;
+        $this->group = $group;
+        $this->user = $user;
     }
 
     /**
@@ -43,20 +62,21 @@ class MysqlActivatedToggleGateway extends MysqlGetAllTogglesGateway implements A
      */
     public function getAllMyActivatedToggles( $userIdentifier )
     {
-        $activatedToggles = [ ];
+        $toggles = [ ];
 
-        $queryBuilder = new QueryBuilder( $this->connection );
-        $queryBuilder
-            ->select( '*, toggle.id as toggleId' )
-            ->from( 'toggle' );
-        $data = $queryBuilder->execute()->fetchAll();
-        $toggles = $this->getAllTogglesFromGivenSqlResult( $data );
+        $data = $this->connection->fetchAll(
+            'SELECT *, toggle.id as toggleId
+             FROM `toggle`
+             LEFT JOIN `toggle_marketing_information`
+             ON toggle.id = toggle_marketing_information.toggle_id
+             ORDER BY toggle.id ASC' );
 
-        foreach ( $toggles as $toggle ) {
-            if ( $this->toggleChecker->isToggleActive( $toggle->getName() ) ) {
-                $activatedToggles[] = $toggle;
+        foreach ( $data as $row ) {
+            if ( $this->toggleChecker->isToggleActive( $row[ 'name' ], $this->user, $this->group ) ) {
+                $toggles[] = $row;
             }
         }
+        $activatedToggles = $this->getAllTogglesFromGivenSqlResult( $toggles );
 
         return $activatedToggles;
     }

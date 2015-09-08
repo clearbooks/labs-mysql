@@ -12,8 +12,11 @@ namespace Clearbooks\LabsMysql\Toggle;
 use Clearbooks\Labs\Toggle\Gateway\GroupToggleGateway;
 use Doctrine\DBAL\Connection;
 
-class MysqlGroupToggleGateway extends MysqlGetAllTogglesGateway implements  GroupToggleGateway
+class MysqlGroupToggleGateway implements GroupToggleGateway
 {
+
+    use ToggleHelperMethods;
+
     /**
      * @var Connection
      */
@@ -23,7 +26,7 @@ class MysqlGroupToggleGateway extends MysqlGetAllTogglesGateway implements  Grou
      * MysqlGroupToggleGateway constructor.
      * @param Connection $connection
      */
-    public function __construct(Connection $connection )
+    public function __construct( Connection $connection )
     {
         $this->connection = $connection;
     }
