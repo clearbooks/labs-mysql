@@ -85,7 +85,7 @@ abstract class MysqlGetAllTogglesGateway
     protected function getToggleFromRow( $row )
     {
         return new Toggle(
-            $row[ 'toggleId' ], $row[ 'name' ], $row[ 'release_id' ], (bool)$row[ 'is_active' ], $this->getDefaultForScreenshotUrl( $row ), $this->getDefaultForDescriptionOfToggle( $row ), $this->getDefaultForDescriptionOfFunctionality( $row ), $this->getDefaultForDescriptionOfImplementationReason( $row ), $this->getDefaultForDescriptionOfLocation( $row ), $this->getDefaultForGuideUrl( $row ), $this->getDefaultForAppNotificationCopyText( $row )
+            $row[ 'toggleId' ], $row[ 'name' ], $row[ 'release_id' ], (bool)$row[ 'visible' ], $this->getDefaultForScreenshotUrl( $row ), $this->getDefaultForDescriptionOfToggle( $row ), $this->getDefaultForDescriptionOfFunctionality( $row ), $this->getDefaultForDescriptionOfImplementationReason( $row ), $this->getDefaultForDescriptionOfLocation( $row ), $this->getDefaultForGuideUrl( $row ), $this->getDefaultForAppNotificationCopyText( $row )
         );
     }
 

@@ -9,9 +9,9 @@
 namespace Clearbooks\LabsMysql\Toggle;
 
 
-use Clearbooks\Labs\Client\Toggle\UseCase\IsToggleActive;
+use Clearbooks\Labs\Client\Toggle\UseCase\IsCurrentUserToggleActive;
 
-class ToggleCheckerMock implements IsToggleActive
+class ToggleCheckerMock implements IsCurrentUserToggleActive
 {
     /**
      * @var

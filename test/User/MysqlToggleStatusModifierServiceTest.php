@@ -61,7 +61,7 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
     public function addToggleToDatabase( $name, $releaseId, $isActive, $toggleType )
     {
         return $this->connection->insert( "`toggle`",
-            [ 'name' => $name, 'release_id' => $releaseId, 'toggle_type' => $toggleType, 'is_active' => $isActive ] );
+            [ 'name' => $name, 'release_id' => $releaseId, 'type' => $toggleType, 'visible' => $isActive ] );
     }
 
     /**
@@ -71,8 +71,8 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
      */
     private function addUserActivatedToggle( $toggleId, $userId, $status = false )
     {
-        $this->connection->insert( "`user_activated_toggle`",
-            [ 'user_id' => $userId, 'toggle_id' => $toggleId, 'is_active' => $status ] );
+        $this->connection->insert( "`user_policy`",
+            [ 'user_id' => $userId, 'toggle_id' => $toggleId, 'active' => $status ] );
     }
 
     /**
@@ -82,7 +82,7 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
      */
     private function addGroupActivatedToggle( $toggleId, $userId, $status = false )
     {
-        $this->connection->insert( "`group_activated_toggle`",
+        $this->connection->insert( "`group_policy`",
             [ 'group_id' => $userId, 'toggle_id' => $toggleId, 'active' => $status ] );
     }
 
@@ -93,12 +93,12 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
      */
     private function getUserActivatedToggleEntry( $toggleId, $userId )
     {
-        $data = $this->connection->fetchAssoc( 'SELECT * FROM `user_activated_toggle` WHERE toggle_id = ? AND user_id = ?',
+        $data = $this->connection->fetchAssoc( 'SELECT * FROM `user_policy` WHERE toggle_id = ? AND user_id = ?',
             [ $toggleId, $userId ] );
         if ( empty( $data ) ) {
             return [ ];
         }
-        $entry = [ 1 => $data[ 'toggle_id' ], 2 => $data[ 'user_id' ], 3 => $data[ 'is_active' ] ];
+        $entry = [ 1 => $data[ 'toggle_id' ], 2 => $data[ 'user_id' ], 3 => $data[ 'active' ] ];
         return $entry;
     }
 
@@ -109,7 +109,7 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
      */
     private function getGroupActivatedToggleEntry( $toggleId, $groupId )
     {
-        $data = $this->connection->fetchAssoc( 'SELECT * FROM `group_activated_toggle` WHERE toggle_id = ? AND group_id = ?',
+        $data = $this->connection->fetchAssoc( 'SELECT * FROM `group_policy` WHERE toggle_id = ? AND group_id = ?',
             [ $toggleId, $groupId ] );
         if ( empty( $data ) ) {
             return [ ];
