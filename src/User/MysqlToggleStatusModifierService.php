@@ -105,13 +105,7 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
      */
     private function generateQueryBuilderForUserToggleUpdate()
     {
-        $queryBuilder = new QueryBuilder( $this->connection );
-        $queryBuilder
-            ->update( 'user_policy' )
-            ->set( 'active', '?' )
-            ->where( 'toggle_id = ?' )
-            ->andWhere( 'user_id = ?' );
-        return $queryBuilder;
+        return $this->generateQueryBuilderForToggleUpdate( '`user_policy`', 'user_id' );
     }
 
     /**
@@ -119,13 +113,7 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
      */
     private function generateQueryBuilderFroGroupToggleUpdate()
     {
-        $queryBuilder = new QueryBuilder( $this->connection );
-        $queryBuilder
-            ->update( 'group_policy' )
-            ->set( 'active', '?' )
-            ->where( 'toggle_id = ?' )
-            ->andWhere( 'group_id = ?' );
-        return $queryBuilder;
+        return $this->generateQueryBuilderForToggleUpdate( '`group_policy`', 'group_id' );
     }
 
     /**
@@ -186,6 +174,7 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     /**
      * @param string $toggleIdentifier
      * @param string $groupIdentifier
+     * @param bool $isActive
      */
     private function tryInsertElseUpdateGroupToggleToAGivenState( $toggleIdentifier, $groupIdentifier, $isActive )
     {
@@ -313,5 +302,21 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
             return false;
         }
         return $this->setToggleStatus( $toggleIdentifier, $toggleStatus, $groupIdentifier, true );
+    }
+
+    /**
+     * @param string $table
+     * @param string $colon
+     * @return QueryBuilder
+     */
+    private function generateQueryBuilderForToggleUpdate( $table, $colon )
+    {
+        $queryBuilder = new QueryBuilder( $this->connection );
+        $queryBuilder
+            ->update( $table )
+            ->set( 'active', '?' )
+            ->where( 'toggle_id = ?' )
+            ->andWhere( $colon . '= ?' );
+        return $queryBuilder;
     }
 }
