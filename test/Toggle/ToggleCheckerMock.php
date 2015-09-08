@@ -9,36 +9,41 @@
 namespace Clearbooks\LabsMysql\Toggle;
 
 
-use Clearbooks\Labs\Client\Toggle\UseCase\IsToggleActive;
+use Clearbooks\Labs\Client\Toggle\Entity\Group;
+use Clearbooks\Labs\Client\Toggle\Entity\User;
+use Clearbooks\Labs\Client\Toggle\UseCase\ToggleChecker;
 
-class ToggleCheckerMock implements IsToggleActive
+class ToggleCheckerMock implements ToggleChecker
 {
     /**
-     * @var
+     * @var string
      */
     private $userId;
     /**
-     * @var
+     * @var bool[]
      */
     private $activatedToggles;
 
     /**
      * ToggleCheckerMock constructor.
-     * @param string $userId
      * @param bool[] $activatedToggles
      */
-    public function __construct( $userId, $activatedToggles )
+    public function __construct( $activatedToggles )
     {
-        $this->userId = $userId;
         $this->activatedToggles = $activatedToggles;
     }
 
     /**
      * @param string $toggleName
+     * @param User $user
+     * @param Group $group
      * @return bool is it active
      */
-    public function isToggleActive( $toggleName )
+    public function isToggleActive( $toggleName, User $user, Group $group )
     {
-        return $this->activatedToggles[ $toggleName ];
+        if ( $this->activatedToggles[ $toggleName ] ) {
+            return true;
+        }
+        return false;
     }
 }

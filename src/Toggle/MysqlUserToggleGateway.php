@@ -13,8 +13,11 @@ use Clearbooks\Labs\Toggle\Entity\UserToggle;
 use Clearbooks\Labs\Toggle\Gateway\UserToggleGateway;
 use Doctrine\DBAL\Connection;
 
-class MysqlUserToggleGateway extends MysqlGetAllTogglesGateway implements UserToggleGateway
+class MysqlUserToggleGateway implements UserToggleGateway
 {
+
+    use ToggleHelperMethods;
+
     /**
      * @var Connection|\Doctrine\DBAL\Connection
      */
