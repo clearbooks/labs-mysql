@@ -148,15 +148,16 @@ class MysqlActivatedToggleGatewayTest extends \PHPUnit_Framework_TestCase
     protected function validateDatabaseData( $releaseId, $toggleId, $toggleId2, $toggleId3, $notActivateToggleId )
     {
         $expectedResult = [
-            new Toggle( $notActivateToggleId, "test2", $releaseId, true, "blah", "blah" ),
-            new Toggle( $toggleId3, "test4", $releaseId, true, "this", "is", "the", "test", "of",
-                "marketing", "information" ),
             new Toggle( $toggleId, "test1", $releaseId, true ),
-            new Toggle( $toggleId2, "test3", $releaseId, true ) ];
+            new Toggle( $notActivateToggleId, "test2", $releaseId, true, "blah", "blah" ),
+            new Toggle( $toggleId2, "test3", $releaseId, true ),
+            new Toggle( $toggleId3, "test4", $releaseId, true, "this", "is", "the", "test", "of",
+                "marketing", "information" ) ];
 
         $data = $this->connection->fetchAll( 'SELECT *, toggle.id as toggleId FROM `toggle` LEFT JOIN `toggle_marketing_information` ON toggle.id = toggle_marketing_information.toggle_id WHERE toggle.name IN (?,?,?,?)',
             [ $expectedResult[ 0 ]->getName(), $expectedResult[ 1 ]->getName(), $expectedResult[ 2 ]->getName(), $expectedResult[ 3 ]->getName() ] );
         $actualResult = $this->getAllTogglesFromGivenSqlResult( $data );
+
         $this->assertEquals( $expectedResult, $actualResult );
     }
 
