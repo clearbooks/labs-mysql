@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "33f5d4c8a79374a2eb2d186f6fb15e9c",
+    "hash": "0dc6e73b98ef58130ad2cb3b043452f5",
     "packages": [
         {
             "name": "clearbooks/labs",
@@ -80,10 +80,11 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/clearbooks/labs-php-client-mysql.git",
-                "reference": "4de0a91dc8e5627d2bcf7b7b5689490d7c517f11"
+                "reference": "128532d9ce7ca9dde974c640b0e9375b569ee603"
             },
             "require": {
                 "clearbooks/labs-php-client": "dev-master",
+                "clearbooks/labs-schema": "dev-master",
                 "crodas/notoj": "1.0.8",
                 "doctrine/dbal": "2.5.1",
                 "php-di/php-di": "^5.0"
@@ -112,7 +113,28 @@
                 }
             ],
             "description": "DB connection classes for Labs",
-            "time": "2015-08-28 12:09:37"
+            "time": "2015-09-08 13:08:11"
+        },
+        {
+            "name": "clearbooks/labs-schema",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:clearbooks/labs-schema.git",
+                "reference": "da6570405ab27ed0a3690237e340588e812afaa5"
+            },
+            "type": "library",
+            "license": [
+                "GPL v2"
+            ],
+            "authors": [
+                {
+                    "name": "Clear Books Engineering Team",
+                    "email": "developers@clearbooks.co.uk"
+                }
+            ],
+            "description": "DB schema for Labs",
+            "time": "2015-09-08 12:13:33"
         },
         {
             "name": "container-interop/container-interop",
@@ -807,16 +829,16 @@
         },
         {
             "name": "php-di/php-di",
-            "version": "5.0.4",
+            "version": "5.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-DI/PHP-DI.git",
-                "reference": "b8e9f51c41047dd463e0415167be2155f305c187"
+                "reference": "f4a8088fa4eb480ee66c51b5ee4e4e30cce78489"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-DI/PHP-DI/zipball/b8e9f51c41047dd463e0415167be2155f305c187",
-                "reference": "b8e9f51c41047dd463e0415167be2155f305c187",
+                "url": "https://api.github.com/repos/PHP-DI/PHP-DI/zipball/f4a8088fa4eb480ee66c51b5ee4e4e30cce78489",
+                "reference": "f4a8088fa4eb480ee66c51b5ee4e4e30cce78489",
                 "shasum": ""
             },
             "require": {
@@ -830,14 +852,14 @@
             },
             "require-dev": {
                 "doctrine/annotations": "~1.2",
-                "doctrine/cache": "~1.0",
+                "doctrine/cache": "~1.4",
                 "mnapoli/phpunit-easymock": "~0.1.4",
                 "ocramius/proxy-manager": "~1.0",
                 "phpunit/phpunit": "~4.5"
             },
             "suggest": {
                 "doctrine/annotations": "Install it if you want to use annotations (version ~1.2)",
-                "doctrine/cache": "Install it if you want to use the cache (version ~1.0)",
+                "doctrine/cache": "Install it if you want to use the cache (version ~1.4)",
                 "ocramius/proxy-manager": "Install it if you want to use lazy injection (version ~1.0)"
             },
             "type": "library",
@@ -860,7 +882,7 @@
                 "dependency injection",
                 "di"
             ],
-            "time": "2015-09-02 16:50:29"
+            "time": "2015-09-08 08:56:29"
         },
         {
             "name": "php-di/phpdoc-reader",
@@ -1858,7 +1880,8 @@
     "stability-flags": {
         "clearbooks/labs": 20,
         "clearbooks/labs-php-client": 20,
-        "clearbooks/labs-php-client-mysql": 20
+        "clearbooks/labs-php-client-mysql": 20,
+        "clearbooks/labs-schema": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
