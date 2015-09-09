@@ -16,6 +16,15 @@ class UserTest extends PHPUnit_Framework_TestCase
      */
     private $emptyUserData;
 
+    /**
+     * @param User $user
+     * @param array $emptyUserData
+     */
+    private function assertUserGettersMatchExpectedUserData( User $user, $emptyUserData )
+    {
+        $this->assertEquals( $emptyUserData[ 'userId' ], $user->getId() );
+    }
+
     public function setUp()
     {
         parent::setUp();
@@ -44,14 +53,5 @@ class UserTest extends PHPUnit_Framework_TestCase
         $userData[ 'userId' ] = self::USER_ID;
 
         $this->assertUserGettersMatchExpectedUserData( $user, $userData );
-    }
-
-    /**
-     * @param User $user
-     * @param array $emptyUserData
-     */
-    private function assertUserGettersMatchExpectedUserData( User $user, $emptyUserData )
-    {
-        $this->assertEquals( $emptyUserData[ 'userId' ], $user->getId() );
     }
 }
