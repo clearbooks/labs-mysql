@@ -77,7 +77,7 @@ class MysqlGroupToggleGatewayTest extends \PHPUnit_Framework_TestCase
     public function addToggleToDatabase( $name, $releaseId, $isActive, $toggle_type )
     {
         return $this->connection->insert( "`toggle`",
-            [ 'name' => $name, 'release_id' => $releaseId, 'toggle_type' => $toggle_type, 'is_active' => $isActive ] );
+            [ 'name' => $name, 'release_id' => $releaseId, 'type' => $toggle_type, 'visible' => $isActive ] );
     }
 
     public function setUp()

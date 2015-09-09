@@ -82,8 +82,8 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
         return $this->connection->insert( "`toggle`", [
             'name' => $name,
             'release_id' => $releaseId,
-            'toggle_type' => 1,
-            'is_active' => $isActive
+            'type' => 1,
+            'visible' => $isActive
         ] );
     }
 
