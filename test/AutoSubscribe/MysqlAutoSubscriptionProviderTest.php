@@ -111,7 +111,7 @@ class MysqlAutoSubscriptionProviderTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenNoChosenSubscriber_duringUpdateSubscriptionAttemptAndTrueGiven_NewUserWillBeAddedToSubscribers()
+    public function givenNoExistentSubscriber_duringUpdateSubscriptionAttemptAndTrueGiven_NewUserWillBeAddedToSubscribers()
     {
         $user = new User( "YES HE IS THE ONE" );
         $subscribers = [ new User( "Brolli" ), new User( "test1" ), new User( "test2" ) ];
@@ -128,7 +128,7 @@ class MysqlAutoSubscriptionProviderTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenNoChosenSubscriber_duringUpdateSubscriptionAttemptAndFalseGiven_NoNewSubscribersWillBeCreatedNorDeleted()
+    public function givenNoExistentSubscriber_duringUpdateSubscriptionAttemptAndFalseGiven_NoNewSubscribersWillBeCreatedNorDeleted()
     {
         $user = new User( "YES HE IS THE ONE" );
         $subscribers = [ new User( "Brolli" ), new User( "test1" ), new User( "test2" ) ];
@@ -143,7 +143,7 @@ class MysqlAutoSubscriptionProviderTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenExistentChosenSubscribers_duringUpdateSubscriptionAttemptAndTrueGiven_NoSubscribersWillBeCreatedNorDeleted()
+    public function givenExistentSubscribers_duringUpdateSubscriptionAttemptAndTrueGiven_NoSubscribersWillBeCreatedNorDeleted()
     {
         $user = new User( "YES HE IS THE ONE" );
         $subscribers = [ new User( "Brolli" ), new User( "test1" ), new User( "test2" ), $user ];
@@ -158,7 +158,7 @@ class MysqlAutoSubscriptionProviderTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenExistentChosenSubscribers_duringUpdateSubscriptionAttemptAndFalseGiven_ChosenSubscriberWillBeDeletedFromSubscribers()
+    public function givenExistentSubscribers_duringUpdateSubscriptionAttemptAndFalseGiven_ChosenSubscriberWillBeDeletedFromSubscribers()
     {
         $user = new User( "YES HE IS THE ONE" );
         $subscribers = [ new User( "Brolli" ), new User( "test1" ), new User( "test2" ), $user ];
