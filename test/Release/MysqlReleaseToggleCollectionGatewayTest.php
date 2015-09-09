@@ -82,8 +82,8 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
         return $this->connection->insert( "`toggle`", [
             'name' => $name,
             'release_id' => $releaseId,
-            'toggle_type' => 1,
-            'is_active' => $isActive
+            'type' => 1,
+            'visible' => $isActive
         ] );
     }
 
@@ -179,11 +179,11 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
     {
         $id = $this->addRelease( 'Test release for toggle 2', 'a helpful url' );
 
-        $this->addToggle( "test1", $id );
-        $this->addToggle( "test2", $id );
+        $toggleId = $this->addToggle( "test1", $id );
+        $toggleId2 = $this->addToggle( "test2", $id );
 
-        $expectedToggle = new Toggle( "test1", $id );
-        $expectedToggle2 = new Toggle( "test2", $id );
+        $expectedToggle = new Toggle( $toggleId, "test1", $id );
+        $expectedToggle2 = new Toggle( $toggleId2, "test2", $id );
 
         $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
         $returnedToggles = $this->gateway->getTogglesForRelease( $id );
@@ -202,12 +202,11 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
     {
         $id = $this->addRelease( 'Test release for toggle 2', 'a helpful url' );
 
-        $this->addToggle( "test1", $id, false, "this", "is", "a", "test", "of", "marketing", "information" );
-        $this->addToggle( "test2", $id );
+        $toggleId = $this->addToggle( "test1", $id, false, "this", "is", "a", "test", "of", "marketing", "information" );
+        $toggleId2 = $this->addToggle( "test2", $id );
 
-        $expectedToggle = new Toggle( "test1", $id, false, "this", "is", "a", "test", "of", "marketing",
-            "information" );
-        $expectedToggle2 = new Toggle( "test2", $id );
+        $expectedToggle = new Toggle( $toggleId, "test1", $id, false, "this", "is", "a", "test", "of", "marketing", "information" );
+        $expectedToggle2 = new Toggle( $toggleId2, "test2", $id );
 
         $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
         $returnedToggles = $this->gateway->getTogglesForRelease( $id );
@@ -227,15 +226,14 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
         $id = $this->addRelease( 'Test release for toggle 3.1', 'a helpful url' );
         $id2 = $this->addRelease( 'Test release for toggle 3.2', 'a helpful url2' );
 
-        $this->addToggle( "test1", $id, true, "this", "is", "a", "test", "of", "marketing",
+        $toggleId = $this->addToggle( "test1", $id, true, "this", "is", "a", "test", "of", "marketing",
             "information" );
-        $this->addToggle( "test2", $id, true );
+        $toggleId2 = $this->addToggle( "test2", $id, true );
         $this->addToggle( "test3", $id2, true );
         $this->addToggle( "test4", $id2, true );
 
-        $expectedToggle = new Toggle( "test1", $id, true, "this", "is", "a", "test", "of", "marketing",
-            "information" );
-        $expectedToggle2 = new Toggle( "test2", $id, true );
+        $expectedToggle = new Toggle( $toggleId, "test1", $id, true, "this", "is", "a", "test", "of", "marketing", "information" );
+        $expectedToggle2 = new Toggle( $toggleId2, "test2", $id, true );
 
         $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
         $returnedToggles = $this->gateway->getTogglesForRelease( $id );

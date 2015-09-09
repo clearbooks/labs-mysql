@@ -85,8 +85,8 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
      */
     private function insertActiveUserActivatedToggle( $toggleIdentifier, $userIdentifier )
     {
-        $this->connection->insert( "`user_activated_toggle`",
-            [ 'user_id' => $userIdentifier, 'toggle_id' => $toggleIdentifier, 'is_active' => 1 ] );
+        $this->connection->insert( "`user_policy`",
+            [ 'user_id' => $userIdentifier, 'toggle_id' => $toggleIdentifier, 'active' => 1 ] );
     }
 
     /**
@@ -96,35 +96,23 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
      */
     private function insertGroupActivatedToggle( $toggleIdentifier, $groupIdentifier, $isActive )
     {
-        $this->connection->insert( "`group_activated_toggle`",
+        $this->connection->insert( "`group_policy`",
             [ 'group_id' => $groupIdentifier, 'toggle_id' => $toggleIdentifier, 'active' => $isActive ] );
     }
 
     /**
+     * @param string $table
+     * @param string $colon
      * @return QueryBuilder
      */
-    private function generateQueryBuilderForUserToggleUpdate()
+    private function generateQueryBuilderForToggleUpdate( $table, $colon )
     {
         $queryBuilder = new QueryBuilder( $this->connection );
         $queryBuilder
-            ->update( 'user_activated_toggle' )
-            ->set( 'is_active', '?' )
-            ->where( 'toggle_id = ?' )
-            ->andWhere( 'user_id = ?' );
-        return $queryBuilder;
-    }
-
-    /**
-     * @return QueryBuilder
-     */
-    private function generateQueryBuilderFroGroupToggleUpdate()
-    {
-        $queryBuilder = new QueryBuilder( $this->connection );
-        $queryBuilder
-            ->update( 'group_activated_toggle' )
+            ->update( $table )
             ->set( 'active', '?' )
             ->where( 'toggle_id = ?' )
-            ->andWhere( 'group_id = ?' );
+            ->andWhere( $colon . '= ?' );
         return $queryBuilder;
     }
 
@@ -135,7 +123,7 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     {
         $queryBuilder = new QueryBuilder( $this->connection );
         $queryBuilder
-            ->delete( 'user_activated_toggle' )
+            ->delete( 'user_policy' )
             ->where( 'toggle_id = ?' )
             ->andWhere( 'user_id = ?' );
         return $queryBuilder;
@@ -148,7 +136,7 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     {
         $queryBuilder = new QueryBuilder( $this->connection );
         $queryBuilder
-            ->delete( 'group_activated_toggle' )
+            ->delete( 'group_policy' )
             ->where( 'toggle_id = ?' )
             ->andWhere( 'group_id = ?' );
         return $queryBuilder;
@@ -178,7 +166,7 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
         try {
             $this->insertActiveUserActivatedToggle( $toggleIdentifier, $userIdentifier );
         } catch ( \Exception $e ) {
-            $queryBuilder = $this->generateQueryBuilderForUserToggleUpdate();
+            $queryBuilder = $this->generateQueryBuilderForToggleUpdate( '`user_policy`', 'user_id' );
             $this->updateToggle( $queryBuilder, $toggleIdentifier, $userIdentifier, true );
         }
     }
@@ -186,13 +174,14 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     /**
      * @param string $toggleIdentifier
      * @param string $groupIdentifier
+     * @param bool $isActive
      */
     private function tryInsertElseUpdateGroupToggleToAGivenState( $toggleIdentifier, $groupIdentifier, $isActive )
     {
         try {
             $this->insertGroupActivatedToggle( $toggleIdentifier, $groupIdentifier, $isActive );
         } catch ( \Exception $e ) {
-            $queryBuilder = $this->generateQueryBuilderFroGroupToggleUpdate();
+            $queryBuilder = $this->generateQueryBuilderForToggleUpdate( '`group_policy`', 'group_id' );
             $this->updateToggle( $queryBuilder, $toggleIdentifier, $groupIdentifier, $isActive );
         }
     }
@@ -235,7 +224,7 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     private function tryInsertElseUpdateToggleToInactiveState( $toggleIdentifier, $userOrGroupIdentifier, $isGroup )
     {
         if ( !$isGroup ) {
-            $queryBuilder = $this->generateQueryBuilderForUserToggleUpdate();
+            $queryBuilder = $this->generateQueryBuilderForToggleUpdate( '`user_policy`', 'user_id' );
             $this->updateToggle( $queryBuilder, $toggleIdentifier, $userOrGroupIdentifier, false );
         } else {
             $this->tryInsertElseUpdateGroupToggleToAGivenState( $toggleIdentifier, $userOrGroupIdentifier, false );

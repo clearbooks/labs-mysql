@@ -1,11 +1,9 @@
 <?php
+use Clearbooks\Labs\Bootstrap;
 use Clearbooks\LabsMysql\Release\MysqlReleaseGateway;
 use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
 use Clearbooks\LabsMysql\Toggle\MysqlActivatableToggleGateway;
-use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Exception\InvalidArgumentException;
 
 /**
  * Created by PhpStorm.
@@ -24,22 +22,6 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
      * @var Connection
      */
     private $connection;
-
-    /**
-     * @throws InvalidArgumentException
-     */
-    private function deleteAddedReleases()
-    {
-        $this->connection->delete( '`release`', [ '*' ] );
-    }
-
-    /**
-     * @throws InvalidArgumentException
-     */
-    private function deleteAddedToggles()
-    {
-        $this->connection->delete( '`toggle`', [ '*' ] );
-    }
 
     /**
      * @param string $releaseName
@@ -73,7 +55,18 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
     public function addToggleToDatebase( $name, $releaseId, $isActive )
     {
         return $this->connection->insert( "`toggle`",
-            [ 'name' => $name, 'release_id' => $releaseId, 'toggle_type' => 1, 'is_active' => $isActive ] );
+            [ 'name' => $name, 'release_id' => $releaseId, 'type' => 1, 'visible' => $isActive ] );
+    }
+
+    /**
+     * @param string $toggleId
+     * @param int $userId
+     * @param bool $status
+     */
+    private function addUserActivatedToggle( $toggleId, $userId, $status = false )
+    {
+        $this->connection->insert( "`user_policy`",
+            [ 'user_id' => $userId, 'toggle_id' => $toggleId, 'active' => $status ] );
     }
 
     /**
@@ -84,19 +77,19 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
         $id = $this->addRelease( 'Test activatable toggle 3', 'a helpful url' );
         $id2 = $this->addRelease( 'Test activatable toggle 3.1', 'a helpful url' );
 
-        $toggle_id = $this->addToggle( "test1", $id, true );
-        $toggle_id2 = $this->addToggle( "test2", $id, false );
-        $toggle_id3 = $this->addToggle( "test3", $id2, true );
-        $user_id = 1;
+        $toggleId = $this->addToggle( "test1", $id, true );
+        $toggleId2 = $this->addToggle( "test2", $id, false );
+        $toggleId3 = $this->addToggle( "test3", $id2, true );
+        $userId = 1;
 
-        $this->addUserActivatedToggle( $toggle_id, $user_id, true );
-        $this->addUserActivatedToggle( $toggle_id2, $user_id, false );
-        $this->addUserActivatedToggle( $toggle_id3, $user_id, true );
+        $this->addUserActivatedToggle( $toggleId, $userId, true );
+        $this->addUserActivatedToggle( $toggleId2, $userId, false );
+        $this->addUserActivatedToggle( $toggleId3, $userId, true );
 
-        $expected_toggle = new Toggle( "test1", $id, true );
-        $expected_toggle2 = new Toggle( "test2", $id, false );
-        $expected_toggle3 = new Toggle( "test3", $id2, true );
-        return array( $expected_toggle, $expected_toggle2, $expected_toggle3 );
+        $expectedToggle = new Toggle( $toggleId, "test1", $id, true );
+        $expectedToggle2 = new Toggle( $toggleId2, "test2", $id, false );
+        $expectedToggle3 = new Toggle( $toggleId3, "test3", $id2, true );
+        return array( $expectedToggle, $expectedToggle2, $expectedToggle3 );
     }
 
     /**
@@ -104,68 +97,45 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
      */
     private function getTogglesUsingActivatableToggleGateway()
     {
-        $returned_toggle = $this->gateway->getActivatableToggleByName( "test1" );
-        $returned_toggle2 = $this->gateway->getActivatableToggleByName( "test2" );
-        $returned_toggle3 = $this->gateway->getActivatableToggleByName( "test3" );
-        return array( $returned_toggle, $returned_toggle2, $returned_toggle3 );
+        $returnedToggle = $this->gateway->getActivatableToggleByName( "test1" );
+        $returnedToggle2 = $this->gateway->getActivatableToggleByName( "test2" );
+        $returnedToggle3 = $this->gateway->getActivatableToggleByName( "test3" );
+        return array( $returnedToggle, $returnedToggle2, $returnedToggle3 );
     }
 
     /**
-     * @param Toggle $expected_toggle
-     * @param Toggle $returned_toggle
-     * @param Toggle $expected_toggle2
-     * @param Toggle $returned_toggle2
-     * @param Toggle $expected_toggle3
-     * @param Toggle $returned_toggle3
+     * @param Toggle $expectedToggle
+     * @param Toggle $returnedToggle
+     * @param Toggle $expectedToggle2
+     * @param Toggle $returnedToggle2
+     * @param Toggle $expectedToggle3
+     * @param Toggle $returnedToggle3
      */
-    private function validateInsertedDatabaseData( $expected_toggle, $returned_toggle, $expected_toggle2,
-                                                   $returned_toggle2, $expected_toggle3, $returned_toggle3 )
+    private function validateInsertedDatabaseData( $expectedToggle, $returnedToggle, $expectedToggle2,
+                                                   $returnedToggle2, $expectedToggle3, $returnedToggle3 )
     {
-        $this->assertEquals( $expected_toggle, $returned_toggle );
-        $this->assertEquals( $expected_toggle2, $returned_toggle2 );
-        $this->assertEquals( $expected_toggle3, $returned_toggle3 );
-    }
-
-    /**
-     * @throws InvalidArgumentException
-     */
-    private function deleteAddedUserActivatedToggles()
-    {
-        $this->connection->delete( '`user_activated_toggle`', [ '*' ] );
-    }
-
-    /**
-     * @param string $toggle_id
-     * @param int $user_id
-     * @param bool $status
-     */
-    private function addUserActivatedToggle( $toggle_id, $user_id, $status = false )
-    {
-        $this->connection->insert( "`user_activated_toggle`",
-            [ 'user_id' => $user_id, 'toggle_id' => $toggle_id, 'is_active' => $status ] );
+        $this->assertEquals( $expectedToggle, $returnedToggle );
+        $this->assertEquals( $expectedToggle2, $returnedToggle2 );
+        $this->assertEquals( $expectedToggle3, $returnedToggle3 );
     }
 
     public function setUp()
     {
         parent::setUp();
 
-        $connectionParams = array(
-            'dbname' => 'labs',
-            'user' => 'root',
-            'password' => '',
-            'host' => 'localhost',
-            'driver' => 'pdo_mysql',
-        );
+        $this->connection = Bootstrap::getInstance()->getDIContainer()
+            ->get( Connection::class );
 
-        $this->connection = DriverManager::getConnection( $connectionParams, new Configuration() );
+        $this->connection->beginTransaction();
+        $this->connection->setRollbackOnly();
+
         $this->gateway = new MysqlActivatableToggleGateway( $this->connection );
     }
 
     public function tearDown()
     {
-        $this->deleteAddedUserActivatedToggles();
-        $this->deleteAddedToggles();
-        $this->deleteAddedReleases();
+        parent::tearDown();
+        $this->connection->rollBack();
     }
 
     /**
@@ -173,8 +143,8 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
      */
     public function givenNoExistentToggleWithProvidedName_MysqlActivatableToggleGateway_ReturnsNull()
     {
-        $returned_toggle = $this->gateway->getActivatableToggleByName( "test" );
-        $this->assertEquals( null, $returned_toggle );
+        $returnedToggle = $this->gateway->getActivatableToggleByName( "test" );
+        $this->assertEquals( null, $returnedToggle );
     }
 
     /**
@@ -184,16 +154,16 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
     {
         $id = $this->addRelease( 'Test activatable toggle 1', 'a helpful url' );
 
-        $toggle_id = $this->addToggle( "test1", $id );
-        $user_id = 1;
-        $expected_toggle = new Toggle( "test1", $id );
+        $toggleId = $this->addToggle( "test1", $id );
+        $userId = 1;
+        $expectedToggle = new Toggle( $toggleId, "test1", $id );
 
-        $this->addUserActivatedToggle( $toggle_id, $user_id, false );
+        $this->addUserActivatedToggle( $toggleId, $userId, false );
 
-        $returned_toggle = $this->gateway->getActivatableToggleByName( "test1" );
+        $returnedToggle = $this->gateway->getActivatableToggleByName( "test1" );
 
-        $this->assertEquals( $expected_toggle, $returned_toggle );
-        $this->assertEquals( $expected_toggle->isActive(), $returned_toggle->isActive() );
+        $this->assertEquals( $expectedToggle, $returnedToggle );
+        $this->assertEquals( $expectedToggle->isActive(), $returnedToggle->isActive() );
     }
 
     /**
@@ -203,17 +173,17 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
     {
         $id = $this->addRelease( 'Test activatable toggle 2', 'a helpful url' );
 
-        $toggle_id = $this->addToggle( "test1", $id, true );
-        $user_id = 1;
+        $toggleId = $this->addToggle( "test1", $id, true );
+        $userId = 1;
 
-        $this->addUserActivatedToggle( $toggle_id, $user_id, true );
+        $this->addUserActivatedToggle( $toggleId, $userId, true );
 
-        $expected_toggle = new Toggle( "test1", $id, true );
+        $expectedToggle = new Toggle( $toggleId, "test1", $id, true );
 
-        $returned_toggle = $this->gateway->getActivatableToggleByName( "test1" );
+        $returnedToggle = $this->gateway->getActivatableToggleByName( "test1" );
 
-        $this->assertEquals( $expected_toggle, $returned_toggle );
-        $this->assertEquals( $expected_toggle->isActive(), $returned_toggle->isActive() );
+        $this->assertEquals( $expectedToggle, $returnedToggle );
+        $this->assertEquals( $expectedToggle->isActive(), $returnedToggle->isActive() );
     }
 
     /**
@@ -223,18 +193,18 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
     {
         $id = $this->addRelease( 'Test activatable toggle 3', 'a helpful url' );
 
-        $toggle_id = $this->addToggle( "test1", $id, true );
-        $user_id = 1;
+        $toggleId = $this->addToggle( "test1", $id, true );
+        $userId = 1;
 
         $this->addToggle( "test2", $id );
 
-        $this->addUserActivatedToggle( $toggle_id, $user_id, true );
+        $this->addUserActivatedToggle( $toggleId, $userId, true );
 
-        $expected_toggle = new Toggle( "test1", $id, true );
+        $expectedToggle = new Toggle( $toggleId, "test1", $id, true );
 
-        $returned_toggle = $this->gateway->getActivatableToggleByName( "test1" );
+        $returnedToggle = $this->gateway->getActivatableToggleByName( "test1" );
 
-        $this->assertEquals( $expected_toggle, $returned_toggle );
+        $this->assertEquals( $expectedToggle, $returnedToggle );
     }
 
     /**
@@ -242,12 +212,12 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
      */
     public function givenMultipleExistentTogglesWithDifferentNames_DuringSelectAttempt_MysqlActivatableToggleGateway_DoesNotEffectOtherTogglesInTheDatabase()
     {
-        list( $expected_toggle, $expected_toggle2, $expected_toggle3 ) = $this->InsertDataIntoDatabase();
+        list( $expectedToggle, $expectedToggle2, $expectedToggle3 ) = $this->InsertDataIntoDatabase();
 
-        list( $returned_toggle, $returned_toggle2, $returned_toggle3 ) = $this->getTogglesUsingActivatableToggleGateway();
+        list( $returnedToggle, $returnedToggle2, $returnedToggle3 ) = $this->getTogglesUsingActivatableToggleGateway();
 
-        $this->validateInsertedDatabaseData( $expected_toggle, $returned_toggle, $expected_toggle2, $returned_toggle2,
-            $expected_toggle3, $returned_toggle3 );
+        $this->validateInsertedDatabaseData( $expectedToggle, $returnedToggle, $expectedToggle2, $returnedToggle2,
+            $expectedToggle3, $returnedToggle3 );
 
     }
 }
