@@ -73,14 +73,6 @@ class MysqlAutoSubscriptionProviderTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function duringConstructionOfGateway_GatewayIsNotNull()
-    {
-        $this->assertNotNull( $this->gateway );
-    }
-
-    /**
-     * @test
-     */
     public function givenNoSubscribers_duringIsSubscribedAttempt_ReturnsFalse()
     {
         $response = $this->gateway->isSubscribed( new User( "test" ) );
@@ -92,10 +84,10 @@ class MysqlAutoSubscriptionProviderTest extends PHPUnit_Framework_TestCase
      */
     public function givenExistentSubscriber_duringIsSubscribedAttempt_ReturnsTrue()
     {
-        $theChosenOne = new User( "YES HE IS THE ONE" );
-        $this->addNewSubscriber( $theChosenOne );
+        $user = new User( "YES HE IS THE ONE" );
+        $this->addNewSubscriber( $user );
 
-        $response = $this->gateway->isSubscribed( $theChosenOne );
+        $response = $this->gateway->isSubscribed( $user );
 
         $this->assertTrue( $response );
     }
@@ -105,12 +97,12 @@ class MysqlAutoSubscriptionProviderTest extends PHPUnit_Framework_TestCase
      */
     public function givenExistentSubscribers_duringIsSubscribedAttempt_ReturnsTrueAndDoesNotEffectOtherSubscribers()
     {
-        $theChosenOne = new User( "YES HE IS THE ONE" );
-        $subscribers = [ new User( "Brolli" ), new User( "test2" ), $theChosenOne ];
+        $user = new User( "YES HE IS THE ONE" );
+        $subscribers = [ new User( "Brolli" ), new User( "test2" ), $user ];
 
         $this->addNewSubscribersToDatabase( $subscribers );
 
-        $response = $this->gateway->isSubscribed( $theChosenOne );
+        $response = $this->gateway->isSubscribed( $user );
 
         $this->assertTrue( $response );
         $this->validateSubscribersDatabase( $subscribers );
@@ -121,14 +113,14 @@ class MysqlAutoSubscriptionProviderTest extends PHPUnit_Framework_TestCase
      */
     public function givenNoChosenSubscriber_duringUpdateSubscriptionAttemptAndTrueGiven_NewUserWillBeAddedToSubscribers()
     {
-        $theChosenOne = new User( "YES HE IS THE ONE" );
+        $user = new User( "YES HE IS THE ONE" );
         $subscribers = [ new User( "Brolli" ), new User( "test1" ), new User( "test2" ) ];
 
         $this->addNewSubscribersToDatabase( $subscribers );
 
-        $subscribers [] = $theChosenOne;
+        $subscribers [] = $user;
 
-        $this->gateway->updateSubscription( $theChosenOne, true );
+        $this->gateway->updateSubscription( $user, true );
 
         $this->validateSubscribersDatabase( $subscribers );
     }
@@ -138,12 +130,12 @@ class MysqlAutoSubscriptionProviderTest extends PHPUnit_Framework_TestCase
      */
     public function givenNoChosenSubscriber_duringUpdateSubscriptionAttemptAndFalseGiven_NoNewSubscribersWillBeCreatedNorDeleted()
     {
-        $theChosenOne = new User( "YES HE IS THE ONE" );
+        $user = new User( "YES HE IS THE ONE" );
         $subscribers = [ new User( "Brolli" ), new User( "test1" ), new User( "test2" ) ];
 
         $this->addNewSubscribersToDatabase( $subscribers );
 
-        $this->gateway->updateSubscription( $theChosenOne, false );
+        $this->gateway->updateSubscription( $user, false );
 
         $this->validateSubscribersDatabase( $subscribers );
     }
@@ -153,12 +145,12 @@ class MysqlAutoSubscriptionProviderTest extends PHPUnit_Framework_TestCase
      */
     public function givenExistentChosenSubscribers_duringUpdateSubscriptionAttemptAndTrueGiven_NoSubscribersWillBeCreatedNorDeleted()
     {
-        $theChosenOne = new User( "YES HE IS THE ONE" );
-        $subscribers = [ new User( "Brolli" ), new User( "test1" ), new User( "test2" ), $theChosenOne ];
+        $user = new User( "YES HE IS THE ONE" );
+        $subscribers = [ new User( "Brolli" ), new User( "test1" ), new User( "test2" ), $user ];
 
         $this->addNewSubscribersToDatabase( $subscribers );
 
-        $this->gateway->updateSubscription( $theChosenOne, true );
+        $this->gateway->updateSubscription( $user, true );
 
         $this->validateSubscribersDatabase( $subscribers );
     }
@@ -168,14 +160,14 @@ class MysqlAutoSubscriptionProviderTest extends PHPUnit_Framework_TestCase
      */
     public function givenExistentChosenSubscribers_duringUpdateSubscriptionAttemptAndFalseGiven_ChosenSubscriberWillBeDeletedFromSubscribers()
     {
-        $theChosenOne = new User( "YES HE IS THE ONE" );
-        $subscribers = [ new User( "Brolli" ), new User( "test1" ), new User( "test2" ), $theChosenOne ];
+        $user = new User( "YES HE IS THE ONE" );
+        $subscribers = [ new User( "Brolli" ), new User( "test1" ), new User( "test2" ), $user ];
 
         $this->addNewSubscribersToDatabase( $subscribers );
 
         array_pop( $subscribers );
 
-        $this->gateway->updateSubscription( $theChosenOne, false );
+        $this->gateway->updateSubscription( $user, false );
 
         $this->validateSubscribersDatabase( $subscribers );
     }

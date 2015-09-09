@@ -28,13 +28,18 @@
     {
       "url": "https://github.com/clearbooks/labs-php-client-mysql.git",
       "type": "git"
+    },
+    {
+      "url": "git@github.com:clearbooks/labs-schema.git",
+      "type": "git"
     }
   ],
   "require": {
     "doctrine/dbal": "2.5.1",
     "clearbooks/labs": "dev-master",
     "clearbooks/labs-php-client": "dev-master",
-    "clearbooks/labs-php-client-mysql": "dev-master"
+    "clearbooks/labs-php-client-mysql": "dev-master",
+    "clearbooks/labs-schema": "dev-master"
   },
   "require-dev": {
     "phpunit/phpunit": "4.7.*"
