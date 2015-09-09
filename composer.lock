@@ -121,7 +121,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:clearbooks/labs-schema.git",
-                "reference": "da6570405ab27ed0a3690237e340588e812afaa5"
+                "reference": "eeb53a92fc3ad9bedb10d40c82edf8ff0c14f2aa"
             },
             "type": "library",
             "license": [
@@ -134,7 +134,7 @@
                 }
             ],
             "description": "DB schema for Labs",
-            "time": "2015-09-08 12:13:33"
+            "time": "2015-09-09 10:43:10"
         },
         {
             "name": "container-interop/container-interop",
@@ -1827,16 +1827,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.7.3",
+            "version": "v2.7.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "71340e996171474a53f3d29111d046be4ad8a0ff"
+                "reference": "2dc7b06c065df96cc686c66da2705e5e18aef661"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/71340e996171474a53f3d29111d046be4ad8a0ff",
-                "reference": "71340e996171474a53f3d29111d046be4ad8a0ff",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/2dc7b06c065df96cc686c66da2705e5e18aef661",
+                "reference": "2dc7b06c065df96cc686c66da2705e5e18aef661",
                 "shasum": ""
             },
             "require": {
@@ -1872,7 +1872,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2015-07-28 14:07:07"
+            "time": "2015-08-24 07:13:45"
         }
     ],
     "aliases": [],
