@@ -24,9 +24,9 @@ class MysqlGetAllTogglesGateway implements GetAllTogglesGateway
 
     /**
      * MysqlGetAllTogglesGateway constructor.
-     * @param Connection|mixed $connection
+     * @param Connection $connection
      */
-    public function __construct( $connection )
+    public function __construct( Connection $connection )
     {
         $this->connection = $connection;
     }
