@@ -12,7 +12,10 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/clearbooks/labs.git",
-                "reference": "464aa5bd0755329d4af18292af024b19630f1917"
+                "reference": "d9f0c25b34ba4aded53f55f5c3b33e30b981a529"
+            },
+            "require": {
+                "clearbooks/labs-php-client": "dev-master"
             },
             "require-dev": {
                 "codeclimate/php-test-reporter": "dev-master",
@@ -37,7 +40,7 @@
                 }
             ],
             "description": "Sensible releases",
-            "time": "2015-09-04 13:24:08"
+            "time": "2015-09-09 15:31:20"
         },
         {
             "name": "clearbooks/labs-php-client",
@@ -45,7 +48,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/clearbooks/labs-php-client.git",
-                "reference": "34c16be3fa7e24277e5b051679b0a782753a3ef6"
+                "reference": "82258e5f15adbac75d44eb64f6b01255c09d9c52"
             },
             "require-dev": {
                 "codeclimate/php-test-reporter": "dev-master",
@@ -54,12 +57,10 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Clearbooks\\Labs\\Client\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Clearbooks\\Labs\\Client\\": "test/"
+                    "Clearbooks\\Labs\\Client\\": [
+                        "src/",
+                        "test/"
+                    ]
                 }
             },
             "license": [
@@ -72,7 +73,7 @@
                 }
             ],
             "description": "Sensible releases",
-            "time": "2015-09-04 14:08:31"
+            "time": "2015-09-09 13:38:03"
         },
         {
             "name": "clearbooks/labs-php-client-mysql",
