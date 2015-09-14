@@ -12,7 +12,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/clearbooks/labs.git",
-                "reference": "ae73d0c5ffe4f01804205575a22f0279016cb1f5"
+                "reference": "4afb1be9fdf6e9be5842aae7ee690de7c7b797fd"
             },
             "require": {
                 "clearbooks/labs-php-client": "dev-master"
@@ -40,7 +40,7 @@
                 }
             ],
             "description": "Sensible releases",
-            "time": "2015-09-11 13:56:09"
+            "time": "2015-09-14 14:40:10"
         },
         {
             "name": "clearbooks/labs-php-client",
