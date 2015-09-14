@@ -111,8 +111,8 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
         return $this->connection->insert( "`toggle`", [
             'name' => $name,
             'release_id' => $releaseId,
-            'toggle_type' => $toggleType,
-            'is_active' => $isActive
+            'type' => $toggleType,
+            'visible' => $isActive
         ] );
     }
 

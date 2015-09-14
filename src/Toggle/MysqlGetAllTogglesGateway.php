@@ -2,109 +2,41 @@
 /**
  * Created by PhpStorm.
  * User: Volodymyr
- * Date: 14/08/2015
- * Time: 16:11
+ * Date: 09/09/2015
+ * Time: 16:15
  */
 
 namespace Clearbooks\LabsMysql\Toggle;
 
 
-use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
+use Clearbooks\Labs\Toggle\Entity\MarketableToggle;
+use Clearbooks\Labs\Toggle\Gateway\GetAllTogglesGateway;
+use Doctrine\DBAL\Connection;
 
-abstract class MysqlGetAllTogglesGateway
+class MysqlGetAllTogglesGateway implements GetAllTogglesGateway
 {
+    use ToggleHelperMethods;
 
     /**
-     * @param $row
-     * @return string
+     * @var Connection
      */
-    protected function getDefaultForScreenshotUrl( $row )
+    private $connection;
+
+    /**
+     * MysqlGetAllTogglesGateway constructor.
+     * @param Connection $connection
+     */
+    public function __construct( Connection $connection )
     {
-        return isset( $row[ 'screenshot_urls' ] ) ? $row[ 'screenshot_urls' ] : null;
+        $this->connection = $connection;
     }
 
     /**
-     * @param $row
-     * @return string
+     * @return MarketableToggle[]
      */
-    protected function getDefaultForDescriptionOfToggle( $row )
+    public function getAllToggles()
     {
-        return isset( $row[ 'description_of_toggle' ] ) ? $row[ 'description_of_toggle' ] : null;
+        $data = $this->connection->fetchAll( 'SELECT *, toggle.id as toggleId FROM `toggle`' );
+        return $this->getAllTogglesFromGivenSqlResult( $data );
     }
-
-    /**
-     * @param $row
-     * @return string
-     */
-    protected function getDefaultForDescriptionOfFunctionality( $row )
-    {
-        return isset( $row[ 'description_of_functionality' ] ) ? $row[ 'description_of_functionality' ] : null;
-    }
-
-    /**
-     * @param $row
-     * @return string
-     */
-    protected function getDefaultForDescriptionOfImplementationReason( $row )
-    {
-        return isset( $row[ 'description_of_implementation_reason' ] ) ? $row[ 'description_of_implementation_reason' ] : null;
-    }
-
-    /**
-     * @param $row
-     * @return string
-     */
-    protected function getDefaultForDescriptionOfLocation( $row )
-    {
-        return isset( $row[ 'description_of_location' ] ) ? $row[ 'description_of_location' ] : null;
-    }
-
-    /**
-     * @param $row
-     * @return string
-     */
-    protected function getDefaultForGuideUrl( $row )
-    {
-        return isset( $row[ 'guide_url' ] ) ? $row[ 'guide_url' ] : null;
-    }
-
-    /**
-     * @param $row
-     * @return string
-     */
-    protected function getDefaultForAppNotificationCopyText( $row )
-    {
-        return isset( $row[ 'app_notification_copy_text' ] ) ? $row[ 'app_notification_copy_text' ] : null;
-    }
-
-    /**
-     * @param $row
-     * @return array
-     * @internal param $toggles
-     */
-    protected function getToggleFromRow( $row )
-    {
-        return new Toggle(
-            $row[ 'toggleId' ], $row[ 'name' ], $row[ 'release_id' ], (bool) $row[ 'is_active' ],
-            $this->getDefaultForScreenshotUrl( $row ), $this->getDefaultForDescriptionOfToggle( $row ),
-            $this->getDefaultForDescriptionOfFunctionality( $row ),
-            $this->getDefaultForDescriptionOfImplementationReason( $row ),
-            $this->getDefaultForDescriptionOfLocation( $row ), $this->getDefaultForGuideUrl( $row ),
-            $this->getDefaultForAppNotificationCopyText( $row )
-        );
-    }
-
-    /**
-     * @param array $data
-     * @return Toggle[]
-     */
-    protected function getAllTogglesFromGivenSqlResult( array $data )
-    {
-        $toggles = [ ];
-        foreach ( $data as $row ) {
-            $toggles[] = $this->getToggleFromRow( $row );
-        }
-        return $toggles;
-    }
-
 }

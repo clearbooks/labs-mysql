@@ -22,9 +22,9 @@ class ToggleTest extends \PHPUnit_Framework_TestCase
         parent::setUp();
         $this->emptyToggleData = array(
             'id' => '',
+            'visible' => false,
             'toggleName' => '',
             'release_id' => '',
-            'isActive' => false,
             'screenshotUrl' => '',
             'toggleDesc' => '',
             'functionalityDes' => '',
@@ -66,7 +66,7 @@ class ToggleTest extends \PHPUnit_Framework_TestCase
             'id' => 'Eye Dee',
             'toggleName' => 'Toggle Name',
             'release_id' => 'Release Eye Dee',
-            'isActive' => true,
+            'visible' => true,
             'screenshotUrl' => 'www.screenshot.fake',
             'toggleDesc' => 'this is a toggle',
             'functionalityDes' => 'it is used to toggle stuff',
@@ -75,7 +75,7 @@ class ToggleTest extends \PHPUnit_Framework_TestCase
             'guideUrl' => 'www.guide.url',
             'notificationCopy' => 'oh look a new toggle!'
         );
-        $toggle = new Toggle( $toggleData['id'], $toggleData[ 'toggleName' ], $toggleData[ 'release_id' ], $toggleData[ 'isActive' ], $toggleData[ 'screenshotUrl' ], $toggleData[ 'toggleDesc' ], $toggleData[ 'functionalityDes' ], $toggleData[ 'reasonWhyDesc' ], $toggleData[ 'locationDesc' ], $toggleData[ 'guideUrl' ], $toggleData[ 'notificationCopy' ] );
+        $toggle = new Toggle( $toggleData['id'], $toggleData[ 'toggleName' ], $toggleData[ 'release_id' ], $toggleData[ 'visible' ], $toggleData[ 'screenshotUrl' ], $toggleData[ 'toggleDesc' ], $toggleData[ 'functionalityDes' ], $toggleData[ 'reasonWhyDesc' ], $toggleData[ 'locationDesc' ], $toggleData[ 'guideUrl' ], $toggleData[ 'notificationCopy' ] );
         $this->assertToggleGettersMatchExpectedToggleData( $toggle, $toggleData );
     }
 
@@ -88,7 +88,7 @@ class ToggleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals( $expectedToggleData[ 'id' ], $toggle->getId() );
         $this->assertEquals( $expectedToggleData[ 'toggleName' ], $toggle->getName() );
         $this->assertEquals( $expectedToggleData[ 'release_id' ], $toggle->getRelease() );
-        $this->assertEquals( $expectedToggleData[ 'isActive' ], $toggle->isActive() );
+        $this->assertEquals( $expectedToggleData[ 'visible' ], $toggle->isActive() );
         $this->assertEquals( $expectedToggleData[ 'screenshotUrl' ], $toggle->getScreenshotUrl() );
         $this->assertEquals( $expectedToggleData[ 'toggleDesc' ], $toggle->getDescriptionOfToggle() );
         $this->assertEquals( $expectedToggleData[ 'functionalityDes' ], $toggle->getDescriptionOfFunctionality() );

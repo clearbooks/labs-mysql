@@ -39,13 +39,13 @@ class MysqlActivatableToggleGateway implements ActivatableToggleGateway
             ->select( '*' )
             ->from( 'toggle' )
             ->where( 'toggle.name = ?' )
-            ->join( 'toggle', 'user_activated_toggle', 'u_a_t', 'toggle.id = u_a_t.toggle_id' )
+            ->join( 'toggle', 'user_policy', 'u_p', 'toggle.id = u_p.toggle_id' )
             ->setParameter( 0, $name );
         $data = $queryBuilder->execute()->fetch();
         if ( empty( $data ) ) {
             return null;
         }
-        $toggle = new Toggle( $data[ 'id' ], $data[ 'name' ], $data[ 'release_id' ], (bool)$data[ 'is_active' ] );
+        $toggle = new Toggle( $data[ 'id' ], $data[ 'name' ], $data[ 'release_id' ], (bool)$data[ 'visible' ] );
 
         return $toggle;
     }
