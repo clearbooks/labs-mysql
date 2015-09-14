@@ -120,7 +120,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:clearbooks/labs-schema.git",
-                "reference": "eeb53a92fc3ad9bedb10d40c82edf8ff0c14f2aa"
+                "reference": "20cb4b181bf191ab52c694c5dcd5d0936c49d45c"
             },
             "type": "library",
             "license": [
@@ -133,7 +133,7 @@
                 }
             ],
             "description": "DB schema for Labs",
-            "time": "2015-09-09 10:43:10"
+            "time": "2015-09-14 15:03:19"
         },
         {
             "name": "container-interop/container-interop",
