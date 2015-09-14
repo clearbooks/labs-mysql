@@ -119,7 +119,7 @@ class MysqlInsertFeedbackForToggleGatewayTest extends PHPUnit_Framework_TestCase
      */
     private function getAllFeedbackForToggle( $toggleId )
     {
-        return $this->connection->fetchAll( "SELECT * FROM `feedback` WHERE toggle_id = ?", [ $toggleId ] );
+        return $this->connection->fetchAll( "SELECT toggle_id, mood, message FROM `feedback` WHERE toggle_id = ?", [ $toggleId ] );
     }
 
     /**
@@ -136,7 +136,7 @@ class MysqlInsertFeedbackForToggleGatewayTest extends PHPUnit_Framework_TestCase
      */
     private function getAllFeedback()
     {
-        return $this->connection->fetchAll( "SELECT * FROM `feedback`" );
+        return $this->connection->fetchAll( "SELECT toggle_id, mood, message FROM `feedback`" );
     }
 
     private function insertDataToDatabase()
@@ -191,6 +191,19 @@ class MysqlInsertFeedbackForToggleGatewayTest extends PHPUnit_Framework_TestCase
         $this->gateway->addFeedbackForToggle( $toggleId, true, "BROLLY FEEDBACK" );
         $this->validateFeedbackForToggle( $toggleId,
             [ [ 'toggle_id' => $toggleId, 'mood' => true, 'message' => "BROLLY FEEDBACK" ] ] );
+    }
+
+    /**
+     * @test
+     */
+    public function givenExistentToggle_duringAttemptToAddMultipleFeedbacksForTheSameToggle_AddNewFeedbacksToTheDatabase()
+    {
+        $releaseId = $this->addRelease( "Insert Feedabck test 1", "useful" );
+        $toggleId = $this->addToggle( "test", $releaseId, true );
+        $this->gateway->addFeedbackForToggle( $toggleId, true, "BROLLY FEEDBACK" );
+        $this->gateway->addFeedbackForToggle( $toggleId, true, "BROLLY FEEDBACK is awesome" );
+        $this->validateFeedbackForToggle( $toggleId,
+            [ [ 'toggle_id' => $toggleId, 'mood' => true, 'message' => "BROLLY FEEDBACK" ], [ 'toggle_id' => $toggleId, 'mood' => true, 'message' => "BROLLY FEEDBACK is awesome" ] ] );
     }
 
     /**
