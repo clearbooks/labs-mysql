@@ -6,6 +6,7 @@ php:
 - hhvm
 - nightly
 before_install:
+- chmod +x authGithub.sh
 - ./authGithub.sh
 install: composer install --dev
 before_script:
