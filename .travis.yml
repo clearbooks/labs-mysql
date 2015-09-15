@@ -10,7 +10,7 @@ install: composer install --dev
 before_script:
   - cp vendor/clearbooks/labs-php-client-mysql/config/db-config.sample.php vendor/clearbooks/labs-php-client-mysql/config/db-config.php
   - mysql -e 'create database labs;'
-  - composer self-update
+  - php /home/travis/.phpenv/versions/5.3.26/bin/composer.phar self-update
 script:
   - cat vendor/clearbooks/labs-schema/sql/*.sql | mysql -uroot labs
   - vendor/phpunit/phpunit/phpunit -c phpunit.xml --coverage-clover build/logs/clover.xml
