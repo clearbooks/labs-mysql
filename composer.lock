@@ -12,7 +12,11 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/clearbooks/labs.git",
+<<<<<<< Updated upstream
                 "reference": "d9f0c25b34ba4aded53f55f5c3b33e30b981a529"
+=======
+                "reference": "ab1f589332c1a5a6663b618f4b5f9321971a9ba5"
+>>>>>>> Stashed changes
             },
             "require": {
                 "clearbooks/labs-php-client": "dev-master"
@@ -40,7 +44,11 @@
                 }
             ],
             "description": "Sensible releases",
+<<<<<<< Updated upstream
             "time": "2015-09-09 15:31:20"
+=======
+            "time": "2015-09-15 08:57:04"
+>>>>>>> Stashed changes
         },
         {
             "name": "clearbooks/labs-php-client",
@@ -1280,16 +1288,16 @@
         },
         {
             "name": "phpunit/php-token-stream",
-            "version": "1.4.6",
+            "version": "1.4.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-token-stream.git",
-                "reference": "3ab72c62e550370a6cd5dc873e1a04ab57562f5b"
+                "reference": "6f1447a60f068c89d345ceee32025a51dd630f1c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/3ab72c62e550370a6cd5dc873e1a04ab57562f5b",
-                "reference": "3ab72c62e550370a6cd5dc873e1a04ab57562f5b",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/6f1447a60f068c89d345ceee32025a51dd630f1c",
+                "reference": "6f1447a60f068c89d345ceee32025a51dd630f1c",
                 "shasum": ""
             },
             "require": {
@@ -1325,7 +1333,7 @@
             "keywords": [
                 "tokenizer"
             ],
-            "time": "2015-08-16 08:51:00"
+            "time": "2015-09-14 18:56:12"
         },
         {
             "name": "phpunit/phpunit",
