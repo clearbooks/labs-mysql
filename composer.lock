@@ -5,6 +5,7 @@
         "This file is @generated automatically"
     ],
     "hash": "0dc6e73b98ef58130ad2cb3b043452f5",
+    "content-hash": "6745e2867c72e972be1677787c88c2bd",
     "packages": [
         {
             "name": "clearbooks/labs",
@@ -12,7 +13,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/clearbooks/labs.git",
-                "reference": "4afb1be9fdf6e9be5842aae7ee690de7c7b797fd"
+                "reference": "ab1f589332c1a5a6663b618f4b5f9321971a9ba5"
             },
             "require": {
                 "clearbooks/labs-php-client": "dev-master"
@@ -40,7 +41,7 @@
                 }
             ],
             "description": "Sensible releases",
-            "time": "2015-09-14 14:40:10"
+            "time": "2015-09-15 08:57:04"
         },
         {
             "name": "clearbooks/labs-php-client",
@@ -1278,16 +1279,16 @@
         },
         {
             "name": "phpunit/php-token-stream",
-            "version": "1.4.6",
+            "version": "1.4.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-token-stream.git",
-                "reference": "3ab72c62e550370a6cd5dc873e1a04ab57562f5b"
+                "reference": "6f1447a60f068c89d345ceee32025a51dd630f1c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/3ab72c62e550370a6cd5dc873e1a04ab57562f5b",
-                "reference": "3ab72c62e550370a6cd5dc873e1a04ab57562f5b",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/6f1447a60f068c89d345ceee32025a51dd630f1c",
+                "reference": "6f1447a60f068c89d345ceee32025a51dd630f1c",
                 "shasum": ""
             },
             "require": {
@@ -1323,7 +1324,7 @@
             "keywords": [
                 "tokenizer"
             ],
-            "time": "2015-08-16 08:51:00"
+            "time": "2015-09-14 18:56:12"
         },
         {
             "name": "phpunit/phpunit",

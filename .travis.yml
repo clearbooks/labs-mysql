@@ -1,18 +1,27 @@
 language: php
 php:
-  - 5.5
-  - 5.6
-  - 7.0
-  - hhvm
-  - nightly
-
+- 5.5
+- 5.6
+- 7.0
+- hhvm
+- nightly
+before_install:
+- chmod +x authGithub.sh
+- ./authGithub.sh
 install: composer install --dev
 before_script:
-  - cp vendor/clearbooks/labs-php-client-mysql/config/db-config.sample.php vendor/clearbooks/labs-php-client-mysql/config/db-config.php
-  - mysql -e 'create database labs;'
+- cp vendor/clearbooks/labs-php-client-mysql/config/db-config.sample.php vendor/clearbooks/labs-php-client-mysql/config/db-config.php
+- mysql -e 'create database labs;'
 script:
-  - cat vendor/clearbooks/labs-schema/sql/*.sql | mysql -uroot labs
-  - vendor/phpunit/phpunit/phpunit -c phpunit.xml --coverage-clover build/logs/clover.xml
+- cat vendor/clearbooks/labs-schema/sql/*.sql | mysql -uroot labs
+- vendor/phpunit/phpunit/phpunit -c phpunit.xml --coverage-clover build/logs/clover.xml
 after_success:
-  - if [ "$TRAVIS_PHP_VERSION" != "nightly" ] && [ "$TRAVIS_PHP_VERSION" != "7.0" ] && [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then wget https://scrutinizer-ci.com/ocular.phar; fi
-  - if [ "$TRAVIS_PHP_VERSION" != "nightly" ] && [ "$TRAVIS_PHP_VERSION" != "7.0" ] && [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml; fi
+- if [ "$TRAVIS_PHP_VERSION" != "nightly" ] && [ "$TRAVIS_PHP_VERSION" != "7.0" ]
+  && [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then wget https://scrutinizer-ci.com/ocular.phar;
+  fi
+- if [ "$TRAVIS_PHP_VERSION" != "nightly" ] && [ "$TRAVIS_PHP_VERSION" != "7.0" ]
+  && [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php ocular.phar code-coverage:upload
+  --format=php-clover build/logs/clover.xml; fi
+env:
+  global:
+    secure: CIiYIYA6qgaHkJLpOP9Jn9btBdcf6/nGWETJ0aSUwhpMo0WKVMSjEVkAFUMI9bb0P/qFPslRP05arr5rU5qrBzbDYgmhBuLUEy/zf1hYuU3hecMGHZl7lLGPtcSp1XFdAeVh23l3ItJBrJZu8corAfhKjhGgijelfkHcQJ04qEV4H5oaDdFoD9fvVfoiG2nwnOBlHr+RcQCDCrDB9MhSIZE0aBEnKGbEEFGHYrjwPMQSQ1exshIL1LAJ+sgEwN/sHlT4VoDOgtG2jjDRBd0xlggboPJ/S+84VMMV+c31hQFg5FkoVcrrRg+kFFtgVT98VsvtlX9bZFUnZeOdTSQUqsam9lefo9/Fy7ZSxjGsfPQHY2ujUgEYQPPlc7rn+/2V/2OkB0bXaCch6BGHuLa9hhn50rAE1kLJqAxXCOkvom6/lJexQasWhPnEYO4qPhzJdHIhKH1eM8aNrHgORk8jWm7FLVRri/iQTOAp5ct5bpyKQGnc9+7tXd51o2Zgocc0WCHSPI/Rs3yAlDBegEhPaR3fZCQm1OmZCXxv7LJe3HNhuDHs/qg5Os//Oavc0G56oAQiEoy9jxnF/Od9MdyeRG3gioG0oFKJHuwC4cCnVvYLN25ZvphmjxTMrR/euVg89cnqKik3ptuLVd8GkfvgB+wnCfUTnEIw52ICQXtv4IM=
