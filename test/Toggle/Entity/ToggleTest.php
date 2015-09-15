@@ -67,6 +67,7 @@ class ToggleTest extends \PHPUnit_Framework_TestCase
             'toggleName' => 'Toggle Name',
             'release_id' => 'Release Eye Dee',
             'visible' => true,
+            'type' => 'simple',
             'screenshotUrl' => 'www.screenshot.fake',
             'toggleDesc' => 'this is a toggle',
             'functionalityDes' => 'it is used to toggle stuff',
@@ -75,7 +76,7 @@ class ToggleTest extends \PHPUnit_Framework_TestCase
             'guideUrl' => 'www.guide.url',
             'notificationCopy' => 'oh look a new toggle!'
         );
-        $toggle = new Toggle( $toggleData['id'], $toggleData[ 'toggleName' ], $toggleData[ 'release_id' ], $toggleData[ 'visible' ], $toggleData[ 'screenshotUrl' ], $toggleData[ 'toggleDesc' ], $toggleData[ 'functionalityDes' ], $toggleData[ 'reasonWhyDesc' ], $toggleData[ 'locationDesc' ], $toggleData[ 'guideUrl' ], $toggleData[ 'notificationCopy' ] );
+        $toggle = new Toggle( $toggleData['id'], $toggleData[ 'toggleName' ], $toggleData[ 'release_id' ], $toggleData[ 'visible' ], $toggleData[ 'type' ], $toggleData[ 'screenshotUrl' ], $toggleData[ 'toggleDesc' ], $toggleData[ 'functionalityDes' ], $toggleData[ 'reasonWhyDesc' ], $toggleData[ 'locationDesc' ], $toggleData[ 'guideUrl' ], $toggleData[ 'notificationCopy' ] );
         $this->assertToggleGettersMatchExpectedToggleData( $toggle, $toggleData );
     }
 

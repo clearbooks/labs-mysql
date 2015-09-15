@@ -40,6 +40,7 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
      * @param string $name
      * @param string $releaseId
      * @param bool $isActive
+     * @param string $toggleType
      * @param string $screenshotUrl
      * @param string $descriptionOfToggle
      * @param string $descriptionOfFunctionality
@@ -49,11 +50,12 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
      * @param string $appNotificationCopyText
      * @return string
      */
-    private function addToggle( $name, $releaseId, $isActive = false, $screenshotUrl = "", $descriptionOfToggle = "",
+    private function addToggle( $name, $releaseId, $isActive = false, $toggleType = "simple", $screenshotUrl = "",
+                                $descriptionOfToggle = "",
                                 $descriptionOfFunctionality = "", $descriptionOfImplementationReason = "",
                                 $descriptionOfLocation = "", $guideUrl = "", $appNotificationCopyText = "" )
     {
-        $this->addToggleToDatabase( $name, $releaseId, $isActive );
+        $this->addToggleToDatabase( $name, $releaseId, $isActive, $toggleType );
         $toggleId = $this->connection->lastInsertId( "`toggle`" );
         if (
             !empty( $screenshotUrl ) ||
@@ -75,14 +77,15 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
      * @param string $name
      * @param string $releaseId
      * @param bool $isActive
+     * @param string $toggleType
      * @return int
      */
-    public function addToggleToDatabase( $name, $releaseId, $isActive )
+    public function addToggleToDatabase( $name, $releaseId, $isActive, $toggleType = "simple" )
     {
         return $this->connection->insert( "`toggle`", [
             'name' => $name,
             'release_id' => $releaseId,
-            'type' => 1,
+            'type' => $toggleType,
             'visible' => $isActive
         ] );
     }
@@ -113,6 +116,8 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
             $returnedToggle->getGuideUrl() );
         $this->assertEquals( $expectedToggle->getAppNotificationCopyText(),
             $returnedToggle->getAppNotificationCopyText() );
+        $this->assertEquals( $expectedToggle->getType(),
+            $returnedToggle->getType() );
     }
 
     private function addToggleMarketingInformationToDatabase( $toggleId, $screenshotUrl, $descriptionOfToggle,
@@ -202,10 +207,13 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
     {
         $id = $this->addRelease( 'Test release for toggle 2', 'a helpful url' );
 
-        $toggleId = $this->addToggle( "test1", $id, false, "this", "is", "a", "test", "of", "marketing", "information" );
+        $toggleId = $this->addToggle( "test1", $id, false, "simple", "this", "is", "a", "test", "of", "marketing",
+            "information" );
         $toggleId2 = $this->addToggle( "test2", $id );
 
-        $expectedToggle = new Toggle( $toggleId, "test1", $id, false, "this", "is", "a", "test", "of", "marketing", "information" );
+        $expectedToggle = new Toggle( $toggleId, "test1", $id, false, "simple", "this", "is", "a", "test", "of",
+            "marketing",
+            "information" );
         $expectedToggle2 = new Toggle( $toggleId2, "test2", $id );
 
         $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
@@ -226,13 +234,15 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
         $id = $this->addRelease( 'Test release for toggle 3.1', 'a helpful url' );
         $id2 = $this->addRelease( 'Test release for toggle 3.2', 'a helpful url2' );
 
-        $toggleId = $this->addToggle( "test1", $id, true, "this", "is", "a", "test", "of", "marketing",
+        $toggleId = $this->addToggle( "test1", $id, true, "simple", "this", "is", "a", "test", "of", "marketing",
             "information" );
         $toggleId2 = $this->addToggle( "test2", $id, true );
         $this->addToggle( "test3", $id2, true );
         $this->addToggle( "test4", $id2, true );
 
-        $expectedToggle = new Toggle( $toggleId, "test1", $id, true, "this", "is", "a", "test", "of", "marketing", "information" );
+        $expectedToggle = new Toggle( $toggleId, "test1", $id, true, "simple", "this", "is", "a", "test", "of",
+            "marketing",
+            "information" );
         $expectedToggle2 = new Toggle( $toggleId2, "test2", $id, true );
 
         $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
