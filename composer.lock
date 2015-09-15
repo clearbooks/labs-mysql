@@ -5,6 +5,7 @@
         "This file is @generated automatically"
     ],
     "hash": "0dc6e73b98ef58130ad2cb3b043452f5",
+    "content-hash": "6745e2867c72e972be1677787c88c2bd",
     "packages": [
         {
             "name": "clearbooks/labs",
@@ -12,11 +13,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/clearbooks/labs.git",
-<<<<<<< Updated upstream
-                "reference": "d9f0c25b34ba4aded53f55f5c3b33e30b981a529"
-=======
                 "reference": "ab1f589332c1a5a6663b618f4b5f9321971a9ba5"
->>>>>>> Stashed changes
             },
             "require": {
                 "clearbooks/labs-php-client": "dev-master"
@@ -44,11 +41,7 @@
                 }
             ],
             "description": "Sensible releases",
-<<<<<<< Updated upstream
-            "time": "2015-09-09 15:31:20"
-=======
             "time": "2015-09-15 08:57:04"
->>>>>>> Stashed changes
         },
         {
             "name": "clearbooks/labs-php-client",
@@ -89,7 +82,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/clearbooks/labs-php-client-mysql.git",
-                "reference": "128532d9ce7ca9dde974c640b0e9375b569ee603"
+                "reference": "fffb347af9afe39f6b44145bef382bf6fe7e63e2"
             },
             "require": {
                 "clearbooks/labs-php-client": "dev-master",
@@ -104,12 +97,10 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Clearbooks\\Labs\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Clearbooks\\Labs\\": "test/"
+                    "Clearbooks\\Labs\\": [
+                        "src/",
+                        "test/"
+                    ]
                 }
             },
             "license": [
@@ -122,7 +113,7 @@
                 }
             ],
             "description": "DB connection classes for Labs",
-            "time": "2015-09-08 13:08:11"
+            "time": "2015-09-10 10:19:08"
         },
         {
             "name": "clearbooks/labs-schema",
@@ -130,7 +121,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:clearbooks/labs-schema.git",
-                "reference": "eeb53a92fc3ad9bedb10d40c82edf8ff0c14f2aa"
+                "reference": "20cb4b181bf191ab52c694c5dcd5d0936c49d45c"
             },
             "type": "library",
             "license": [
@@ -143,7 +134,7 @@
                 }
             ],
             "description": "DB schema for Labs",
-            "time": "2015-09-09 10:43:10"
+            "time": "2015-09-14 15:03:19"
         },
         {
             "name": "container-interop/container-interop",
@@ -795,16 +786,16 @@
         },
         {
             "name": "php-di/invoker",
-            "version": "1.0.1",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-DI/Invoker.git",
-                "reference": "2eb8f3a9b44c1427865134ef585d986ca89bce36"
+                "reference": "67ad285484a1f783ba2ce26866b5d48f171d3abf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-DI/Invoker/zipball/2eb8f3a9b44c1427865134ef585d986ca89bce36",
-                "reference": "2eb8f3a9b44c1427865134ef585d986ca89bce36",
+                "url": "https://api.github.com/repos/PHP-DI/Invoker/zipball/67ad285484a1f783ba2ce26866b5d48f171d3abf",
+                "reference": "67ad285484a1f783ba2ce26866b5d48f171d3abf",
                 "shasum": ""
             },
             "require": {
@@ -834,7 +825,7 @@
                 "invoke",
                 "invoker"
             ],
-            "time": "2015-09-02 16:01:10"
+            "time": "2015-09-12 09:14:11"
         },
         {
             "name": "php-di/php-di",
@@ -1097,16 +1088,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "2.2.2",
+            "version": "2.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "2d7c03c0e4e080901b8f33b2897b0577be18a13c"
+                "reference": "ef1ca6835468857944d5c3b48fa503d5554cff2f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/2d7c03c0e4e080901b8f33b2897b0577be18a13c",
-                "reference": "2d7c03c0e4e080901b8f33b2897b0577be18a13c",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/ef1ca6835468857944d5c3b48fa503d5554cff2f",
+                "reference": "ef1ca6835468857944d5c3b48fa503d5554cff2f",
                 "shasum": ""
             },
             "require": {
@@ -1155,7 +1146,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-08-04 03:42:39"
+            "time": "2015-09-14 06:51:16"
         },
         {
             "name": "phpunit/php-file-iterator",
