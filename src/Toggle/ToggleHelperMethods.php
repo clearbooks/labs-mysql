@@ -90,7 +90,8 @@ trait ToggleHelperMethods
             $this->getDefaultForDescriptionOfFunctionality( $row ),
             $this->getDefaultForDescriptionOfImplementationReason( $row ),
             $this->getDefaultForDescriptionOfLocation( $row ), $this->getDefaultForGuideUrl( $row ),
-            $this->getDefaultForAppNotificationCopyText( $row )
+            $this->getDefaultForAppNotificationCopyText( $row ),
+            $row[ 'type' ]
         );
     }
 

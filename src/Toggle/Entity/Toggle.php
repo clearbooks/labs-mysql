@@ -184,6 +184,9 @@ class Toggle implements MarketableToggle, UserToggle, ActivatableToggle
         return $this->appNotificationCopyText;
     }
 
+    /**
+     * @return string
+     */
     public function getType()
     {
         return $this->toggleType;
