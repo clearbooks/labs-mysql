@@ -10,6 +10,8 @@ namespace Clearbooks\LabsMysql\Release;
 use Clearbooks\Labs\Release\Gateway\ReleaseGateway;
 use Clearbooks\Labs\Release\Release;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Query\QueryException;
 
 class MysqlReleaseGateway implements ReleaseGateway
 {
@@ -46,11 +48,11 @@ class MysqlReleaseGateway implements ReleaseGateway
     public function getRelease( $releaseId )
     {
         $releaseArray = $this->connection->fetchAssoc( 'SELECT * FROM `release` WHERE id = ?', [ $releaseId ] );
-        if ( empty( $releaseArray ) ){
+        if ( empty( $releaseArray ) ) {
             return null;
         }
 
-        return new Release( $releaseArray['id'], $releaseArray['name'], $releaseArray['info'], new \DateTime() );
+        return new Release( $releaseArray[ 'id' ], $releaseArray[ 'name' ], $releaseArray[ 'info' ], new \DateTime() );
     }
 
     /**
@@ -58,11 +60,35 @@ class MysqlReleaseGateway implements ReleaseGateway
      */
     public function getAllReleases()
     {
-        $releases = [];
-        foreach ( $this->connection->fetchAll( 'SELECT * FROM `release`' ) as $row ){
-            $releases[] = new Release( $row['id'], $row['name'], $row['info'], new \DateTime() );
+        $releases = [ ];
+        foreach ( $this->connection->fetchAll( 'SELECT * FROM `release`' ) as $row ) {
+            $releases[] = new Release( $row[ 'id' ], $row[ 'name' ], $row[ 'info' ], new \DateTime() );
         }
         return $releases;
+    }
+
+    /**
+     * @param string $releaseId
+     * @param string $releaseName
+     * @param string $releaseUrl
+     * @return bool
+     */
+    public function editRelease( $releaseId, $releaseName, $releaseUrl )
+    {
+        if ( empty( $this->getRelease( $releaseId ) ) ) {
+            return false;
+        }
+        $queryBuilder = new QueryBuilder( $this->connection );
+        $queryBuilder
+            ->update( '`release`' )
+            ->set( 'name', '?' )
+            ->set( 'info', '?' )
+            ->where( 'id = ?' )
+            ->setParameter( 0, $releaseName )
+            ->setParameter( 1, $releaseUrl )
+            ->setParameter( 2, $releaseId );
+        $queryBuilder->execute();
+        return true;
     }
 }
 //EOF MysqlReleaseGateway.php
