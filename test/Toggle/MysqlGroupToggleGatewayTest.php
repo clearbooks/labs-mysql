@@ -58,12 +58,12 @@ class MysqlGroupToggleGatewayTest extends \PHPUnit_Framework_TestCase
      * @param string $name
      * @param string $releaseId
      * @param bool $isActive
-     * @param int $toggle_type
+     * @param string $toggleType
      * @return string
      */
-    private function addToggle( $name, $releaseId, $isActive = false, $toggle_type = 2 )
+    private function addToggle( $name, $releaseId, $isActive = false, $toggleType = "group" )
     {
-        $this->addToggleToDatabase( $name, $releaseId, $isActive, $toggle_type );
+        $this->addToggleToDatabase( $name, $releaseId, $isActive, $toggleType );
         return $this->connection->lastInsertId( "`toggle`" );
     }
 
@@ -71,13 +71,13 @@ class MysqlGroupToggleGatewayTest extends \PHPUnit_Framework_TestCase
      * @param string $name
      * @param string $releaseId
      * @param bool $isActive
-     * @param int $toggle_type
+     * @param int $toggleType
      * @return int
      */
-    public function addToggleToDatabase( $name, $releaseId, $isActive, $toggle_type )
+    public function addToggleToDatabase( $name, $releaseId, $isActive, $toggleType )
     {
         return $this->connection->insert( "`toggle`",
-            [ 'name' => $name, 'release_id' => $releaseId, 'type' => $toggle_type, 'visible' => $isActive ] );
+            [ 'name' => $name, 'release_id' => $releaseId, 'type' => $toggleType, 'visible' => $isActive ] );
     }
 
     public function setUp()
@@ -120,7 +120,7 @@ class MysqlGroupToggleGatewayTest extends \PHPUnit_Framework_TestCase
 
         $toggleId = $this->addToggle( "test1", $id, true );
 
-        $expectedToggles = [new Toggle( $toggleId, "test1", $id, true )];
+        $expectedToggles = [ new Toggle( $toggleId, "test1", $id, true, "group" ) ];
 
         $returnedToggles = $this->gateway->getAllGroupToggles();
 
@@ -140,7 +140,10 @@ class MysqlGroupToggleGatewayTest extends \PHPUnit_Framework_TestCase
         $this->addToggle( "test3", $id, true, 1 );
         $this->addToggle( "test4", $id, true, 1 );
 
-        $expectedToggles = [ new Toggle( $toggleId, "test1", $id, true ), new Toggle( $toggleId2, "test2", $id, true ) ];
+        $expectedToggles = [
+            new Toggle( $toggleId, "test1", $id, true, "group" ),
+            new Toggle( $toggleId2, "test2", $id, true, "group" )
+        ];
         $returnedToggles = $this->gateway->getAllGroupToggles();
 
         $this->assertEquals( $expectedToggles, $returnedToggles );
