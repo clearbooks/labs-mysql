@@ -27,6 +27,112 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
      */
     private $connection;
 
+    /**
+     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
+     */
+    private function deleteAddedReleases()
+    {
+        $this->connection->delete( '`release`', [ '*' ] );
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
+     */
+    private function deleteAddedToggles()
+    {
+        $this->connection->delete( '`toggle`', [ '*' ] );
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
+     */
+    private function deleteAddedToggleMarketingInformation()
+    {
+        $this->connection->delete( '`toggle_marketing_information`', [ '*' ] );
+    }
+
+    /**
+     * @param string $releaseName
+     * @param string $url
+     * @return string
+     */
+    private function addRelease( $releaseName, $url )
+    {
+        ( new MysqlReleaseGateway( $this->connection ) )->addRelease( $releaseName, $url );
+        return $this->connection->lastInsertId( "`release`" );
+    }
+
+    /**
+     * @param string $name
+     * @param string $releaseId
+     * @param bool $isActive
+     * @param string $toggleType
+     * @param string $screenshotUrl
+     * @param string $descriptionOfToggle
+     * @param string $descriptionOfFunctionality
+     * @param string $descriptionOfImplementationReason
+     * @param string $descriptionOfLocation
+     * @param string $guideUrl
+     * @param string $appNotificationCopyText
+     * @return string
+     */
+    private function addToggle( $name, $releaseId, $isActive = false, $toggleType = "simple", $screenshotUrl = "",
+                                $descriptionOfToggle = "",
+                                $descriptionOfFunctionality = "", $descriptionOfImplementationReason = "",
+                                $descriptionOfLocation = "", $guideUrl = "", $appNotificationCopyText = "" )
+    {
+        $this->addToggleToDatabase( $name, $releaseId, $isActive, $toggleType );
+        $toggleId = $this->connection->lastInsertId( "`toggle`" );
+        if (
+            !empty( $screenshotUrl ) ||
+            !empty( $descriptionOfToggle ) ||
+            !empty( $descriptionOfFunctionality ) ||
+            !empty( $descriptionOfImplementationReason ) ||
+            !empty( $descriptionOfLocation ) ||
+            !empty( $guideUrl ) ||
+            !empty( $appNotificationCopyText )
+        ) {
+            $this->addToggleMarketingInformationToDatabase( $toggleId, $screenshotUrl, $descriptionOfToggle,
+                $descriptionOfFunctionality, $descriptionOfImplementationReason,
+                $descriptionOfLocation, $guideUrl, $appNotificationCopyText );
+        }
+        return $toggleId;
+    }
+
+    /**
+     * @param string $name
+     * @param string $releaseId
+     * @param bool $isActive
+     * @param int $toggleType
+     * @return int
+     */
+    public function addToggleToDatabase( $name, $releaseId, $isActive, $toggleType )
+    {
+        return $this->connection->insert( "`toggle`", [
+            'name' => $name,
+            'release_id' => $releaseId,
+            'type' => $toggleType,
+            'visible' => $isActive
+        ] );
+    }
+
+    private function addToggleMarketingInformationToDatabase( $toggleId, $screenshotUrl, $descriptionOfToggle,
+                                                              $descriptionOfFunctionality,
+                                                              $descriptionOfImplementationReason,
+                                                              $descriptionOfLocation, $guideUrl,
+                                                              $appNotificationCopyText )
+    {
+        return $this->connection->insert( "`toggle_marketing_information`", [
+            'toggle_id' => $toggleId,
+            'screenshot_urls' => $screenshotUrl,
+            'description_of_toggle' => $descriptionOfToggle,
+            'description_of_functionality' => $descriptionOfFunctionality,
+            'description_of_implementation_reason' => $descriptionOfImplementationReason,
+            'description_of_location' => $descriptionOfLocation, 'guide_url' => $guideUrl,
+            'app_notification_copy_text' => $appNotificationCopyText
+        ] );
+    }
+
     public function setUp()
     {
         parent::setUp();
@@ -45,6 +151,7 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        $this->deleteAddedToggleMarketingInformation();
         $this->deleteAddedToggles();
         $this->deleteAddedReleases();
     }
@@ -52,7 +159,7 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenNoUserTogglesFound_MysqlUserToggleGateway_ReturnsEmptyArray()
+    public function givenNoUserTogglesFound_ReturnsEmptyArray()
     {
         $returnedToggle = $this->gateway->getAllUserToggles();
         $this->assertEquals( [ ], $returnedToggle );
@@ -61,15 +168,13 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenExistentUserTogglesFound_MysqlUserToggleGateway_ReturnsArrayOfUserToggles()
+    public function givenUserTogglesFound_ReturnsArrayOfUserToggles()
     {
-        $releaseName = 'Test user toggle 1';
-        $url = 'a helpful url';
-        $id = $this->addRelease( $releaseName, $url );
+        $releaseId = $this->addRelease( 'Test user toggle 1', 'a helpful url' );
 
-        $toggleId = $this->addToggle( "test1", $id, true );
+        $toggleId = $this->addToggle( "test1", $releaseId, true, "simple" );
 
-        $expectedToggle = new Toggle( $toggleId, "test1", $id, true );
+        $expectedToggle = new Toggle( $toggleId, "test1", $releaseId, true, "simple" );
 
         $expectedToggles[] = $expectedToggle;
         $returnedToggles = $this->gateway->getAllUserToggles();
@@ -80,73 +185,40 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenExistentUserTogglesAndNonUserTogglesFound_MysqlUserToggleGateway_ReturnsArrayOfUserTogglesOnly()
+    public function givenUserTogglesFoundWithMarketingInformation_ReturnsArrayOfUserTogglesWithValidMarketingInformation()
     {
-        $releaseName = 'Test user toggle 1';
-        $url = 'a helpful url';
-        $id = $this->addRelease( $releaseName, $url );
+        $releaseId = $this->addRelease( 'Test user toggle 1', 'a helpful url' );
 
-        $toggleId = $this->addToggle( "test1", $id, true, 1 );
-        $toggleId2 = $this->addToggle( "test2", $id, true, 1 );
-        $this->addToggle( "test3", $id, true, 2 );
-        $this->addToggle( "test4", $id, true, 2 );
+        $toggleId = $this->addToggle( "test1", $releaseId, true, "simple", "this", "is", "a", "test", "of", "marketing",
+            "information" );
+        $toggleId2 = $this->addToggle( "test2", $releaseId, true, "simple" );;
 
-        $expectedToggles = [ new Toggle( $toggleId, "test1", $id, true ), new Toggle( $toggleId2, "test2", $id, true ) ];
+        $expectedToggles = [ new Toggle( $toggleId, "test1", $releaseId, true, "simple", "this", "is", "a", "test", "of", "marketing",
+            "information" ), new Toggle( $toggleId2, "test2", $releaseId, true ) ];
         $returnedToggles = $this->gateway->getAllUserToggles();
 
         $this->assertEquals( $expectedToggles, $returnedToggles );
     }
 
     /**
-     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
+     * @test
      */
-    private function deleteAddedReleases()
+    public function givenUserTogglesAndNonUserTogglesFound_ReturnsArrayOfUserTogglesOnly()
     {
-        $this->connection->delete( '`release`', [ '*' ] );
-    }
+        $releaseId = $this->addRelease( 'Test user toggle 1', 'a helpful url' );
 
-    /**
-     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
-     */
-    private function deleteAddedToggles()
-    {
-        $this->connection->delete( '`toggle`', [ '*' ] );
-    }
+        //Parameters: name, release_id, is_activatable, toggle_type
+        $toggleId = $this->addToggle( "test1", $releaseId, true, "simple" );
+        $toggleId2 = $this->addToggle( "test2", $releaseId, true, "simple" );
+        $this->addToggle( "test3", $releaseId, true, "group" );
+        $this->addToggle( "test4", $releaseId, true, "group" );
 
-    /**
-     * @param string $releaseName
-     * @param string $url
-     * @return string
-     */
-    private function addRelease( $releaseName, $url )
-    {
-        ( new MysqlReleaseGateway( $this->connection ) )->addRelease( $releaseName, $url );
-        return $this->connection->lastInsertId( "`release`" );
-    }
+        $expectedToggle = new Toggle( $toggleId, "test1", $releaseId, true, "simple" );
+        $expectedToggle2 = new Toggle( $toggleId2, "test2", $releaseId, true, "simple" );
 
-    /**
-     * @param string $name
-     * @param string $releaseId
-     * @param bool $isActive
-     * @param int $toggle_type
-     * @return string
-     */
-    private function addToggle( $name, $releaseId, $isActive = false, $toggle_type = 1 )
-    {
-        $this->addToggleToDatabase( $name, $releaseId, $isActive, $toggle_type );
-        return $this->connection->lastInsertId( "`toggle`" );
-    }
+        $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
+        $returnedToggles = $this->gateway->getAllUserToggles();
 
-    /**
-     * @param string $name
-     * @param string $releaseId
-     * @param bool $isActive
-     * @param int $toggle_type
-     * @return int
-     */
-    public function addToggleToDatabase( $name, $releaseId, $isActive, $toggle_type )
-    {
-        return $this->connection->insert( "`toggle`",
-            [ 'name' => $name, 'release_id' => $releaseId, 'type' => $toggle_type, 'visible' => $isActive ] );
+        $this->assertEquals( $expectedToggles, $returnedToggles );
     }
 }
