@@ -52,11 +52,9 @@ class MysqlMarketableToggleGateway implements MarketableToggleGateway
      */
     private function updateMarketingInformationForToggle( $toggleId, $marketingInformation )
     {
-        foreach ( $marketingInformation as $marketingKey => $marketingInfo ) {
-            if ( !empty( $marketingInfo ) ) {
-                $this->connection->update( "`toggle_marketing_information`",
-                    [ $marketingKey => $marketingInfo ], [ 'toggle_id' => $toggleId ] );
-            }
+        $info = array_filter( $marketingInformation );
+        if ( !empty( $info ) ) {
+            $this->connection->update( "`toggle_marketing_information`", $info, [ 'toggle_id' => $toggleId ] );
         }
     }
 }

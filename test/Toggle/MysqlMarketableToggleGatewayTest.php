@@ -83,8 +83,8 @@ class MysqlMarketableToggleGatewayTest extends \PHPUnit_Framework_TestCase
         return $this->connection->insert( "`toggle`", [
             'name' => $name,
             'release_id' => $releaseId,
-            'toggle_type' => 1,
-            'is_active' => $isActive
+            'type' => 1,
+            'visible' => $isActive
         ] );
     }
 
@@ -114,6 +114,72 @@ class MysqlMarketableToggleGatewayTest extends \PHPUnit_Framework_TestCase
             'description_of_location' => $descriptionOfLocation, 'guide_url' => $guideUrl,
             'app_notification_copy_text' => $appNotificationCopyText
         ] );
+    }
+
+    /**
+     * @param array $expected
+     * @param string $toggleId
+     */
+    private function validateMarketingInformationInTheDatabase( $expected, $toggleId )
+    {
+        $actual = $this->connection->fetchAll( 'SELECT * FROM `toggle_marketing_information` WHERE toggle_id = ?',
+            [ $toggleId ] );
+
+        $this->assertEquals( $expected, $actual );
+    }
+
+    /**
+     * @param $toggleId
+     * @param $url
+     * @param $toggleDesc
+     * @param $toggleFunctionalityDesc
+     * @param $implementationDesc
+     * @param $locationDesc
+     * @param $guideUrl
+     * @param $appNotificationText
+     * @return array
+     */
+    private function makeExpectedMarketingInformation( $toggleId, $url, $toggleDesc, $toggleFunctionalityDesc,
+                                                       $implementationDesc, $locationDesc, $guideUrl,
+                                                       $appNotificationText )
+    {
+        $expected = [ [
+            'toggle_id' => $toggleId,
+            'screenshot_urls' => $url,
+            'description_of_toggle' => $toggleDesc,
+            'description_of_functionality' => $toggleFunctionalityDesc,
+            'description_of_implementation_reason' => $implementationDesc,
+            'description_of_location' => $locationDesc,
+            'guide_url' => $guideUrl,
+            'app_notification_copy_text' => $appNotificationText
+        ] ];
+        return $expected;
+    }
+
+    /**
+     * @param $url
+     * @param $toggleDesc
+     * @param $toggleFunctionalityDesc
+     * @param $implementationDesc
+     * @param $locationDesc
+     * @param $guideUrl
+     * @param $appNotificationText
+     * @return array
+     */
+    private function makeMarketingInformation( $url, $toggleDesc, $toggleFunctionalityDesc,
+                                               $implementationDesc, $locationDesc, $guideUrl,
+                                               $appNotificationText )
+    {
+        $expected = [
+            'screenshot_urls' => $url,
+            'description_of_toggle' => $toggleDesc,
+            'description_of_functionality' => $toggleFunctionalityDesc,
+            'description_of_implementation_reason' => $implementationDesc,
+            'description_of_location' => $locationDesc,
+            'guide_url' => $guideUrl,
+            'app_notification_copy_text' => $appNotificationText
+        ];
+        return $expected;
     }
 
     public function setUp()
@@ -154,16 +220,7 @@ class MysqlMarketableToggleGatewayTest extends \PHPUnit_Framework_TestCase
         $releaseId = $this->addRelease( 'Test Marketing Information for toggle 1', "Very Very useful" );
         $toggleId = $this->addToggle( "MarketingToggleTest 1", $releaseId, true );
 
-        $expected = [ [
-            'toggle_id' => $toggleId,
-            'screenshot_urls' => '',
-            'description_of_toggle' => '',
-            'description_of_functionality' => '',
-            'description_of_implementation_reason' => '',
-            'description_of_location' => '',
-            'guide_url' => '',
-            'app_notification_copy_text' => ''
-        ] ];
+        $expected = $this->makeExpectedMarketingInformation( $toggleId, "", "", "", "", "", "", "" );
         $this->gateway->setMarketingInformationForToggle( $toggleId, [ ] );
 
         $this->validateMarketingInformationInTheDatabase( $expected, $toggleId );
@@ -175,29 +232,14 @@ class MysqlMarketableToggleGatewayTest extends \PHPUnit_Framework_TestCase
     public function givenExistantToggleIdWithAllMarketingInformation_whenNoInformationProvided_NoOriginalInformationWillBeChanged()
     {
         $releaseId = $this->addRelease( 'Test Marketing Information for toggle 2', "Very Very useful" );
-        $toggleId = $this->addToggle( "MarketingToggleTest 2", $releaseId, true, "this", "is", "the", "test", "of",
-            "marketing", "information" );
+        $toggleId = $this->addToggle( "MarketingToggleTest 2", $releaseId, true,
+            "this", "is", "the", "test", "of", "marketing", "information" );
 
-        $expected = [ [
-            'toggle_id' => $toggleId,
-            'screenshot_urls' => 'this',
-            'description_of_toggle' => 'is',
-            'description_of_functionality' => 'the',
-            'description_of_implementation_reason' => 'test',
-            'description_of_location' => 'of',
-            'guide_url' => 'marketing',
-            'app_notification_copy_text' => 'information'
-        ] ];
+        $expected = $this->makeExpectedMarketingInformation( $toggleId,
+            "this", "is", "the", "test", "of", "marketing", "information" );
+
         $this->gateway->setMarketingInformationForToggle( $toggleId,
-            [
-                'screenshot_urls' => '',
-                'description_of_toggle' => '',
-                'description_of_functionality' => '',
-                'description_of_implementation_reason' => '',
-                'description_of_location' => '',
-                'guide_url' => '',
-                'app_notification_copy_text' => ''
-            ] );
+            $this->makeMarketingInformation( '', '', '', '', '', '', '' ) );
 
         $this->validateMarketingInformationInTheDatabase( $expected, $toggleId );
     }
@@ -210,26 +252,10 @@ class MysqlMarketableToggleGatewayTest extends \PHPUnit_Framework_TestCase
         $releaseId = $this->addRelease( 'Test Marketing Information for toggle 2', "Very Very useful" );
         $toggleId = $this->addToggle( "MarketingToggleTest 2", $releaseId, true );
 
-        $expected = [ [
-            'toggle_id' => $toggleId,
-            'screenshot_urls' => 'this',
-            'description_of_toggle' => 'is',
-            'description_of_functionality' => 'the',
-            'description_of_implementation_reason' => 'test',
-            'description_of_location' => 'of',
-            'guide_url' => 'marketing',
-            'app_notification_copy_text' => 'information'
-        ] ];
+        $expected = $this->makeExpectedMarketingInformation( $toggleId,
+            'this', 'is', 'the', 'test', 'of', 'marketing', 'information' );
         $this->gateway->setMarketingInformationForToggle( $toggleId,
-            [
-                'screenshot_urls' => 'this',
-                'description_of_toggle' => 'is',
-                'description_of_functionality' => 'the',
-                'description_of_implementation_reason' => 'test',
-                'description_of_location' => 'of',
-                'guide_url' => 'marketing',
-                'app_notification_copy_text' => 'information'
-            ] );
+            $this->makeMarketingInformation( 'this', 'is', 'the', 'test', 'of', 'marketing', 'information' ) );
 
         $this->validateMarketingInformationInTheDatabase( $expected, $toggleId );
     }
@@ -240,30 +266,16 @@ class MysqlMarketableToggleGatewayTest extends \PHPUnit_Framework_TestCase
     public function givenExistantToggleIdWithAllMarketingInformation_whenAllInformationProvided_AllTheInformationWillBeUpdated()
     {
         $releaseId = $this->addRelease( 'Test Marketing Information for toggle 2', "Very Very useful" );
-        $toggleId = $this->addToggle( "MarketingToggleTest 2", $releaseId, true, "this blah...", "is blah...",
+        $toggleId = $this->addToggle( "MarketingToggleTest 2", $releaseId, true,
+            "this blah...", "is blah...",
             "the blah...", "test blah...", "of blah...",
             "marketing blah...", "information blah..." );
 
-        $expected = [ [
-            'toggle_id' => $toggleId,
-            'screenshot_urls' => 'this',
-            'description_of_toggle' => 'is',
-            'description_of_functionality' => 'the',
-            'description_of_implementation_reason' => 'test',
-            'description_of_location' => 'of',
-            'guide_url' => 'marketing',
-            'app_notification_copy_text' => 'information'
-        ] ];
+        $expected = $this->makeExpectedMarketingInformation( $toggleId,
+            'this', 'is', 'the', 'test', 'of', 'marketing', 'information' );
+
         $this->gateway->setMarketingInformationForToggle( $toggleId,
-            [
-                'screenshot_urls' => 'this',
-                'description_of_toggle' => 'is',
-                'description_of_functionality' => 'the',
-                'description_of_implementation_reason' => 'test',
-                'description_of_location' => 'of',
-                'guide_url' => 'marketing',
-                'app_notification_copy_text' => 'information'
-            ] );
+            $this->makeMarketingInformation( 'this', 'is', 'the', 'test', 'of', 'marketing', 'information' ) );
 
         $this->validateMarketingInformationInTheDatabase( $expected, $toggleId );
     }
@@ -278,26 +290,11 @@ class MysqlMarketableToggleGatewayTest extends \PHPUnit_Framework_TestCase
             "the blah...", "test blah...", "of blah...",
             "marketing blah...", "information blah..." );
 
-        $expected = [ [
-            'toggle_id' => $toggleId,
-            'screenshot_urls' => 'this blah...',
-            'description_of_toggle' => 'is',
-            'description_of_functionality' => 'the blah...',
-            'description_of_implementation_reason' => 'test',
-            'description_of_location' => 'of blah...',
-            'guide_url' => 'marketing',
-            'app_notification_copy_text' => 'information blah...'
-        ] ];
+        $expected = $this->makeExpectedMarketingInformation( $toggleId,
+            'this blah...', 'is', 'the blah...', 'test', 'of blah...', 'marketing', 'information blah...' );
+
         $this->gateway->setMarketingInformationForToggle( $toggleId,
-            [
-                'screenshot_urls' => '',
-                'description_of_toggle' => 'is',
-                'description_of_functionality' => '',
-                'description_of_implementation_reason' => 'test',
-                'description_of_location' => '',
-                'guide_url' => 'marketing',
-                'app_notification_copy_text' => ''
-            ] );
+            $this->makeMarketingInformation( '', 'is', '', 'test', '', 'marketing', '' ) );
 
         $this->validateMarketingInformationInTheDatabase( $expected, $toggleId );
     }
@@ -310,26 +307,9 @@ class MysqlMarketableToggleGatewayTest extends \PHPUnit_Framework_TestCase
         $releaseId = $this->addRelease( 'Test Marketing Information for toggle 2', "Very Very useful" );
         $toggleId = $this->addToggle( "MarketingToggleTest 2", $releaseId, true );
 
-        $expected = [ [
-            'toggle_id' => $toggleId,
-            'screenshot_urls' => '',
-            'description_of_toggle' => 'is',
-            'description_of_functionality' => '',
-            'description_of_implementation_reason' => 'test',
-            'description_of_location' => '',
-            'guide_url' => 'marketing',
-            'app_notification_copy_text' => ''
-        ] ];
+        $expected = $this->makeExpectedMarketingInformation( $toggleId, '', 'is', '', 'test', '', 'marketing', '' );
         $this->gateway->setMarketingInformationForToggle( $toggleId,
-            [
-                'screenshot_urls' => '',
-                'description_of_toggle' => 'is',
-                'description_of_functionality' => '',
-                'description_of_implementation_reason' => 'test',
-                'description_of_location' => '',
-                'guide_url' => 'marketing',
-                'app_notification_copy_text' => ''
-            ] );
+            $this->makeMarketingInformation( '', 'is', '', 'test', '', 'marketing', '' ) );
 
         $this->validateMarketingInformationInTheDatabase( $expected, $toggleId );
     }
@@ -342,26 +322,11 @@ class MysqlMarketableToggleGatewayTest extends \PHPUnit_Framework_TestCase
         $releaseId = $this->addRelease( 'Test Marketing Information for toggle 2', "Very Very useful" );
         $toggleId = $this->addToggle( "MarketingToggleTest 2", $releaseId, true, "this blah...", "is blah..." );
 
-        $expected = [ [
-            'toggle_id' => $toggleId,
-            'screenshot_urls' => 'this blah...',
-            'description_of_toggle' => 'is blah...',
-            'description_of_functionality' => '',
-            'description_of_implementation_reason' => '',
-            'description_of_location' => '',
-            'guide_url' => '',
-            'app_notification_copy_text' => ''
-        ] ];
+        $expected = $this->makeExpectedMarketingInformation( $toggleId,
+            "this blah...", "is blah...", "", "", "", "", "" );
+
         $this->gateway->setMarketingInformationForToggle( $toggleId,
-            [
-                'screenshot_urls' => '',
-                'description_of_toggle' => '',
-                'description_of_functionality' => '',
-                'description_of_implementation_reason' => '',
-                'description_of_location' => '',
-                'guide_url' => '',
-                'app_notification_copy_text' => ''
-            ] );
+            $this->makeMarketingInformation( '', '', '', '', '', '', '' ) );
 
         $this->validateMarketingInformationInTheDatabase( $expected, $toggleId );
     }
@@ -372,41 +337,15 @@ class MysqlMarketableToggleGatewayTest extends \PHPUnit_Framework_TestCase
     public function givenExistantToggleIdWithSomeMarketingInformation_whenSomeInformationProvided_OnlyProvidedInformationWillBeUptated()
     {
         $releaseId = $this->addRelease( 'Test Marketing Information for toggle 2', "Very Very useful" );
-        $toggleId = $this->addToggle( "MarketingToggleTest 2", $releaseId, true, "this blah...", "is blah...", "", "", "this isi sisiis" );
+        $toggleId = $this->addToggle( "MarketingToggleTest 2", $releaseId, true, "this blah...", "is blah...", "", "",
+            "this isi sisiis" );
 
-        $expected = [ [
-            'toggle_id' => $toggleId,
-            'screenshot_urls' => 'this',
-            'description_of_toggle' => 'is blah...',
-            'description_of_functionality' => 'the',
-            'description_of_implementation_reason' => '',
-            'description_of_location' => 'this isi sisiis',
-            'guide_url' => '',
-            'app_notification_copy_text' => 'test'
-        ] ];
+        $expected = $this->makeExpectedMarketingInformation( $toggleId,
+            'this', 'is blah...', 'the', '', 'this isi sisiis', '', 'test' );
+
         $this->gateway->setMarketingInformationForToggle( $toggleId,
-            [
-                'screenshot_urls' => 'this',
-                'description_of_toggle' => '',
-                'description_of_functionality' => 'the',
-                'description_of_implementation_reason' => '',
-                'description_of_location' => '',
-                'guide_url' => '',
-                'app_notification_copy_text' => 'test'
-            ] );
+            $this->makeMarketingInformation( 'this', '', 'the', '', '', '', 'test' ) );
 
         $this->validateMarketingInformationInTheDatabase( $expected, $toggleId );
-    }
-
-    /**
-     * @param array $expected
-     * @param string $toggleId
-     */
-    private function validateMarketingInformationInTheDatabase( $expected, $toggleId )
-    {
-        $actual = $this->connection->fetchAll( 'SELECT * FROM `toggle_marketing_information` WHERE toggle_id = ?',
-            [ $toggleId ] );
-
-        $this->assertEquals( $expected, $actual );
     }
 }
