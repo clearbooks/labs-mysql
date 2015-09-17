@@ -66,7 +66,7 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
      * @param string $name
      * @param string $releaseId
      * @param bool $isActive
-     * @param int $toggleType
+     * @param string $toggleType
      * @param string $screenshotUrl
      * @param string $descriptionOfToggle
      * @param string $descriptionOfFunctionality
@@ -76,7 +76,7 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
      * @param string $appNotificationCopyText
      * @return string
      */
-    private function addToggle( $name, $releaseId, $isActive = false, $toggleType = 1, $screenshotUrl = "",
+    private function addToggle( $name, $releaseId, $isActive = false, $toggleType = "simple", $screenshotUrl = "",
                                 $descriptionOfToggle = "",
                                 $descriptionOfFunctionality = "", $descriptionOfImplementationReason = "",
                                 $descriptionOfLocation = "", $guideUrl = "", $appNotificationCopyText = "" )
@@ -168,13 +168,13 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenExistentUserTogglesFound_ReturnsArrayOfUserToggles()
+    public function givenUserTogglesFound_ReturnsArrayOfUserToggles()
     {
-        $id = $this->addRelease( 'Test user toggle 1', 'a helpful url' );
+        $releaseId = $this->addRelease( 'Test user toggle 1', 'a helpful url' );
 
-        $toggleId = $this->addToggle( "test1", $id, true );
+        $toggleId = $this->addToggle( "test1", $releaseId, true, "simple" );
 
-        $expectedToggle = new Toggle( $toggleId, "test1", $id, true );
+        $expectedToggle = new Toggle( $toggleId, "test1", $releaseId, true, "simple" );
 
         $expectedToggles[] = $expectedToggle;
         $returnedToggles = $this->gateway->getAllUserToggles();
@@ -185,16 +185,16 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenExistentUserTogglesFoundWithMarketingInformation_ReturnsArrayOfUserTogglesWithValidMarketingInformation()
+    public function givenUserTogglesFoundWithMarketingInformation_ReturnsArrayOfUserTogglesWithValidMarketingInformation()
     {
-        $id = $this->addRelease( 'Test user toggle 1', 'a helpful url' );
+        $releaseId = $this->addRelease( 'Test user toggle 1', 'a helpful url' );
 
-        $toggleId = $this->addToggle( "test1", $id, true, 1, "this", "is", "a", "test", "of", "marketing",
+        $toggleId = $this->addToggle( "test1", $releaseId, true, "simple", "this", "is", "a", "test", "of", "marketing",
             "information" );
-        $toggleId2 = $this->addToggle( "test2", $id, true, 1 );;
+        $toggleId2 = $this->addToggle( "test2", $releaseId, true, "simple" );;
 
-        $expectedToggles = [ new Toggle( $toggleId, "test1", $id, true, "this", "is", "a", "test", "of", "marketing",
-            "information" ), new Toggle( $toggleId2, "test2", $id, true ) ];
+        $expectedToggles = [ new Toggle( $toggleId, "test1", $releaseId, true, "simple", "this", "is", "a", "test", "of", "marketing",
+            "information" ), new Toggle( $toggleId2, "test2", $releaseId, true ) ];
         $returnedToggles = $this->gateway->getAllUserToggles();
 
         $this->assertEquals( $expectedToggles, $returnedToggles );
@@ -203,18 +203,18 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenExistentUserTogglesAndNonUserTogglesFound_ReturnsArrayOfUserTogglesOnly()
+    public function givenUserTogglesAndNonUserTogglesFound_ReturnsArrayOfUserTogglesOnly()
     {
-        $id = $this->addRelease( 'Test user toggle 1', 'a helpful url' );
+        $releaseId = $this->addRelease( 'Test user toggle 1', 'a helpful url' );
 
         //Parameters: name, release_id, is_activatable, toggle_type
-        $toggleId = $this->addToggle( "test1", $id, true, 1 );
-        $toggleId2 = $this->addToggle( "test2", $id, true, 1 );
-        $this->addToggle( "test3", $id, true, 2 );
-        $this->addToggle( "test4", $id, true, 2 );
+        $toggleId = $this->addToggle( "test1", $releaseId, true, "simple" );
+        $toggleId2 = $this->addToggle( "test2", $releaseId, true, "simple" );
+        $this->addToggle( "test3", $releaseId, true, "group" );
+        $this->addToggle( "test4", $releaseId, true, "group" );
 
-        $expectedToggle = new Toggle( $toggleId, "test1", $id, true );
-        $expectedToggle2 = new Toggle( $toggleId2, "test2", $id, true );
+        $expectedToggle = new Toggle( $toggleId, "test1", $releaseId, true, "simple" );
+        $expectedToggle2 = new Toggle( $toggleId2, "test2", $releaseId, true, "simple" );
 
         $expectedToggles = [ $expectedToggle, $expectedToggle2 ];
         $returnedToggles = $this->gateway->getAllUserToggles();
