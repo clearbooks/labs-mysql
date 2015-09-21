@@ -5,6 +5,7 @@
         "This file is @generated automatically"
     ],
     "hash": "0dc6e73b98ef58130ad2cb3b043452f5",
+    "content-hash": "6745e2867c72e972be1677787c88c2bd",
     "packages": [
         {
             "name": "clearbooks/labs",
@@ -12,7 +13,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/clearbooks/labs.git",
-                "reference": "033fd8accdd5e61debeb7b6ac423553eeff02167"
+                "reference": "e6ce5cd6c74a273713bb79af60517e9f1a260c4d"
             },
             "require": {
                 "clearbooks/labs-php-client": "dev-master"
@@ -40,7 +41,7 @@
                 }
             ],
             "description": "Sensible releases",
-            "time": "2015-09-16 10:37:35"
+            "time": "2015-09-21 10:17:08"
         },
         {
             "name": "clearbooks/labs-php-client",
@@ -785,16 +786,16 @@
         },
         {
             "name": "php-di/invoker",
-            "version": "1.1.0",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-DI/Invoker.git",
-                "reference": "67ad285484a1f783ba2ce26866b5d48f171d3abf"
+                "reference": "7b2d2cd0e40b1583fe6601fb343a280c378669c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-DI/Invoker/zipball/67ad285484a1f783ba2ce26866b5d48f171d3abf",
-                "reference": "67ad285484a1f783ba2ce26866b5d48f171d3abf",
+                "url": "https://api.github.com/repos/PHP-DI/Invoker/zipball/7b2d2cd0e40b1583fe6601fb343a280c378669c9",
+                "reference": "7b2d2cd0e40b1583fe6601fb343a280c378669c9",
                 "shasum": ""
             },
             "require": {
@@ -824,7 +825,7 @@
                 "invoke",
                 "invoker"
             ],
-            "time": "2015-09-12 09:14:11"
+            "time": "2015-09-17 09:57:25"
         },
         {
             "name": "php-di/php-di",

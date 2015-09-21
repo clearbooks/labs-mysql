@@ -23,7 +23,7 @@ class MysqlInsertFeedbackForToggleGateway implements InsertFeedbackForToggleGate
      * MysqlInsertFeedbackForToggleGateway constructor.
      * @param Connection $connection
      */
-    public function __construct( $connection )
+    public function __construct( Connection $connection )
     {
         $this->connection = $connection;
     }
@@ -32,15 +32,16 @@ class MysqlInsertFeedbackForToggleGateway implements InsertFeedbackForToggleGate
      * @param string $toggleId
      * @param bool $mood
      * @param string $message
-     * @return void
+     * @return bool
      */
     public function addFeedbackForToggle( $toggleId, $mood, $message )
     {
         try {
             $this->connection->insert( '`feedback`',
                 [ 'toggle_id' => $toggleId, 'mood' => $mood, 'message' => $message ] );
-        }catch (\Exception $e){
-
+        } catch ( \Exception $e ) {
+            return false;
         }
+        return true;
     }
 }
