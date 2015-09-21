@@ -119,7 +119,8 @@ class MysqlInsertFeedbackForToggleGatewayTest extends PHPUnit_Framework_TestCase
      */
     private function getAllFeedbackForToggle( $toggleId )
     {
-        return $this->connection->fetchAll( "SELECT toggle_id, mood, message FROM `feedback` WHERE toggle_id = ?", [ $toggleId ] );
+        return $this->connection->fetchAll( "SELECT toggle_id, mood, message FROM `feedback` WHERE toggle_id = ?",
+            [ $toggleId ] );
     }
 
     /**
@@ -175,35 +176,39 @@ class MysqlInsertFeedbackForToggleGatewayTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function givenNoExpectedToggleExist_NoDataWillBeAddedToTheDatabase()
+    public function givenNoExpectedToggleExist_NoDataWillBeAddedToTheDatabaseAndGatewayReturnsFalse()
     {
-        $this->gateway->addFeedbackForToggle( "1", true, "this is the test" );
+        $response = $this->gateway->addFeedbackForToggle( "1", true, "this is the test" );
         $this->validateFeedbackForToggle( "1", [ ] );
+        $this->assertFalse( $response );
     }
 
     /**
      * @test
      */
-    public function givenExistentToggle_AddNewFeedbackToTheDatabase()
+    public function givenExistentToggle_AddNewFeedbackToTheDatabaseAndGatewayReturnsTrue()
     {
         $releaseId = $this->addRelease( "Insert Feedabck test 1", "useful" );
         $toggleId = $this->addToggle( "test", $releaseId, true );
-        $this->gateway->addFeedbackForToggle( $toggleId, true, "BROLLY FEEDBACK" );
+        $response = $this->gateway->addFeedbackForToggle( $toggleId, true, "BROLLY FEEDBACK" );
         $this->validateFeedbackForToggle( $toggleId,
             [ [ 'toggle_id' => $toggleId, 'mood' => true, 'message' => "BROLLY FEEDBACK" ] ] );
+        $this->assertTrue( $response );
     }
 
     /**
      * @test
      */
-    public function givenExistentToggle_duringAttemptToAddMultipleFeedbacksForTheSameToggle_AddNewFeedbacksToTheDatabase()
+    public function givenExistentToggle_duringAttemptToAddMultipleFeedbacksForTheSameToggle_AddNewFeedbacksToTheDatabaseAndGatewayReturnsTrue()
     {
         $releaseId = $this->addRelease( "Insert Feedabck test 1", "useful" );
         $toggleId = $this->addToggle( "test", $releaseId, true );
-        $this->gateway->addFeedbackForToggle( $toggleId, true, "BROLLY FEEDBACK" );
-        $this->gateway->addFeedbackForToggle( $toggleId, true, "BROLLY FEEDBACK is awesome" );
+        $response1 = $this->gateway->addFeedbackForToggle( $toggleId, true, "BROLLY FEEDBACK" );
+        $response2 = $this->gateway->addFeedbackForToggle( $toggleId, true, "BROLLY FEEDBACK is awesome" );
         $this->validateFeedbackForToggle( $toggleId,
             [ [ 'toggle_id' => $toggleId, 'mood' => true, 'message' => "BROLLY FEEDBACK" ], [ 'toggle_id' => $toggleId, 'mood' => true, 'message' => "BROLLY FEEDBACK is awesome" ] ] );
+        $this->assertTrue( $response1 );
+        $this->assertTrue( $response2 );
     }
 
     /**
