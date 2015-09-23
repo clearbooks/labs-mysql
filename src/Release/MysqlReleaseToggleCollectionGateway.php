@@ -12,11 +12,14 @@ namespace Clearbooks\LabsMysql\Release;
 use Clearbooks\Labs\Release\Gateway\ReleaseToggleCollection;
 use Clearbooks\Labs\Toggle\Entity\MarketableToggle;
 use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
-use Clearbooks\LabsMysql\Toggle\MysqlGetAllTogglesGateway;
+use Clearbooks\LabsMysql\Toggle\ToggleHelperMethods;
 use Doctrine\DBAL\Connection;
 
-class MysqlReleaseToggleCollectionGateway extends MysqlGetAllTogglesGateway implements ReleaseToggleCollection
+class MysqlReleaseToggleCollectionGateway implements ReleaseToggleCollection
 {
+
+    use ToggleHelperMethods;
+
     /**
      * @var Connection
      */
@@ -37,7 +40,7 @@ class MysqlReleaseToggleCollectionGateway extends MysqlGetAllTogglesGateway impl
      */
     public function getTogglesForRelease( $releaseId )
     {
-        $data = $this->connection->fetchAll( 'SELECT * FROM `toggle` LEFT JOIN `toggle_marketing_information` ON toggle.id = toggle_marketing_information.toggle_id WHERE release_id = ?',
+        $data = $this->connection->fetchAll( 'SELECT *, toggle.id as toggleId FROM `toggle` LEFT JOIN `toggle_marketing_information` ON toggle.id = toggle_marketing_information.toggle_id WHERE release_id = ?',
             [ $releaseId ] );
         return $this->getAllTogglesFromGivenSqlResult( $data );
     }

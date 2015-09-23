@@ -7,10 +7,9 @@
 namespace Clearbooks\LabsMysql\Release;
 
 
+use Clearbooks\Labs\Bootstrap;
 use Clearbooks\Labs\Release\Release;
-use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
 
 class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,23 +23,50 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
      */
     private $connection;
 
+    /**
+     * @param $releaseName
+     * @param $url
+     * @return string
+     */
+    private function addRelease( $releaseName, $url )
+    {
+        $this->gateway->addRelease( $releaseName, $url );
+        return $this->connection->lastInsertId( "`release`" );
+    }
+
+    /**
+     * @param Release $expectedRelease
+     * @param Release $release
+     */
+    private function assertReleasesMatch( $expectedRelease, $release )
+    {
+        $this->assertEquals( $expectedRelease->getReleaseName(), $release->getReleaseName() );
+        $this->assertEquals( $expectedRelease->getReleaseInfoUrl(), $release->getReleaseInfoUrl() );
+    }
+
     public function setUp()
     {
         parent::setUp();
 
-        $connectionParams = array(
-            'dbname' => 'labs',
-            'user' => 'root',
-            'password' => '',
-            'host' => 'localhost',
-            'driver' => 'pdo_mysql',
-        );
+        $this->connection = Bootstrap::getInstance()->getDIContainer()
+            ->get( Connection::class );
 
-        $this->connection = DriverManager::getConnection( $connectionParams, new Configuration() );
+        $this->connection->beginTransaction();
+        $this->connection->setRollbackOnly();
+
         $this->gateway = new MysqlReleaseGateway( $this->connection );
     }
 
-    public function testAddRelease()
+    public function tearDown()
+    {
+        parent::tearDown();
+        $this->connection->rollBack();
+    }
+
+    /**
+     * @test
+     */
+    public function givenReleaseNameAndUrl_AddRelease()
     {
         $releaseName = 'Test release 1';
         $url = 'a helpful url';
@@ -55,9 +81,6 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertEquals( $expectedRelease,
             $this->connection->fetchAssoc( 'SELECT * FROM `release` WHERE `id` = ?', [ $id ] ) );
-
-        // Teardown
-        $this->deleteAddedRelease( $id );
     }
 
     /**
@@ -75,7 +98,6 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
     {
         $id = $this->addRelease( 'Test release 1', 'a helpful url' );
         $this->assertNull( $this->gateway->getRelease( 'blergh' ) );
-        $this->deleteAddedRelease( $id );
     }
 
     /**
@@ -88,11 +110,9 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
         $id = $this->addRelease( $releaseName, $url );
 
         $release = $this->gateway->getRelease( $id );
-        $expectedRelease = new Release( 1 ,$releaseName, $url, new \DateTime() );
+        $expectedRelease = new Release( 1, $releaseName, $url, new \DateTime() );
 
         $this->assertReleasesMatch( $expectedRelease, $release );
-
-        $this->deleteAddedRelease( $id );
     }
 
     /**
@@ -116,8 +136,6 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
         $releases = $this->gateway->getAllReleases();
 
         $this->assertReleasesMatch( $expectedRelease, $releases[ 0 ] );
-
-        $this->deleteAddedRelease( $id );
     }
 
     /**
@@ -148,40 +166,48 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
         foreach ( $expectedReleases as $index => $expectedRelease ) {
             $this->assertReleasesMatch( $expectedRelease, $releases[ $index ] );
         }
-
-        foreach ( $releasesToDelete as $id ) {
-            $this->deleteAddedRelease( $id );
-        }
     }
 
     /**
-     * @param $id
-     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
+     * @test
      */
-    private function deleteAddedRelease( $id )
+    public function givenNoToggleWithGivenToggleIdFound_withNoTogglesInTheDatabase_returnFalse()
     {
-        $this->connection->delete( '`release`', [ 'id' => $id ] );
+        $response = $this->gateway->editRelease( "123", "test", "brollies" );
+        $this->assertFalse( $response );
     }
 
     /**
-     * @param $releaseName
-     * @param $url
-     * @return string
+     * @test
      */
-    private function addRelease( $releaseName, $url )
+    public function givenNoToggleWithGivenToggleIdFound_withTogglesInTheDatabase_returnFalse()
     {
-        $this->gateway->addRelease( $releaseName, $url );
-        return $this->connection->lastInsertId( "`release`" );
+        $this->addRelease( "test", "url" );
+        $response = $this->gateway->editRelease( "123", "test", "brollies" );
+        $this->assertFalse( $response );
     }
 
     /**
-     * @param Release $expectedRelease
-     * @param Release $release
+     * @test
      */
-    private function assertReleasesMatch( $expectedRelease, $release )
+    public function givenToggleFound_editReleaseCalledAndUrlIsChanged_returnTrueAndModifyToggle()
     {
-        $this->assertEquals( $expectedRelease->getReleaseName(), $release->getReleaseName() );
-        $this->assertEquals( $expectedRelease->getReleaseInfoUrl(), $release->getReleaseInfoUrl() );
+        $releaseId = $this->addRelease( "test", "url" );
+        $response = $this->gateway->editRelease( $releaseId, "test", "brollies" );
+        $this->assertTrue( $response );
+        $this->assertEquals( new Release( $releaseId, "test", "brollies", new \DateTime(), true ), $this->gateway->getRelease( $releaseId ) );
+    }
+
+    /**
+     * @test
+     */
+    public function givenToggleFound_editReleaseCalledAndNothingIsChanged_returnTrueAndDoNotModifyToggle()
+    {
+        $releaseId = $this->addRelease( "test", "brollies" );
+        $response = $this->gateway->editRelease( $releaseId, "test", "brollies" );
+        $this->assertTrue( $response );
+        $this->assertEquals( new Release( $releaseId, "test", "brollies", new \DateTime(), true ), $this->gateway->getRelease( $releaseId ) );
     }
 }
+
 //EOF MysqlReleaseGatewayTest.php

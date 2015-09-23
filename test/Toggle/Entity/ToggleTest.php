@@ -21,9 +21,10 @@ class ToggleTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->emptyToggleData = array(
-            'toggleName' => '',
             'id' => '',
-            'isActive' => false,
+            'visible' => false,
+            'toggleName' => '',
+            'release_id' => '',
             'screenshotUrl' => '',
             'toggleDesc' => '',
             'functionalityDes' => '',
@@ -39,7 +40,7 @@ class ToggleTest extends \PHPUnit_Framework_TestCase
      */
     public function givenNoData_AllGettersDefaultCorrectly()
     {
-        $toggle = new Toggle( '', '', '', '', '', '', '', '', '', '' );
+        $toggle = new Toggle( '', '', '', '', '', '', '', '', '', '', '' );
         $this->assertToggleGettersMatchExpectedToggleData( $toggle, $this->emptyToggleData );
     }
 
@@ -49,9 +50,10 @@ class ToggleTest extends \PHPUnit_Framework_TestCase
     public function givenMinimumData_AllUninitialisedGettersDefaultCorrectly()
     {
         $toggleData = $this->emptyToggleData;
-        $toggleData['toggleName'] = 'Toggle Name';
         $toggleData['id'] = 'Eye Dee';
-        $toggle = new Toggle( $toggleData['toggleName'], $toggleData['id'] );
+        $toggleData['toggleName'] = 'Toggle Name';
+        $toggleData['release_id'] = 'Release Eye Dee';
+        $toggle = new Toggle( $toggleData['id'], $toggleData[ 'toggleName' ], $toggleData[ 'release_id' ] );
         $this->assertToggleGettersMatchExpectedToggleData( $toggle, $toggleData );
     }
 
@@ -61,9 +63,11 @@ class ToggleTest extends \PHPUnit_Framework_TestCase
     public function givenAllDataSet_AllGettersReturnCorrectValues()
     {
         $toggleData = array(
-            'toggleName' => 'Toggle Name',
             'id' => 'Eye Dee',
-            'isActive' => true,
+            'toggleName' => 'Toggle Name',
+            'release_id' => 'Release Eye Dee',
+            'visible' => true,
+            'type' => 'simple',
             'screenshotUrl' => 'www.screenshot.fake',
             'toggleDesc' => 'this is a toggle',
             'functionalityDes' => 'it is used to toggle stuff',
@@ -72,7 +76,7 @@ class ToggleTest extends \PHPUnit_Framework_TestCase
             'guideUrl' => 'www.guide.url',
             'notificationCopy' => 'oh look a new toggle!'
         );
-        $toggle = new Toggle( $toggleData['toggleName'], $toggleData['id'], $toggleData['isActive'], $toggleData['screenshotUrl'], $toggleData['toggleDesc'], $toggleData['functionalityDes'], $toggleData['reasonWhyDesc'], $toggleData['locationDesc'], $toggleData['guideUrl'], $toggleData['notificationCopy'] );
+        $toggle = new Toggle( $toggleData['id'], $toggleData[ 'toggleName' ], $toggleData[ 'release_id' ], $toggleData[ 'visible' ], $toggleData[ 'type' ], $toggleData[ 'screenshotUrl' ], $toggleData[ 'toggleDesc' ], $toggleData[ 'functionalityDes' ], $toggleData[ 'reasonWhyDesc' ], $toggleData[ 'locationDesc' ], $toggleData[ 'guideUrl' ], $toggleData[ 'notificationCopy' ] );
         $this->assertToggleGettersMatchExpectedToggleData( $toggle, $toggleData );
     }
 
@@ -82,9 +86,10 @@ class ToggleTest extends \PHPUnit_Framework_TestCase
      */
     public function assertToggleGettersMatchExpectedToggleData( Toggle $toggle, $expectedToggleData )
     {
+        $this->assertEquals( $expectedToggleData[ 'id' ], $toggle->getId() );
         $this->assertEquals( $expectedToggleData[ 'toggleName' ], $toggle->getName() );
-        $this->assertEquals( $expectedToggleData[ 'id' ], $toggle->getRelease() );
-        $this->assertEquals( $expectedToggleData[ 'isActive' ], $toggle->isActive() );
+        $this->assertEquals( $expectedToggleData[ 'release_id' ], $toggle->getRelease() );
+        $this->assertEquals( $expectedToggleData[ 'visible' ], $toggle->isActive() );
         $this->assertEquals( $expectedToggleData[ 'screenshotUrl' ], $toggle->getScreenshotUrl() );
         $this->assertEquals( $expectedToggleData[ 'toggleDesc' ], $toggle->getDescriptionOfToggle() );
         $this->assertEquals( $expectedToggleData[ 'functionalityDes' ], $toggle->getDescriptionOfFunctionality() );
