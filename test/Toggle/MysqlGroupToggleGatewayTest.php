@@ -176,7 +176,7 @@ class MysqlGroupToggleGatewayTest extends \PHPUnit_Framework_TestCase
         );
         $this->connection->insert( '`toggle_marketing_information`', $marketingInfo );
 
-        $expectedToggle = new Toggle( $toggleName, $id, true,
+        $expectedToggle = new Toggle( $toggleId, $toggleName,  $id, true, "group",
             $marketingInfo['screenshot_urls'],
             $marketingInfo['description_of_toggle'],
             $marketingInfo['description_of_functionality'],
