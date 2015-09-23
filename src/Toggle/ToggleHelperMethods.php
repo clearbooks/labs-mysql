@@ -85,7 +85,7 @@ trait ToggleHelperMethods
     protected function getToggleFromRow( $row )
     {
         return new Toggle(
-            $row[ 'toggleId' ], $row[ 'name' ], $row[ 'release_id' ], (bool) $row[ 'visible' ], $row[ 'type' ],
+            $row[ 'id' ], $row[ 'name' ], $row[ 'release_id' ], (bool) $row[ 'visible' ], $row[ 'type' ],
             $this->getDefaultForScreenshotUrl( $row ), $this->getDefaultForDescriptionOfToggle( $row ),
             $this->getDefaultForDescriptionOfFunctionality( $row ),
             $this->getDefaultForDescriptionOfImplementationReason( $row ),

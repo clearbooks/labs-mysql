@@ -9,6 +9,7 @@
 namespace Clearbooks\LabsMysql\Toggle;
 
 
+use Clearbooks\Labs\Toggle\Entity\GroupToggle;
 use Clearbooks\Labs\Toggle\Gateway\GroupToggleGateway;
 use Doctrine\DBAL\Connection;
 
@@ -36,7 +37,7 @@ class MysqlGroupToggleGateway implements GroupToggleGateway
      */
     public function getAllGroupToggles()
     {
-        $data = $this->connection->fetchAll( 'SELECT *, toggle.id as toggleId FROM `toggle` WHERE type = ?',
+        $data = $this->connection->fetchAll( 'SELECT * FROM `toggle` LEFT JOIN `toggle_marketing_information` ON toggle.id = toggle_marketing_information.toggle_id WHERE `type` = ?',
             [ "group" ] );
         return $this->getAllTogglesFromGivenSqlResult( $data );
     }
