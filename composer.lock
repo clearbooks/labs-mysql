@@ -5,7 +5,6 @@
         "This file is @generated automatically"
     ],
     "hash": "0dc6e73b98ef58130ad2cb3b043452f5",
-    "content-hash": "6745e2867c72e972be1677787c88c2bd",
     "packages": [
         {
             "name": "clearbooks/labs",
@@ -121,7 +120,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:clearbooks/labs-schema.git",
-                "reference": "20cb4b181bf191ab52c694c5dcd5d0936c49d45c"
+                "reference": "a87d4b33763326fd19375d7cf4a47651845b965b"
             },
             "type": "library",
             "license": [
@@ -134,7 +133,7 @@
                 }
             ],
             "description": "DB schema for Labs",
-            "time": "2015-09-14 15:03:19"
+            "time": "2015-09-21 14:45:16"
         },
         {
             "name": "container-interop/container-interop",

@@ -52,7 +52,7 @@ class MysqlReleaseGateway implements ReleaseGateway
             return null;
         }
 
-        return new Release( $releaseArray[ 'id' ], $releaseArray[ 'name' ], $releaseArray[ 'info' ], new \DateTime(), $releaseArray['visibility'] );
+        return new Release( $releaseArray[ 'id' ], $releaseArray[ 'name' ], $releaseArray[ 'info' ], new \DateTime(), (bool)$releaseArray['visibility'] );
     }
 
     /**
