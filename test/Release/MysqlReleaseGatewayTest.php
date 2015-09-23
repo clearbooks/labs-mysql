@@ -195,7 +195,7 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
         $releaseId = $this->addRelease( "test", "url" );
         $response = $this->gateway->editRelease( $releaseId, "test", "brollies" );
         $this->assertTrue( $response );
-        $this->assertEquals( new Release( $releaseId, "test", "brollies", new \DateTime() ), $this->gateway->getRelease( $releaseId ) );
+        $this->assertEquals( new Release( $releaseId, "test", "brollies", new \DateTime(), true ), $this->gateway->getRelease( $releaseId ) );
     }
 
     /**
@@ -206,7 +206,7 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
         $releaseId = $this->addRelease( "test", "brollies" );
         $response = $this->gateway->editRelease( $releaseId, "test", "brollies" );
         $this->assertTrue( $response );
-        $this->assertEquals( new Release( $releaseId, "test", "brollies", new \DateTime() ), $this->gateway->getRelease( $releaseId ) );
+        $this->assertEquals( new Release( $releaseId, "test", "brollies", new \DateTime(), true ), $this->gateway->getRelease( $releaseId ) );
     }
 }
 
