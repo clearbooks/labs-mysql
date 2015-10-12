@@ -63,6 +63,11 @@ class Toggle implements MarketableToggle, UserToggle, ActivatableToggle
     private $toggleType;
 
     /**
+     * @var string
+     */
+    private $marketingToggleTitle;
+
+    /**
      * Toggle constructor.
      * @param $id
      * @param string $name
@@ -76,11 +81,12 @@ class Toggle implements MarketableToggle, UserToggle, ActivatableToggle
      * @param string $descriptionOfLocation
      * @param string $guideUrl
      * @param string $appNotificationCopyText
+     * @param string $marketingToggleTitle
      */
     public function __construct( $id, $name, $releaseId, $isActive = false, $toggleType = "simple", $screenshotUrl = "",
                                  $descriptionOfToggle = "", $descriptionOfFunctionality = "",
                                  $descriptionOfImplementationReason = "", $descriptionOfLocation = "", $guideUrl = "",
-                                 $appNotificationCopyText = "" )
+                                 $appNotificationCopyText = "", $marketingToggleTitle = "" )
     {
         $this->id = $id;
         $this->name = $name;
@@ -94,6 +100,7 @@ class Toggle implements MarketableToggle, UserToggle, ActivatableToggle
         $this->guideUrl = $guideUrl;
         $this->appNotificationCopyText = $appNotificationCopyText;;
         $this->toggleType = $toggleType;
+        $this->marketingToggleTitle = $marketingToggleTitle;
     }
 
     /**
@@ -190,5 +197,13 @@ class Toggle implements MarketableToggle, UserToggle, ActivatableToggle
     public function getType()
     {
         return $this->toggleType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMarketingToggleTitle()
+    {
+        return $this->marketingToggleTitle;
     }
 }

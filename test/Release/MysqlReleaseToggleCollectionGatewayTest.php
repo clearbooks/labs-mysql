@@ -118,6 +118,8 @@ class MysqlReleaseToggleCollectionGatewayTest extends \PHPUnit_Framework_TestCas
             $returnedToggle->getAppNotificationCopyText() );
         $this->assertEquals( $expectedToggle->getType(),
             $returnedToggle->getType() );
+        $this->assertEquals( $expectedToggle->getMarketingToggleTitle(),
+            $returnedToggle->getMarketingToggleTitle());
     }
 
     private function addToggleMarketingInformationToDatabase( $toggleId, $screenshotUrl, $descriptionOfToggle,
