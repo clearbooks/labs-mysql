@@ -77,6 +77,11 @@ trait ToggleHelperMethods
         return isset( $row[ 'app_notification_copy_text' ] ) ? $row[ 'app_notification_copy_text' ] : null;
     }
 
+    protected function getDefaultForToggleTitle($row)
+    {
+        return isset( $row['toggle_title']) ? $row['toggle_title'] : null;
+    }
+
     /**
      * @param $row
      * @return array
@@ -90,7 +95,7 @@ trait ToggleHelperMethods
             $this->getDefaultForDescriptionOfFunctionality( $row ),
             $this->getDefaultForDescriptionOfImplementationReason( $row ),
             $this->getDefaultForDescriptionOfLocation( $row ), $this->getDefaultForGuideUrl( $row ),
-            $this->getDefaultForAppNotificationCopyText( $row )
+            $this->getDefaultForAppNotificationCopyText( $row ), $this->getDefaultForToggleTitle($row)
         );
     }
 
