@@ -32,13 +32,15 @@ class MysqlInsertFeedbackForToggleGateway implements InsertFeedbackForToggleGate
      * @param string $toggleId
      * @param bool $mood
      * @param string $message
+     * @param $userId
+     * @param $groupId
      * @return bool
      */
-    public function addFeedbackForToggle( $toggleId, $mood, $message )
+    public function addFeedbackForToggle( $toggleId, $mood, $message, $userId, $groupId )
     {
         try {
             $this->connection->insert( '`feedback`',
-                [ 'toggle_id' => $toggleId, 'mood' => $mood, 'message' => $message ] );
+                [ 'toggle_id' => $toggleId, 'mood' => $mood, 'message' => $message, 'user_id' => $userId, 'group_id' => $groupId ] );
         } catch ( \Exception $e ) {
             return false;
         }

@@ -13,7 +13,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/clearbooks/labs.git",
-                "reference": "155bc63d500d0eff8e9f89203ef12e9335875e31"
+                "reference": "41b4568ad146c707b4e0bb2036272c6524e7f564"
             },
             "require": {
                 "clearbooks/labs-php-client": "dev-master"
@@ -41,7 +41,7 @@
                 }
             ],
             "description": "Sensible releases",
-            "time": "2015-10-12 09:13:23"
+            "time": "2015-10-14 08:27:55"
         },
         {
             "name": "clearbooks/labs-php-client",
@@ -121,7 +121,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:clearbooks/labs-schema.git",
-                "reference": "00bb7d86c93136a9947221189d167f2955429d99"
+                "reference": "1b489b82a1b775318a632fe9c0fdd1090a685f24"
             },
             "type": "library",
             "license": [
@@ -134,7 +134,7 @@
                 }
             ],
             "description": "DB schema for Labs",
-            "time": "2015-10-09 08:19:34"
+            "time": "2015-10-14 08:19:26"
         },
         {
             "name": "container-interop/container-interop",

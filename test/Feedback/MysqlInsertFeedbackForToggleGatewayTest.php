@@ -119,7 +119,7 @@ class MysqlInsertFeedbackForToggleGatewayTest extends PHPUnit_Framework_TestCase
      */
     private function getAllFeedbackForToggle( $toggleId )
     {
-        return $this->connection->fetchAll( "SELECT toggle_id, mood, message FROM `feedback` WHERE toggle_id = ?",
+        return $this->connection->fetchAll( "SELECT toggle_id, mood, message, user_id, group_id FROM `feedback` WHERE toggle_id = ?",
             [ $toggleId ] );
     }
 
@@ -137,7 +137,7 @@ class MysqlInsertFeedbackForToggleGatewayTest extends PHPUnit_Framework_TestCase
      */
     private function getAllFeedback()
     {
-        return $this->connection->fetchAll( "SELECT toggle_id, mood, message FROM `feedback`" );
+        return $this->connection->fetchAll( "SELECT toggle_id, mood, message, user_id, group_id FROM `feedback`" );
     }
 
     private function insertDataToDatabase()
@@ -147,9 +147,9 @@ class MysqlInsertFeedbackForToggleGatewayTest extends PHPUnit_Framework_TestCase
         $toggleid2 = $this->addToggle( "test2", $releaseId, true );
         $toggleid3 = $this->addToggle( "test3", $releaseId, true );
 
-        $this->gateway->addFeedbackForToggle( $toggleid1, true, "blahh balhh" );
-        $this->gateway->addFeedbackForToggle( $toggleid2, false, "this toggle is bad. FUUUUUUUUUUUUUUUUUUUUUUUU" );
-        $this->gateway->addFeedbackForToggle( $toggleid3, true, "I LOVE IT!!!" );
+        $this->gateway->addFeedbackForToggle( $toggleid1, true, "blahh balhh", "1", "1" );
+        $this->gateway->addFeedbackForToggle( $toggleid2, false, "this toggle is bad. FUUUUUUUUUUUUUUUUUUUUUUUU", "1", "1" );
+        $this->gateway->addFeedbackForToggle( $toggleid3, true, "I LOVE IT!!!", "1", "1" );
 
         return $this->getAllFeedback();
     }
@@ -178,7 +178,7 @@ class MysqlInsertFeedbackForToggleGatewayTest extends PHPUnit_Framework_TestCase
      */
     public function givenNoExpectedToggleExist_NoDataWillBeAddedToTheDatabaseAndGatewayReturnsFalse()
     {
-        $response = $this->gateway->addFeedbackForToggle( "1", true, "this is the test" );
+        $response = $this->gateway->addFeedbackForToggle( "1", true, "this is the test", "1", "1" );
         $this->validateFeedbackForToggle( "1", [ ] );
         $this->assertFalse( $response );
     }
@@ -190,9 +190,9 @@ class MysqlInsertFeedbackForToggleGatewayTest extends PHPUnit_Framework_TestCase
     {
         $releaseId = $this->addRelease( "Insert Feedabck test 1", "useful" );
         $toggleId = $this->addToggle( "test", $releaseId, true );
-        $response = $this->gateway->addFeedbackForToggle( $toggleId, true, "BROLLY FEEDBACK" );
+        $response = $this->gateway->addFeedbackForToggle( $toggleId, true, "BROLLY FEEDBACK", '1', '1' );
         $this->validateFeedbackForToggle( $toggleId,
-            [ [ 'toggle_id' => $toggleId, 'mood' => true, 'message' => "BROLLY FEEDBACK" ] ] );
+            [ [ 'toggle_id' => $toggleId, 'mood' => true, 'message' => "BROLLY FEEDBACK", 'user_id' => "1", 'group_id' => '1' ] ] );
         $this->assertTrue( $response );
     }
 
@@ -203,10 +203,13 @@ class MysqlInsertFeedbackForToggleGatewayTest extends PHPUnit_Framework_TestCase
     {
         $releaseId = $this->addRelease( "Insert Feedabck test 1", "useful" );
         $toggleId = $this->addToggle( "test", $releaseId, true );
-        $response1 = $this->gateway->addFeedbackForToggle( $toggleId, true, "BROLLY FEEDBACK" );
-        $response2 = $this->gateway->addFeedbackForToggle( $toggleId, true, "BROLLY FEEDBACK is awesome" );
+        $response1 = $this->gateway->addFeedbackForToggle( $toggleId, true, "BROLLY FEEDBACK", '1', '1' );
+        $response2 = $this->gateway->addFeedbackForToggle( $toggleId, true, "BROLLY FEEDBACK is awesome", '1', '1' );
         $this->validateFeedbackForToggle( $toggleId,
-            [ [ 'toggle_id' => $toggleId, 'mood' => true, 'message' => "BROLLY FEEDBACK" ], [ 'toggle_id' => $toggleId, 'mood' => true, 'message' => "BROLLY FEEDBACK is awesome" ] ] );
+            [
+                [ 'toggle_id' => $toggleId, 'mood' => true, 'message' => "BROLLY FEEDBACK", 'user_id' => '1', 'group_id' => '1' ],
+                [ 'toggle_id' => $toggleId, 'mood' => true, 'message' => "BROLLY FEEDBACK is awesome", 'user_id' => '1', 'group_id' => '1' ]
+            ] );
         $this->assertTrue( $response1 );
         $this->assertTrue( $response2 );
     }
@@ -221,12 +224,12 @@ class MysqlInsertFeedbackForToggleGatewayTest extends PHPUnit_Framework_TestCase
         $releaseId = $this->addRelease( "Insert Feedabck test 1", "useful" );
         $toggleId = $this->addToggle( "test", $releaseId, true );
 
-        $this->gateway->addFeedbackForToggle( $toggleId, true, "BROLLY FEEDBACK" );
+        $this->gateway->addFeedbackForToggle( $toggleId, true, "BROLLY FEEDBACK", '1', '1' );
 
         $this->validateFeedbackForToggle( $toggleId,
-            [ [ 'toggle_id' => $toggleId, 'mood' => true, 'message' => "BROLLY FEEDBACK" ] ] );
+            [ [ 'toggle_id' => $toggleId, 'mood' => true, 'message' => "BROLLY FEEDBACK", 'user_id' => '1', 'group_id' => '1' ] ] );
 
-        $expectedEntries[] = [ 'toggle_id' => $toggleId, 'mood' => true, 'message' => "BROLLY FEEDBACK" ];
+        $expectedEntries[] = [ 'toggle_id' => $toggleId, 'mood' => true, 'message' => "BROLLY FEEDBACK", 'user_id' => '1', 'group_id' => '1' ];
 
         $this->validateDatebase( $expectedEntries );
     }
