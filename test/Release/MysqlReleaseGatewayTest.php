@@ -13,6 +13,8 @@ use Doctrine\DBAL\Connection;
 
 class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
 {
+    const RELEASE_NAME = "test";
+    const RELEASE_URL = "brollies";
     /**
      * @var MysqlReleaseGateway
      */
@@ -26,11 +28,14 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
     /**
      * @param $releaseName
      * @param $url
+     * @param bool $isVisible
+     * @param \DateTimeInterface $releaseDate
      * @return string
      */
-    private function addRelease( $releaseName, $url )
+    private function addRelease( $releaseName, $url, $isVisible = true, $releaseDate = null )
     {
-        $this->gateway->addRelease( $releaseName, $url );
+        $releaseDate = $releaseDate ?: new \DateTime();
+        $this->gateway->addRelease( $releaseName, $url, $isVisible, $releaseDate );
         return $this->connection->lastInsertId( "`release`" );
     }
 
@@ -42,6 +47,25 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals( $expectedRelease->getReleaseName(), $release->getReleaseName() );
         $this->assertEquals( $expectedRelease->getReleaseInfoUrl(), $release->getReleaseInfoUrl() );
+    }
+
+    /**
+     * @return \DateTime
+     */
+    private function getFutureDate()
+    {
+        return (new \DateTime)->modify("+1 days")->setTime(0, 0);
+    }
+
+    /**
+     * @param Release[] $expectedReleases
+     * @param array $response
+     */
+    private function assertAllReleasesMatch($expectedReleases, $response)
+    {
+        foreach ($expectedReleases as $index => $expectedRelease) {
+            $this->assertReleasesMatch($expectedRelease, $response[$index]);
+        }
     }
 
     public function setUp()
@@ -77,7 +101,7 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
             'name' => $releaseName,
             'info' => $url,
             'visibility' => 1,
-            'release_date' => null
+            'release_date' => (new \DateTime())->format('Y-m-d')
         );
         $this->assertEquals( $expectedRelease,
             $this->connection->fetchAssoc( 'SELECT * FROM `release` WHERE `id` = ?', [ $id ] ) );
@@ -96,7 +120,7 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
      */
     public function givenRelease_WhenGetReleaseCalledWithWrongId_ReturnsNull()
     {
-        $id = $this->addRelease( 'Test release 1', 'a helpful url' );
+        $this->addRelease( 'Test release 1', 'a helpful url' );
         $this->assertNull( $this->gateway->getRelease( 'blergh' ) );
     }
 
@@ -130,7 +154,7 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
     {
         $releaseName = 'Test release 1';
         $url = 'a helpful url';
-        $id = $this->addRelease( $releaseName, $url );
+        $this->addRelease( $releaseName, $url );
 
         $expectedRelease = new Release( 1, $releaseName, $url, new \DateTime() );
         $releases = $this->gateway->getAllReleases();
@@ -173,7 +197,7 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
      */
     public function givenNoToggleWithGivenToggleIdFound_withNoTogglesInTheDatabase_returnFalse()
     {
-        $response = $this->gateway->editRelease( "123", "test", "brollies" );
+        $response = $this->gateway->editRelease( "123", self::RELEASE_NAME, self::RELEASE_URL);
         $this->assertFalse( $response );
     }
 
@@ -182,8 +206,8 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
      */
     public function givenNoToggleWithGivenToggleIdFound_withTogglesInTheDatabase_returnFalse()
     {
-        $this->addRelease( "test", "url" );
-        $response = $this->gateway->editRelease( "123", "test", "brollies" );
+        $this->addRelease( self::RELEASE_NAME, self::RELEASE_URL );
+        $response = $this->gateway->editRelease( "123", self::RELEASE_NAME, self::RELEASE_URL);
         $this->assertFalse( $response );
     }
 
@@ -192,10 +216,10 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
      */
     public function givenToggleFound_editReleaseCalledAndUrlIsChanged_returnTrueAndModifyToggle()
     {
-        $releaseId = $this->addRelease( "test", "url" );
-        $response = $this->gateway->editRelease( $releaseId, "test", "brollies" );
+        $releaseId = $this->addRelease( self::RELEASE_NAME, "url" );
+        $response = $this->gateway->editRelease( $releaseId, self::RELEASE_NAME, self::RELEASE_URL);
         $this->assertTrue( $response );
-        $this->assertEquals( new Release( $releaseId, "test", "brollies", new \DateTime(), true ), $this->gateway->getRelease( $releaseId ) );
+        $this->assertEquals( new Release( $releaseId, self::RELEASE_NAME, self::RELEASE_URL, new \DateTime(), true ), $this->gateway->getRelease( $releaseId ) );
     }
 
     /**
@@ -203,10 +227,83 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
      */
     public function givenToggleFound_editReleaseCalledAndNothingIsChanged_returnTrueAndDoNotModifyToggle()
     {
-        $releaseId = $this->addRelease( "test", "brollies" );
-        $response = $this->gateway->editRelease( $releaseId, "test", "brollies" );
+        $releaseId = $this->addRelease( self::RELEASE_NAME, self::RELEASE_URL);
+        $response = $this->gateway->editRelease( $releaseId, self::RELEASE_NAME, self::RELEASE_URL);
         $this->assertTrue( $response );
-        $this->assertEquals( new Release( $releaseId, "test", "brollies", new \DateTime(), true ), $this->gateway->getRelease( $releaseId ) );
+        $this->assertEquals( new Release( $releaseId, self::RELEASE_NAME, self::RELEASE_URL, new \DateTime(), true ), $this->gateway->getRelease( $releaseId ) );
+    }
+
+    /**
+     * @test
+     */
+    public function givenReleaseNotVisible_whenGettingFutureVisibleReleases_returnNothing()
+    {
+        $this->addRelease(self::RELEASE_NAME, self::RELEASE_URL, false);
+        $response = $this->gateway->getAllFutureVisibleReleases();
+        $this->assertEmpty($response);
+    }
+
+    /**
+     * @test
+     */
+    public function givenReleaseVisibleAndInPast_whenGettingFutureVisibleReleases_returnNothing()
+    {
+        $pastDate = (new \DateTime)->modify("-1 days");
+        $this->addRelease(self::RELEASE_NAME, self::RELEASE_URL, false, $pastDate);
+        $response = $this->gateway->getAllFutureVisibleReleases();
+        $this->assertEmpty($response);
+    }
+
+    /**
+     * @test
+     */
+    public function givenReleaseInFutureAndNotVisible_whenGettingFutureVisibleReleases_returnNothing()
+    {
+        $futureDate = $this->getFutureDate();
+        $this->addRelease(self::RELEASE_NAME, self::RELEASE_URL, false, $futureDate);
+        $response = $this->gateway->getAllFutureVisibleReleases();
+        $this->assertEmpty($response);
+    }
+
+    /**
+     * @test
+     */
+    public function givenReleaseInFutureAndVisible_whenGettingFutureVisibleReleases_returnRelease()
+    {
+        $futureDate = $this->getFutureDate();
+        $releaseId = $this->addRelease(self::RELEASE_NAME, self::RELEASE_URL, true, $futureDate);
+        $response = $this->gateway->getAllFutureVisibleReleases();
+        $expectedReleases = [new Release($releaseId, self::RELEASE_NAME, self::RELEASE_URL, $futureDate)];
+        $this->assertAllReleasesMatch($expectedReleases, $response);
+    }
+
+    /**
+     * @test
+     */
+    public function givenMultipleVisibleReleasesInTheFuture_whenGettingFutureVisibleReleases_returnAllReleases()
+    {
+        $futureDate = $this->getFutureDate();
+        $expectedReleases = [];
+        $releaseId = $this->addRelease(self::RELEASE_NAME, self::RELEASE_URL, true, $futureDate);
+        $secondReleaseId = $this->addRelease(self::RELEASE_NAME, self::RELEASE_URL, true, $futureDate);
+        $expectedReleases[] = new Release($releaseId, self::RELEASE_NAME, self::RELEASE_URL, $futureDate);
+        $expectedReleases[] = new Release($secondReleaseId, self::RELEASE_NAME, self::RELEASE_URL, $futureDate);
+        $response = $this->gateway->getAllFutureVisibleReleases();
+        $this->assertAllReleasesMatch($expectedReleases, $response);
+    }
+
+    /**
+     * @test
+     */
+    public function givenTwoReleasesInFutureWithOnlyOneVisible_whenGettingFutureVisibleReleases_returnOnlyVisibleRelease()
+    {
+        $futureDate = $this->getFutureDate();
+        $expectedReleases = [];
+        $releaseId = $this->addRelease(self::RELEASE_NAME, self::RELEASE_URL, true, $futureDate);
+        $expectedReleases[] = new Release($releaseId, self::RELEASE_NAME, self::RELEASE_URL, $futureDate);
+        $this->addRelease(self::RELEASE_NAME, self::RELEASE_URL, false, $futureDate);
+        $response = $this->gateway->getAllFutureVisibleReleases();
+        $this->assertAllReleasesMatch($expectedReleases, $response);
     }
 }
 

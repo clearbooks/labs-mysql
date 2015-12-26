@@ -11,7 +11,6 @@ use Clearbooks\Labs\Release\Gateway\ReleaseGateway;
 use Clearbooks\Labs\Release\Release;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\Query\QueryException;
 
 class MysqlReleaseGateway implements ReleaseGateway
 {
@@ -32,13 +31,18 @@ class MysqlReleaseGateway implements ReleaseGateway
     }
 
     /**
-     * @param $releaseName
-     * @param $url
+     * @param string $releaseName
+     * @param string $url
+     * @param bool $isVisible
+     * @param \DateTimeInterface $releaseDate
      * @return int
      */
-    public function addRelease( $releaseName, $url )
+    public function addRelease( $releaseName, $url, $isVisible = true, $releaseDate = null )
     {
-        return $this->connection->insert( "`release`", [ 'name' => $releaseName, 'info' => $url ] );
+        $releaseDate = $releaseDate ?: new \DateTime();
+
+        return $this->connection->insert( "`release`", [ 'name' => $releaseName, 'info' => $url,
+            'visibility' => $isVisible, 'release_date' => $releaseDate->format('Y-m-d')] );
     }
 
     /**
@@ -89,6 +93,24 @@ class MysqlReleaseGateway implements ReleaseGateway
             ->setParameter( 2, $releaseId );
         $queryBuilder->execute();
         return true;
+    }
+
+    /**
+     * @return Release[]
+     */
+    public function getAllFutureVisibleReleases()
+    {
+        $rows = $this->connection->fetchAll(
+            "SELECT * FROM `release` WHERE `visibility` = 1 AND `release_date` > ?", [(new \DateTime())->format('Y-m-d')]
+        );
+        $releases = [];
+        foreach($rows as $release) {
+            $releases[] = new Release(
+                $release["id"], $release["name"],
+                $release["info"], (new \DateTime($release["release_date"]))
+            );
+        }
+        return $releases;
     }
 }
 //EOF MysqlReleaseGateway.php
