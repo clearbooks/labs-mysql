@@ -44,6 +44,7 @@ class MysqlGetAllFeedbackForTogglesTest extends \PHPUnit_Framework_TestCase
     {
         parent::tearDown();
         $this->connection->rollBack();
+        $this->connection->setAutoCommit(true);
     }
 
     /**
