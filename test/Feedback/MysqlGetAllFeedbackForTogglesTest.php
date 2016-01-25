@@ -34,7 +34,6 @@ class MysqlGetAllFeedbackForTogglesTest extends \PHPUnit_Framework_TestCase
             ->get( Connection::class );
 
         $this->connection->beginTransaction();
-        $this->connection->setAutoCommit(false);
         $this->connection->setRollbackOnly();
         $this->connection->delete('`feedback`', [1]);
         $this->gateway = new MysqlGetAllFeedbackForToggles($this->connection);
@@ -44,7 +43,6 @@ class MysqlGetAllFeedbackForTogglesTest extends \PHPUnit_Framework_TestCase
     {
         parent::tearDown();
         $this->connection->rollBack();
-        $this->connection->setAutoCommit(true);
     }
 
     /**
