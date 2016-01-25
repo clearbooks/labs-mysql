@@ -11,7 +11,6 @@ use Clearbooks\Labs\Release\Gateway\ReleaseGateway;
 use Clearbooks\Labs\Release\Release;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\Query\QueryException;
 
 class MysqlReleaseGateway implements ReleaseGateway
 {
@@ -89,6 +88,13 @@ class MysqlReleaseGateway implements ReleaseGateway
             ->setParameter( 2, $releaseId );
         $queryBuilder->execute();
         return true;
+    }
+
+    /**
+     * @return Release[]
+     */
+    public function getAllFutureVisibleReleases()
+    {
     }
 }
 //EOF MysqlReleaseGateway.php
