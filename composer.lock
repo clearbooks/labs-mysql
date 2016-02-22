@@ -4,19 +4,19 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0dc6e73b98ef58130ad2cb3b043452f5",
-    "content-hash": "6745e2867c72e972be1677787c88c2bd",
+    "hash": "b60c705a393d221f85d3222aeaa7ea17",
+    "content-hash": "69d1e7ec1184f0cdabe8a2c1c076bdc7",
     "packages": [
         {
             "name": "clearbooks/labs",
-            "version": "dev-master",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/clearbooks/labs.git",
-                "reference": "c48f5de4c11966b187122d152c2eb2c81b4cf1b8"
+                "reference": "54dd8d39278beb615404fe93c7f25aa68b333fcc"
             },
             "require": {
-                "clearbooks/labs-php-client": "dev-master"
+                "clearbooks/labs-php-client": "1.0.0"
             },
             "require-dev": {
                 "codeclimate/php-test-reporter": "dev-master",
@@ -41,11 +41,11 @@
                 }
             ],
             "description": "Sensible releases",
-            "time": "2016-01-22 14:45:27"
+            "time": "2016-02-22 16:09:05"
         },
         {
             "name": "clearbooks/labs-php-client",
-            "version": "dev-master",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/clearbooks/labs-php-client.git",
@@ -78,15 +78,15 @@
         },
         {
             "name": "clearbooks/labs-php-client-mysql",
-            "version": "dev-master",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/clearbooks/labs-php-client-mysql.git",
-                "reference": "fffb347af9afe39f6b44145bef382bf6fe7e63e2"
+                "reference": "c39703b41d3937cbe2fdebcc2630874811258898"
             },
             "require": {
-                "clearbooks/labs-php-client": "dev-master",
-                "clearbooks/labs-schema": "dev-master",
+                "clearbooks/labs-php-client": "1.0.0",
+                "clearbooks/labs-schema": "1.0.0",
                 "crodas/notoj": "1.0.8",
                 "doctrine/dbal": "2.5.1",
                 "php-di/php-di": "^5.0"
@@ -113,11 +113,11 @@
                 }
             ],
             "description": "DB connection classes for Labs",
-            "time": "2015-09-10 10:19:08"
+            "time": "2015-12-08 11:27:00"
         },
         {
             "name": "clearbooks/labs-schema",
-            "version": "dev-master",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:clearbooks/labs-schema.git",
@@ -1877,12 +1877,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "clearbooks/labs": 20,
-        "clearbooks/labs-php-client": 20,
-        "clearbooks/labs-php-client-mysql": 20,
-        "clearbooks/labs-schema": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
