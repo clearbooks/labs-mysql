@@ -38,9 +38,10 @@ class MysqlGetTogglesVisibleWithoutReleaseGateway implements GetUserTogglesVisib
     private function getTogglesVisibleWithoutRelease( $isGroupToggle )
     {
         $queryBuilder = $this->connection->createQueryBuilder();
-        $queryBuilder->select( "*" )
-                     ->from( (string)$this->toggleTable )
-                     ->where( "release_id IS NULL AND visible = 1 AND visible_without_release = 1 AND type = ?" );
+        $queryBuilder->select( "t.*, tmi.*" )
+                     ->from( (string)$this->toggleTable, "t" )
+                     ->join( "t", "toggle_marketing_information", "tmi", "t.id = tmi.toggle_id" )
+                     ->where( "t.release_id IS NULL AND t.visible = 1 AND t.visible_without_release = 1 AND t.type = ?" );
 
         $queryBuilder->setParameter( 0, $isGroupToggle ? "group" : "simple" );
 
