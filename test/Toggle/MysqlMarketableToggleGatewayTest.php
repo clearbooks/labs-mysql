@@ -8,19 +8,11 @@
 
 namespace Clearbooks\LabsMysql\Toggle;
 
-
-use Clearbooks\Labs\Bootstrap;
+use Clearbooks\Labs\LabsTest;
 use Clearbooks\LabsMysql\Release\MysqlReleaseGateway;
-use Doctrine\DBAL\Connection;
 
-class MysqlMarketableToggleGatewayTest extends \PHPUnit_Framework_TestCase
+class MysqlMarketableToggleGatewayTest extends LabsTest
 {
-
-    /**
-     * @var Connection
-     */
-    private $connection;
-
     /**
      * @var MysqlMarketableToggleGateway
      */
@@ -191,20 +183,7 @@ class MysqlMarketableToggleGatewayTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-
-        $this->connection = Bootstrap::getInstance()->getDIContainer()
-            ->get( Connection::class );
-
-        $this->connection->beginTransaction();
-        $this->connection->setRollbackOnly();
-
         $this->gateway = new MysqlMarketableToggleGateway( $this->connection );
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->connection->rollBack();
     }
 
     /**

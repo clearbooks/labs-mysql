@@ -8,23 +8,15 @@
 
 namespace Clearbooks\LabsMysql\Release;
 
-
+use Clearbooks\Labs\LabsTest;
 use Clearbooks\Labs\Release\Release;
-use Doctrine\DBAL\Configuration;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
 
-class MysqlPublicReleaseGatewayTest extends \PHPUnit_Framework_TestCase
+class MysqlPublicReleaseGatewayTest extends LabsTest
 {
     /**
      * @var MysqlPublicReleaseGateway
      */
     private $gateway;
-
-    /**
-     * @var Connection
-     */
-    private $connection;
 
     /**
      * @var \DateTime
@@ -34,24 +26,8 @@ class MysqlPublicReleaseGatewayTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-
-        $connectionParams = array(
-            'dbname' => 'labs',
-            'user' => 'root',
-            'password' => '',
-            'host' => 'localhost',
-            'driver' => 'pdo_mysql',
-        );
-
-        $this->connection = DriverManager::getConnection( $connectionParams, new Configuration() );
         $this->gateway = new MysqlPublicReleaseGateway( $this->connection );
         $this->futureDateTime = new \DateTime('3000-01-01 00:00:00');
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->connection->delete( '`release`', [ '*' ] );
     }
 
     /**

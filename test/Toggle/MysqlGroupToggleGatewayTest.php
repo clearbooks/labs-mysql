@@ -8,45 +8,16 @@
 
 namespace Clearbooks\LabsMysql\Toggle;
 
+use Clearbooks\Labs\LabsTest;
 use Clearbooks\LabsMysql\Release\MysqlReleaseGateway;
 use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
-use Doctrine\DBAL\Configuration;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
-use PHPUnit_Framework_TestCase;
 
-class MysqlGroupToggleGatewayTest extends \PHPUnit_Framework_TestCase
+class MysqlGroupToggleGatewayTest extends LabsTest
 {
     /**
      * @var MysqlGroupToggleGateway
      */
     private $gateway;
-
-    /**
-     * @var Connection $connection
-     */
-    private $connection;
-
-    /**
-     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
-     */
-    private function deleteAddedReleases()
-    {
-        $this->connection->delete( '`release`', [ '*' ] );
-    }
-
-    /**
-     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
-     */
-    private function deleteAddedToggles()
-    {
-        $this->connection->delete( '`toggle`', [ '*' ] );
-    }
-
-    private function deleteAddedMarketingInfo()
-    {
-        $this->connection->delete( '`toggle_marketing_information`', [ '*' ] );
-    }
 
     /**
      * @param string $releaseName
@@ -88,24 +59,7 @@ class MysqlGroupToggleGatewayTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-
-        $connectionParams = array(
-            'dbname' => 'labs',
-            'user' => 'root',
-            'password' => '',
-            'host' => 'localhost',
-            'driver' => 'pdo_mysql',
-        );
-
-        $this->connection = DriverManager::getConnection( $connectionParams, new Configuration() );
         $this->gateway = new MysqlGroupToggleGateway( $this->connection );
-    }
-
-    public function tearDown()
-    {
-        $this->deleteAddedMarketingInfo();
-        $this->deleteAddedToggles();
-        $this->deleteAddedReleases();
     }
 
     /**

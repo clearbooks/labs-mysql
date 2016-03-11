@@ -1,5 +1,5 @@
 <?php
-use Clearbooks\LabsMysql\AutoSubscribe\Entity\User;
+namespace Clearbooks\LabsMysql\AutoSubscribe\Entity;
 
 /**
  * Created by PhpStorm.
@@ -7,7 +7,7 @@ use Clearbooks\LabsMysql\AutoSubscribe\Entity\User;
  * Date: 04/09/2015
  * Time: 10:18
  */
-class UserTest extends PHPUnit_Framework_TestCase
+class UserTest extends \PHPUnit_Framework_TestCase
 {
     const USER_ID = "TheChosenOne";
 

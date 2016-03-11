@@ -83,10 +83,10 @@ class Toggle implements MarketableToggle, UserToggle, ActivatableToggle
      * @param string $appNotificationCopyText
      * @param string $marketingToggleTitle
      */
-    public function __construct( $id, $name, $releaseId, $isActive = false, $toggleType = "simple", $screenshotUrl = "",
-                                 $descriptionOfToggle = "", $descriptionOfFunctionality = "",
-                                 $descriptionOfImplementationReason = "", $descriptionOfLocation = "", $guideUrl = "",
-                                 $appNotificationCopyText = "", $marketingToggleTitle = "" )
+    public function __construct( $id, $name, $releaseId, $isActive = false, $toggleType = "simple", $screenshotUrl = null,
+                                 $descriptionOfToggle = null, $descriptionOfFunctionality = null,
+                                 $descriptionOfImplementationReason = null, $descriptionOfLocation = null, $guideUrl = null,
+                                 $appNotificationCopyText = null, $marketingToggleTitle = null )
     {
         $this->id = $id;
         $this->name = $name;

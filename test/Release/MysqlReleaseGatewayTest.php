@@ -6,22 +6,17 @@
 
 namespace Clearbooks\LabsMysql\Release;
 
-
 use Clearbooks\Labs\Bootstrap;
+use Clearbooks\Labs\LabsTest;
 use Clearbooks\Labs\Release\Release;
 use Doctrine\DBAL\Connection;
 
-class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
+class MysqlReleaseGatewayTest extends LabsTest
 {
     /**
      * @var MysqlReleaseGateway
      */
     private $gateway;
-
-    /**
-     * @var Connection
-     */
-    private $connection;
 
     /**
      * @param $releaseName
@@ -47,20 +42,7 @@ class MysqlReleaseGatewayTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-
-        $this->connection = Bootstrap::getInstance()->getDIContainer()
-            ->get( Connection::class );
-
-        $this->connection->beginTransaction();
-        $this->connection->setRollbackOnly();
-
         $this->gateway = new MysqlReleaseGateway( $this->connection );
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->connection->rollBack();
     }
 
     /**

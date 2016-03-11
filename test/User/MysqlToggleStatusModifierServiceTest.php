@@ -2,11 +2,9 @@
 
 namespace Clearbooks\LabsMysql\User;
 
-use Clearbooks\Labs\Bootstrap;
+use Clearbooks\Labs\LabsTest;
 use Clearbooks\LabsMysql\Release\MysqlReleaseGateway;
 use Clearbooks\Labs\User\UseCase\ToggleStatusModifier;
-use Doctrine\DBAL\Connection;
-use PHPUnit_Framework_TestCase;
 
 /**
  * Created by PhpStorm.
@@ -14,14 +12,8 @@ use PHPUnit_Framework_TestCase;
  * Date: 18/08/2015
  * Time: 11:57
  */
-class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
+class MysqlUserToggleServiceTest extends LabsTest
 {
-
-    /**
-     * @var Connection $connection
-     */
-    private $connection;
-
     /**
      * @var MysqlToggleStatusModifierService
      */
@@ -200,19 +192,7 @@ class MysqlUserToggleServiceTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-
-        $this->connection = Bootstrap::getInstance()->getDIContainer()
-            ->get( Connection::class );
-
-        $this->connection->beginTransaction();
-        $this->connection->setRollbackOnly();
         $this->gateway = new MysqlToggleStatusModifierService( $this->connection );
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->connection->rollBack();
     }
 
     /**

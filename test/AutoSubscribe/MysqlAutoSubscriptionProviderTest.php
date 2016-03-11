@@ -1,9 +1,9 @@
 <?php
-use Clearbooks\Labs\Bootstrap;
+namespace Clearbooks\LabsMysql\AutoSubscribe;
+
+use Clearbooks\Labs\AutoSubscribe\Gateway\AutoSubscriptionProvider;
+use Clearbooks\Labs\LabsTest;
 use Clearbooks\LabsMysql\AutoSubscribe\Entity\User;
-use Clearbooks\LabsMysql\AutoSubscribe\MysqlAutoSubscriberProvider;
-use Clearbooks\LabsMysql\AutoSubscribe\MysqlAutoSubscriptionProvider;
-use Doctrine\DBAL\Connection;
 
 /**
  * Created by PhpStorm.
@@ -11,13 +11,8 @@ use Doctrine\DBAL\Connection;
  * Date: 03/09/2015
  * Time: 13:15
  */
-class MysqlAutoSubscriptionProviderTest extends PHPUnit_Framework_TestCase
+class MysqlAutoSubscriptionProviderTest extends LabsTest
 {
-    /**
-     * @var Connection
-     */
-    private $connection;
-
     /**
      * @var AutoSubscriptionProvider
      */
@@ -54,20 +49,7 @@ class MysqlAutoSubscriptionProviderTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-
-        $this->connection = Bootstrap::getInstance()->getDIContainer()
-            ->get( Connection::class );
-
-        $this->connection->beginTransaction();
-        $this->connection->setRollbackOnly();
-
         $this->gateway = new MysqlAutoSubscriptionProvider( $this->connection );
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->connection->rollBack();
     }
 
     /**
