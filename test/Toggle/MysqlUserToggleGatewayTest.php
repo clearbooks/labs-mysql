@@ -2,12 +2,9 @@
 
 namespace Clearbooks\LabsMysql\Toggle;
 
+use Clearbooks\Labs\LabsTest;
 use Clearbooks\LabsMysql\Release\MysqlReleaseGateway;
 use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
-use Doctrine\DBAL\Configuration;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
-use PHPUnit_Framework_TestCase;
 
 /**
  * Created by PhpStorm.
@@ -15,41 +12,12 @@ use PHPUnit_Framework_TestCase;
  * Date: 14/08/2015
  * Time: 15:12
  */
-class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
+class MysqlUserToggleGatewayTest extends LabsTest
 {
     /**
      * @var MysqlUserToggleGateway
      */
     private $gateway;
-
-    /**
-     * @var Connection $connection
-     */
-    private $connection;
-
-    /**
-     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
-     */
-    private function deleteAddedReleases()
-    {
-        $this->connection->delete( '`release`', [ '*' ] );
-    }
-
-    /**
-     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
-     */
-    private function deleteAddedToggles()
-    {
-        $this->connection->delete( '`toggle`', [ '*' ] );
-    }
-
-    /**
-     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
-     */
-    private function deleteAddedToggleMarketingInformation()
-    {
-        $this->connection->delete( '`toggle_marketing_information`', [ '*' ] );
-    }
 
     /**
      * @param string $releaseName
@@ -136,24 +104,7 @@ class MysqlUserToggleGatewayTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-
-        $connectionParams = array(
-            'dbname' => 'labs',
-            'user' => 'root',
-            'password' => '',
-            'host' => 'localhost',
-            'driver' => 'pdo_mysql',
-        );
-
-        $this->connection = DriverManager::getConnection( $connectionParams, new Configuration() );
         $this->gateway = new MysqlUserToggleGateway( $this->connection );
-    }
-
-    public function tearDown()
-    {
-        $this->deleteAddedToggleMarketingInformation();
-        $this->deleteAddedToggles();
-        $this->deleteAddedReleases();
     }
 
     /**

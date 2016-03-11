@@ -1,9 +1,9 @@
 <?php
-use Clearbooks\Labs\Bootstrap;
+namespace Clearbooks\LabsMysql\Toggle;
+
+use Clearbooks\Labs\LabsTest;
 use Clearbooks\LabsMysql\Release\MysqlReleaseGateway;
 use Clearbooks\LabsMysql\Toggle\Entity\Toggle;
-use Clearbooks\LabsMysql\Toggle\MysqlActivatableToggleGateway;
-use Doctrine\DBAL\Connection;
 
 /**
  * Created by PhpStorm.
@@ -11,17 +11,12 @@ use Doctrine\DBAL\Connection;
  * Date: 13/08/2015
  * Time: 14:38
  */
-class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
+class MysqlActivatableToggleGatewayTest extends LabsTest
 {
     /**
      * @var MysqlActivatableToggleGateway
      */
     private $gateway;
-
-    /**
-     * @var Connection
-     */
-    private $connection;
 
     /**
      * @param string $releaseName
@@ -122,20 +117,7 @@ class MysqlActivatableToggleGatewayTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-
-        $this->connection = Bootstrap::getInstance()->getDIContainer()
-            ->get( Connection::class );
-
-        $this->connection->beginTransaction();
-        $this->connection->setRollbackOnly();
-
         $this->gateway = new MysqlActivatableToggleGateway( $this->connection );
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->connection->rollBack();
     }
 
     /**

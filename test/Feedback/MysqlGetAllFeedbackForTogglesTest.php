@@ -8,13 +8,11 @@
 
 namespace Clearbooks\LabsMysql\Feedback;
 
-
-use Clearbooks\Labs\Bootstrap;
 use Clearbooks\Labs\Feedback\Gateway\GetFeedbackForTogglesGateway;
+use Clearbooks\Labs\LabsTest;
 use Clearbooks\LabsMysql\Feedback\Entity\ToggleFeedback;
-use Doctrine\DBAL\Connection;
 
-class MysqlGetAllFeedbackForTogglesTest extends \PHPUnit_Framework_TestCase
+class MysqlGetAllFeedbackForTogglesTest extends LabsTest
 {
     const TOGGLE_ID = 9001;
     const MOOD = 1;
@@ -22,27 +20,14 @@ class MysqlGetAllFeedbackForTogglesTest extends \PHPUnit_Framework_TestCase
     const USER_ID = 2;
     const GROUP_ID = 3;
     const TOGGLE_NAME = 'meowToggle';
-    /** @var Connection */
-    private $connection;
+
     /** @var GetFeedbackForTogglesGateway */
     private $gateway;
 
-    protected function setUp()
+    public function setUp()
     {
         parent::setUp();
-        $this->connection = Bootstrap::getInstance()->getDIContainer()
-            ->get( Connection::class );
-
-        $this->connection->beginTransaction();
-        $this->connection->setRollbackOnly();
-        $this->connection->delete('`feedback`', [1]);
         $this->gateway = new MysqlGetAllFeedbackForToggles($this->connection);
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-        $this->connection->rollBack();
     }
 
     /**
@@ -59,6 +44,4 @@ class MysqlGetAllFeedbackForTogglesTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals([$expectedToggleFeedback], $this->gateway->getFeedbackForToggles());
     }
-
-
 }

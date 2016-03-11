@@ -4,16 +4,16 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4c2f457405399aaa08f06cb262a430e2",
-    "content-hash": "219b885b49f3c8ca569fd70dd907dd78",
+    "hash": "83793c3e7ec933be180a7d6f335f042d",
+    "content-hash": "84ac1d18eb8e4a665d3a24fd77984e00",
     "packages": [
         {
             "name": "clearbooks/labs",
-            "version": "1.0.1",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/clearbooks/labs.git",
-                "reference": "1d10e13e8c7ecfd45046671545f1e158b3647213"
+                "reference": "8ee9ef5d951280ddcd741afa8ed685904140726c"
             },
             "require": {
                 "clearbooks/labs-php-client": "1.3.1"
@@ -41,7 +41,7 @@
                 }
             ],
             "description": "Sensible releases",
-            "time": "2016-03-10 15:03:21"
+            "time": "2016-03-11 09:17:50"
         },
         {
             "name": "clearbooks/labs-php-client",
