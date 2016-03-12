@@ -207,6 +207,26 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     }
 
     /**
+     * @param bool $isGroupToggle
+     * @return StringifyableTable
+     */
+    private function getPolicyTable( $isGroupToggle )
+    {
+        return $isGroupToggle ? $this->groupPolicyTable : $this->userPolicyTable;
+    }
+
+    /**
+     * @param string $toggleStatus
+     * @return bool
+     */
+    private function isValidStatus( $toggleStatus )
+    {
+        return $this->toggleStatusActive( $toggleStatus )
+               || $this->toggleStatusInactive( $toggleStatus )
+               || $this->toggleStatusUnset( $toggleStatus );
+    }
+
+    /**
      * @param string $toggleIdentifier
      * @param string $toggleStatus
      * @param string $userOrGroupIdentifier
@@ -215,21 +235,23 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
      */
     private function setToggleStatus( $toggleIdentifier, $toggleStatus, $userOrGroupIdentifier, $isGroup = false )
     {
-        $affectedRows = null;
-        $policyTable = $isGroup ? $this->groupPolicyTable : $this->userPolicyTable;
-        if ( $this->toggleStatusActive( $toggleStatus ) || $this->toggleStatusInactive( $toggleStatus ) ) {
-            $affectedRows = $this->insertOrUpdateTogglePolicy(
-                    $policyTable,
-                    $toggleIdentifier,
-                    $userOrGroupIdentifier,
-                    $this->toggleStatusActive( $toggleStatus )
-            );
-        }
-        else if ( $this->toggleStatusUnset( $toggleStatus ) ) {
-            $affectedRows = $this->dropToggle( $policyTable, $toggleIdentifier, $userOrGroupIdentifier );
+        if ( !$this->isValidStatus( $toggleStatus ) ) {
+            return false;
         }
 
-        return $affectedRows !== null;
+        $policyTable = $this->getPolicyTable( $isGroup );
+        if ( $this->toggleStatusUnset( $toggleStatus ) ) {
+            $this->dropToggle( $policyTable, $toggleIdentifier, $userOrGroupIdentifier );
+            return true;
+        }
+
+        $this->insertOrUpdateTogglePolicy(
+                $policyTable,
+                $toggleIdentifier,
+                $userOrGroupIdentifier,
+                $this->toggleStatusActive( $toggleStatus )
+        );
+        return true;
     }
 
     /**
