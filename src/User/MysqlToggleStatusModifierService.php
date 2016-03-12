@@ -2,11 +2,12 @@
 
 namespace Clearbooks\LabsMysql\User;
 
+use Clearbooks\Labs\Db\Table\GroupPolicy;
+use Clearbooks\Labs\Db\Table\UseCase\StringifyableTable;
+use Clearbooks\Labs\Db\Table\UserPolicy;
 use Clearbooks\Labs\User\UseCase\ToggleStatusModifier;
 use Clearbooks\Labs\User\UseCase\ToggleStatusModifierService;
-use Clearbooks\Labs\User\UseCase\UserToggleService;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Query\QueryBuilder;
 
 /**
  * Created by PhpStorm.
@@ -22,12 +23,26 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     private $connection;
 
     /**
+     * @var UserPolicy
+     */
+    private $userPolicyTable;
+
+    /**
+     * @var GroupPolicy
+     */
+    private $groupPolicyTable;
+
+    /**
      * MysqlUserToggleService constructor.
      * @param Connection $connection
+     * @param UserPolicy $userPolicyTable
+     * @param GroupPolicy $groupPolicyTable
      */
-    public function __construct( Connection $connection )
+    public function __construct( Connection $connection, UserPolicy $userPolicyTable, GroupPolicy $groupPolicyTable )
     {
         $this->connection = $connection;
+        $this->userPolicyTable = $userPolicyTable;
+        $this->groupPolicyTable = $groupPolicyTable;
     }
 
     /**
@@ -80,174 +95,115 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
     }
 
     /**
-     * @param string $toggleIdentifier
-     * @param string $userIdentifier
+     * @param StringifyableTable $policyTable
+     * @return string
      */
-    private function insertActiveUserActivatedToggle( $toggleIdentifier, $userIdentifier )
+    private function getIdentityColumnByPolicyTable( StringifyableTable $policyTable )
     {
-        $this->connection->insert( "`user_policy`",
-            [ 'user_id' => $userIdentifier, 'toggle_id' => $toggleIdentifier, 'active' => 1 ] );
-    }
-
-    /**
-     * @param string $toggleIdentifier
-     * @param string $groupIdentifier
-     * @param bool $isActive
-     */
-    private function insertGroupActivatedToggle( $toggleIdentifier, $groupIdentifier, $isActive )
-    {
-        $this->connection->insert( "`group_policy`",
-            [ 'group_id' => $groupIdentifier, 'toggle_id' => $toggleIdentifier, 'active' => $isActive ] );
-    }
-
-    /**
-     * @param string $table
-     * @param string $colon
-     * @return QueryBuilder
-     */
-    private function generateQueryBuilderForToggleUpdate( $table, $colon )
-    {
-        $queryBuilder = new QueryBuilder( $this->connection );
-        $queryBuilder
-            ->update( $table )
-            ->set( 'active', '?' )
-            ->where( 'toggle_id = ?' )
-            ->andWhere( $colon . '= ?' );
-        return $queryBuilder;
-    }
-
-    /**
-     * @return QueryBuilder
-     */
-    private function generateQueryBuilderForUserToggleDelete()
-    {
-        $queryBuilder = new QueryBuilder( $this->connection );
-        $queryBuilder
-            ->delete( 'user_policy' )
-            ->where( 'toggle_id = ?' )
-            ->andWhere( 'user_id = ?' );
-        return $queryBuilder;
-    }
-
-    /**
-     * @return QueryBuilder
-     */
-    private function generateQueryBuilderForGroupToggleDelete()
-    {
-        $queryBuilder = new QueryBuilder( $this->connection );
-        $queryBuilder
-            ->delete( 'group_policy' )
-            ->where( 'toggle_id = ?' )
-            ->andWhere( 'group_id = ?' );
-        return $queryBuilder;
-    }
-
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @param string $toggleIdentifier
-     * @param string $groupIdentifier
-     * @param bool $isActive
-     */
-    private function updateToggle( QueryBuilder $queryBuilder, $toggleIdentifier, $groupIdentifier, $isActive )
-    {
-        $queryBuilder
-            ->setParameter( 0, $isActive )
-            ->setParameter( 1, $toggleIdentifier )
-            ->setParameter( 2, $groupIdentifier );
-        $queryBuilder->execute();
-    }
-
-    /**
-     * @param string $toggleIdentifier
-     * @param string $userIdentifier
-     */
-    private function tryInsertElseUpdateUserToggleToActiveState( $toggleIdentifier, $userIdentifier )
-    {
-        try {
-            $this->insertActiveUserActivatedToggle( $toggleIdentifier, $userIdentifier );
-        } catch ( \Exception $e ) {
-            $queryBuilder = $this->generateQueryBuilderForToggleUpdate( '`user_policy`', 'user_id' );
-            $this->updateToggle( $queryBuilder, $toggleIdentifier, $userIdentifier, true );
+        $identityColumn = "";
+        if ( $policyTable instanceof UserPolicy ) {
+            $identityColumn = "user_id";
         }
-    }
-
-    /**
-     * @param string $toggleIdentifier
-     * @param string $groupIdentifier
-     * @param bool $isActive
-     */
-    private function tryInsertElseUpdateGroupToggleToAGivenState( $toggleIdentifier, $groupIdentifier, $isActive )
-    {
-        try {
-            $this->insertGroupActivatedToggle( $toggleIdentifier, $groupIdentifier, $isActive );
-        } catch ( \Exception $e ) {
-            $queryBuilder = $this->generateQueryBuilderForToggleUpdate( '`group_policy`', 'group_id' );
-            $this->updateToggle( $queryBuilder, $toggleIdentifier, $groupIdentifier, $isActive );
+        else if ( $policyTable instanceof GroupPolicy ) {
+            $identityColumn = "group_id";
         }
+
+        return $identityColumn;
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
-     * @param string $param1
-     * @param string $param2
-     */
-    private function deleteToggle( QueryBuilder $queryBuilder, $param1, $param2 )
-    {
-        $queryBuilder
-            ->setParameter( 0, $param1 )
-            ->setParameter( 1, $param2 );
-        $queryBuilder->execute();
-    }
-
-    /**
-     * @param string $toggleIdentifier
-     * @param string $userOrGroupIdentifier
-     * @param bool $isGroup
+     * @param StringifyableTable $policyTable
+     * @param int $toggleIdentifier
+     * @param string $identity
      * @return bool
      */
-    private function tryInsertElseUpdateToggleToActiveState( $toggleIdentifier, $userOrGroupIdentifier, $isGroup )
+    private function policyRecordExists( StringifyableTable $policyTable, $toggleIdentifier, $identity )
     {
-        if ( !$isGroup ) {
-            $this->tryInsertElseUpdateUserToggleToActiveState( $toggleIdentifier, $userOrGroupIdentifier );
-        } else {
-            $this->tryInsertElseUpdateGroupToggleToAGivenState( $toggleIdentifier, $userOrGroupIdentifier, true );
-        }
-        return true;
+        $identityColumn = $this->getIdentityColumnByPolicyTable( $policyTable );
+        $numberOfPolicyRecords = $this->connection->createQueryBuilder()
+                                                  ->select( "COUNT(toggle_id)" )
+                                                  ->from( (string)$policyTable )
+                                                  ->where( "toggle_id = ?" )
+                                                  ->andWhere( $identityColumn . " = ?" )
+                                                  ->setParameter( 0, $toggleIdentifier )
+                                                  ->setParameter( 1, $identity )
+                                                  ->execute()->fetchColumn();
+        return $numberOfPolicyRecords > 0;
     }
 
     /**
-     * @param string $toggleIdentifier
-     * @param string $userOrGroupIdentifier
-     * @param bool $isGroup
-     * @return bool
+     * @param StringifyableTable $policyTable
+     * @param int $toggleIdentifier
+     * @param string $identity
+     * @param bool $isActive
+     * @return int
      */
-    private function tryInsertElseUpdateToggleToInactiveState( $toggleIdentifier, $userOrGroupIdentifier, $isGroup )
+    private function insertPolicyRecord( StringifyableTable $policyTable, $toggleIdentifier, $identity, $isActive )
     {
-        if ( !$isGroup ) {
-            $queryBuilder = $this->generateQueryBuilderForToggleUpdate( '`user_policy`', 'user_id' );
-            $this->updateToggle( $queryBuilder, $toggleIdentifier, $userOrGroupIdentifier, false );
-        } else {
-            $this->tryInsertElseUpdateGroupToggleToAGivenState( $toggleIdentifier, $userOrGroupIdentifier, false );
-        }
-        return true;
+        $identityColumn = $this->getIdentityColumnByPolicyTable( $policyTable );
+        return $this->connection->insert(
+                (string)$policyTable,
+                [
+                        "toggle_id" => $toggleIdentifier,
+                        $identityColumn => $identity,
+                        "active" => $isActive ? 1 : 0
+                ]
+        );
     }
 
     /**
-     * @param string $toggleIdentifier
-     * @param string $userOrGroupIdentifier
-     * @param bool $isGroup
-     * @return bool
+     * @param StringifyableTable $policyTable
+     * @param int $toggleIdentifier
+     * @param string $identity
+     * @param bool $isActive
+     * @return int
      */
-    private function unsetToggle( $toggleIdentifier, $userOrGroupIdentifier, $isGroup )
+    private function updatePolicyRecord( StringifyableTable $policyTable, $toggleIdentifier, $identity, $isActive )
     {
-        if ( !$isGroup ) {
-            $queryBuilder = $this->generateQueryBuilderForUserToggleDelete();
-            $this->deleteToggle( $queryBuilder, $toggleIdentifier, $userOrGroupIdentifier );
-        } else {
-            $queryBuilder = $this->generateQueryBuilderForGroupToggleDelete();
-            $this->deleteToggle( $queryBuilder, $toggleIdentifier, $userOrGroupIdentifier );
+        $identityColumn = $this->getIdentityColumnByPolicyTable( $policyTable );
+        return $this->connection->update(
+                (string)$policyTable,
+                [ "active" => $isActive ? 1 : 0 ],
+                [
+                        "toggle_id" => $toggleIdentifier,
+                        $identityColumn => $identity
+                ]
+        );
+    }
+
+    /**
+     * @param StringifyableTable $policyTable
+     * @param int $toggleIdentifier
+     * @param string $identity
+     * @param boolean $isActive
+     * @return int
+     */
+    private function insertOrUpdateTogglePolicy( StringifyableTable $policyTable, $toggleIdentifier, $identity, $isActive )
+    {
+        $policyRecordExists = $this->policyRecordExists( $policyTable, $toggleIdentifier, $identity );
+        if ( !$policyRecordExists ) {
+            return $this->insertPolicyRecord( $policyTable, $toggleIdentifier, $identity, $isActive );
         }
-        return true;
+
+        return $this->updatePolicyRecord( $policyTable, $toggleIdentifier, $identity, $isActive );
+    }
+
+    /**
+     * @param StringifyableTable $policyTable
+     * @param int $toggleIdentifier
+     * @param string $identity
+     * @return int
+     */
+    private function dropToggle( StringifyableTable $policyTable, $toggleIdentifier, $identity )
+    {
+        $identityColumn = $this->getIdentityColumnByPolicyTable( $policyTable );
+        return $this->connection->delete(
+                (string)$policyTable,
+                [
+                        "toggle_id" => $toggleIdentifier,
+                        $identityColumn => $identity
+                ]
+        );
     }
 
     /**
@@ -259,16 +215,21 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
      */
     private function setToggleStatus( $toggleIdentifier, $toggleStatus, $userOrGroupIdentifier, $isGroup = false )
     {
-        if ( $this->toggleStatusActive( $toggleStatus ) ) {
-            return $this->tryInsertElseUpdateToggleToActiveState( $toggleIdentifier, $userOrGroupIdentifier, $isGroup );
-        } else if ( $this->toggleStatusInactive( $toggleStatus ) ) {
-            return $this->tryInsertElseUpdateToggleToInactiveState( $toggleIdentifier, $userOrGroupIdentifier,
-                $isGroup );
-        } else if ( $this->toggleStatusUnset( $toggleStatus ) ) {
-            return $this->unsetToggle( $toggleIdentifier, $userOrGroupIdentifier, $isGroup );
-        } else {
-            return false;
+        $affectedRows = null;
+        $policyTable = $isGroup ? $this->groupPolicyTable : $this->userPolicyTable;
+        if ( $this->toggleStatusActive( $toggleStatus ) || $this->toggleStatusInactive( $toggleStatus ) ) {
+            $affectedRows = $this->insertOrUpdateTogglePolicy(
+                    $policyTable,
+                    $toggleIdentifier,
+                    $userOrGroupIdentifier,
+                    $this->toggleStatusActive( $toggleStatus )
+            );
         }
+        else if ( $this->toggleStatusUnset( $toggleStatus ) ) {
+            $affectedRows = $this->dropToggle( $policyTable, $toggleIdentifier, $userOrGroupIdentifier );
+        }
+
+        return $affectedRows !== null;
     }
 
     /**

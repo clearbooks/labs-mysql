@@ -2,6 +2,8 @@
 
 namespace Clearbooks\LabsMysql\User;
 
+use Clearbooks\Labs\Db\Table\GroupPolicy;
+use Clearbooks\Labs\Db\Table\UserPolicy;
 use Clearbooks\Labs\LabsTest;
 use Clearbooks\LabsMysql\Release\MysqlReleaseGateway;
 use Clearbooks\Labs\User\UseCase\ToggleStatusModifier;
@@ -12,7 +14,7 @@ use Clearbooks\Labs\User\UseCase\ToggleStatusModifier;
  * Date: 18/08/2015
  * Time: 11:57
  */
-class MysqlUserToggleServiceTest extends LabsTest
+class MysqlToggleStatusModifierServiceTest extends LabsTest
 {
     /**
      * @var MysqlToggleStatusModifierService
@@ -192,7 +194,7 @@ class MysqlUserToggleServiceTest extends LabsTest
     public function setUp()
     {
         parent::setUp();
-        $this->gateway = new MysqlToggleStatusModifierService( $this->connection );
+        $this->gateway = new MysqlToggleStatusModifierService( $this->connection, new UserPolicy(), new GroupPolicy() );
     }
 
     /**
@@ -291,7 +293,7 @@ class MysqlUserToggleServiceTest extends LabsTest
 
         $this->assertTrue( $response );
         $this->validateDatabaseData( $toggleId, $userId, $toggleId2, $userId2, $toggleId3, $userId3, $userId4,
-            false, true );
+            false );
     }
 
     /**
