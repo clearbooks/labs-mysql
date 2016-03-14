@@ -137,55 +137,23 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
      * @param string $identity
      * @param bool $isActive
      * @return int
+     * @throws \Doctrine\DBAL\DBALException
      */
-    private function insertPolicyRecord( StringifyableTable $policyTable, $toggleIdentifier, $identity, $isActive )
+    private function replacePolicyRecord( StringifyableTable $policyTable, $toggleIdentifier, $identity, $isActive )
     {
         $identityColumn = $this->getIdentityColumnByPolicyTable( $policyTable );
-        return $this->connection->insert(
-                (string)$policyTable,
-                [
-                        "toggle_id" => $toggleIdentifier,
-                        $identityColumn => $identity,
-                        "active" => $isActive ? 1 : 0
-                ]
+        $data = [
+                "toggle_id" => $toggleIdentifier,
+                $identityColumn => $identity,
+                "active" => $isActive ? 1 : 0
+        ];
+
+        $this->connection->connect();
+        return $this->connection->executeUpdate(
+                'REPLACE INTO ' . ( (string)$policyTable ) . ' (' . implode(', ', array_keys( $data ) ) . ')' .
+                ' VALUES (' . implode( ', ', array_fill( 0, count( $data ), '?' ) ) . ')',
+                array_values( $data )
         );
-    }
-
-    /**
-     * @param StringifyableTable $policyTable
-     * @param int $toggleIdentifier
-     * @param string $identity
-     * @param bool $isActive
-     * @return int
-     */
-    private function updatePolicyRecord( StringifyableTable $policyTable, $toggleIdentifier, $identity, $isActive )
-    {
-        $identityColumn = $this->getIdentityColumnByPolicyTable( $policyTable );
-        return $this->connection->update(
-                (string)$policyTable,
-                [ "active" => $isActive ? 1 : 0 ],
-                [
-                        "toggle_id" => $toggleIdentifier,
-                        $identityColumn => $identity
-                ]
-        );
-    }
-
-    /**
-     * @param StringifyableTable $policyTable
-     * @param int $toggleIdentifier
-     * @param string $identity
-     * @param boolean $isActive
-     * @return int
-     */
-    private function insertOrUpdateTogglePolicy( StringifyableTable $policyTable, $toggleIdentifier, $identity, $isActive )
-    {
-        $policyRecordExists = $this->policyRecordExists( $policyTable, $toggleIdentifier, $identity );
-        if ( !$policyRecordExists ) {
-            return $this->insertPolicyRecord( $policyTable, $toggleIdentifier, $identity, $isActive );
-        }
-
-        return $this->updatePolicyRecord( $policyTable, $toggleIdentifier, $identity, $isActive );
     }
 
     /**
@@ -245,7 +213,7 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
             return true;
         }
 
-        $this->insertOrUpdateTogglePolicy(
+        $this->replacePolicyRecord(
                 $policyTable,
                 $toggleIdentifier,
                 $userOrGroupIdentifier,
