@@ -9,11 +9,11 @@
     "packages": [
         {
             "name": "clearbooks/labs",
-            "version": "1.1.0",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/clearbooks/labs.git",
-                "reference": "6bcb1d380721bf8942d000ea9ee3f9a8be2cf94f"
+                "reference": "3461e0ffe204957976e0ca559cd282e1281a3dd8"
             },
             "require": {
                 "clearbooks/labs-php-client": "^1.4"
@@ -41,7 +41,7 @@
                 }
             ],
             "description": "Sensible releases",
-            "time": "2016-06-08 12:58:04"
+            "time": "2016-06-09 11:19:21"
         },
         {
             "name": "clearbooks/labs-php-client",
