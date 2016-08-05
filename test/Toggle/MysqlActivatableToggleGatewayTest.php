@@ -32,25 +32,25 @@ class MysqlActivatableToggleGatewayTest extends LabsTest
     /**
      * @param string $name
      * @param string $releaseId
-     * @param bool $isActive
+     * @param bool $isVisible
      * @return string
      */
-    private function addToggle( $name, $releaseId, $isActive = false )
+    private function addToggle( $name, $releaseId, $isVisible = false )
     {
-        $this->addToggleToDatebase( $name, $releaseId, $isActive );
+        $this->addToggleToDatebase( $name, $releaseId, $isVisible );
         return $this->connection->lastInsertId( "`toggle`" );
     }
 
     /**
      * @param string $name
      * @param string $releaseId
-     * @param bool $isActive
+     * @param bool $isVisible
      * @return int
      */
-    public function addToggleToDatebase( $name, $releaseId, $isActive )
+    public function addToggleToDatebase( $name, $releaseId, $isVisible )
     {
         return $this->connection->insert( "`toggle`",
-            [ 'name' => $name, 'release_id' => $releaseId, 'type' => 1, 'visible' => $isActive ] );
+            [ 'name' => $name, 'release_id' => $releaseId, 'type' => 1, 'visible' => $isVisible ] );
     }
 
     /**
@@ -58,7 +58,7 @@ class MysqlActivatableToggleGatewayTest extends LabsTest
      * @param int $userId
      * @param bool $status
      */
-    private function addUserActivatedToggle( $toggleId, $userId, $status = false )
+    private function setActivatedStatusToggleForUser( $toggleId, $userId, $status = false )
     {
         $this->connection->insert( "`user_policy`",
             [ 'user_id' => $userId, 'toggle_id' => $toggleId, 'active' => $status ] );
@@ -77,9 +77,9 @@ class MysqlActivatableToggleGatewayTest extends LabsTest
         $toggleId3 = $this->addToggle( "test3", $id2, true );
         $userId = 1;
 
-        $this->addUserActivatedToggle( $toggleId, $userId, true );
-        $this->addUserActivatedToggle( $toggleId2, $userId, false );
-        $this->addUserActivatedToggle( $toggleId3, $userId, true );
+        $this->setActivatedStatusToggleForUser( $toggleId, $userId, true );
+        $this->setActivatedStatusToggleForUser( $toggleId2, $userId, false );
+        $this->setActivatedStatusToggleForUser( $toggleId3, $userId, true );
 
         $expectedToggle = new Toggle( $toggleId, "test1", $id, true );
         $expectedToggle2 = new Toggle( $toggleId2, "test2", $id, false );
@@ -136,11 +136,34 @@ class MysqlActivatableToggleGatewayTest extends LabsTest
     {
         $id = $this->addRelease( 'Test activatable toggle 1', 'a helpful url' );
 
-        $toggleId = $this->addToggle( "test1", $id );
+        $toggleId = $this->addToggle( "test1", $id, true );
         $userId = 1;
-        $expectedToggle = new Toggle( $toggleId, "test1", $id );
 
-        $this->addUserActivatedToggle( $toggleId, $userId, false );
+        $status = false;
+        $expectedToggle = new Toggle( $toggleId, "test1", $id, $status );
+
+        $this->setActivatedStatusToggleForUser( $toggleId, $userId, $status );
+
+        $returnedToggle = $this->gateway->getActivatableToggleByName( "test1" );
+
+        $this->assertEquals( $expectedToggle, $returnedToggle );
+        $this->assertEquals( $expectedToggle->isActive(), $returnedToggle->isActive() );
+    }
+
+    /**
+     * @test
+     */
+    public function givenExistentNonVisibleToggleButNotActivated_MysqlActivatableToggleGateway_ReturnsNotActivatedToggle()
+    {
+        $id = $this->addRelease( 'Test invisible activatable toggle 1', 'a helpful url' );
+
+        $toggleId = $this->addToggle( "test1", $id, false );
+        $userId = 1;
+
+        $status = false;
+        $expectedToggle = new Toggle( $toggleId, "test1", $id, $status );
+
+        $this->setActivatedStatusToggleForUser( $toggleId, $userId, $status );
 
         $returnedToggle = $this->gateway->getActivatableToggleByName( "test1" );
 
@@ -158,9 +181,31 @@ class MysqlActivatableToggleGatewayTest extends LabsTest
         $toggleId = $this->addToggle( "test1", $id, true );
         $userId = 1;
 
-        $this->addUserActivatedToggle( $toggleId, $userId, true );
+        $status = true;
+        $this->setActivatedStatusToggleForUser( $toggleId, $userId, $status );
 
-        $expectedToggle = new Toggle( $toggleId, "test1", $id, true );
+        $expectedToggle = new Toggle( $toggleId, "test1", $id, $status );
+
+        $returnedToggle = $this->gateway->getActivatableToggleByName( "test1" );
+
+        $this->assertEquals( $expectedToggle, $returnedToggle );
+        $this->assertEquals( $expectedToggle->isActive(), $returnedToggle->isActive() );
+    }
+
+    /**
+     * @test
+     */
+    public function givenExistentButNonVisibleToggle_MysqlActivatableToggleGateway_ReturnsActivatedToggle()
+    {
+        $id = $this->addRelease( 'Test invisible activatable toggle 1', 'a helpful url' );
+
+        $toggleId = $this->addToggle( "test1", $id, false );
+        $userId = 1;
+
+        $status = true;
+        $expectedToggle = new Toggle( $toggleId, "test1", $id, $status );
+
+        $this->setActivatedStatusToggleForUser( $toggleId, $userId, $status );
 
         $returnedToggle = $this->gateway->getActivatableToggleByName( "test1" );
 
@@ -180,7 +225,7 @@ class MysqlActivatableToggleGatewayTest extends LabsTest
 
         $this->addToggle( "test2", $id );
 
-        $this->addUserActivatedToggle( $toggleId, $userId, true );
+        $this->setActivatedStatusToggleForUser( $toggleId, $userId, true );
 
         $expectedToggle = new Toggle( $toggleId, "test1", $id, true );
 
