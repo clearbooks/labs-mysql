@@ -2,7 +2,7 @@ language: php
 php:
   - 7.0
 
-install: composer install --dev
+install: composer install --dev --verbose
 before_script:
   - cp vendor/clearbooks/labs-php-client-mysql/config/db-config.sample.php vendor/clearbooks/labs-php-client-mysql/config/db-config.php
   - mysql -e 'create database labs;'
