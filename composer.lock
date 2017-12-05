@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e0102a91d68fd769e45b7f22e13ae1d8",
+    "content-hash": "162d9136c8bfbb63d694bf4dd2d40d31",
     "packages": [
         {
             "name": "clearbooks/labs",
@@ -1889,6 +1889,8 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": ">=7.0"
+    },
     "platform-dev": []
 }
