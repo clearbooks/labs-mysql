@@ -30,7 +30,7 @@
       "type": "git"
     },
     {
-      "url": "git@github.com:clearbooks/labs-schema.git",
+      "url": "https://github.com/clearbooks/labs-schema.git",
       "type": "git"
     }
   ],
