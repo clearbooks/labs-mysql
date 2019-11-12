@@ -1,11 +1,16 @@
 language: php
 php:
   - 7.0
+  - 7.1
+  - 7.2
+
+services:
+  - mysql
 
 install: composer install --dev
 before_script:
   - cp vendor/clearbooks/labs-php-client-mysql/config/db-config.sample.php vendor/clearbooks/labs-php-client-mysql/config/db-config.php
-  - mysql -e 'create database labs;'
+  - mysql -e 'create database labs; SET GLOBAL sql_mode = "";'
 script:
   - cat vendor/clearbooks/labs-schema/sql/*.sql | mysql -uroot labs
   - vendor/phpunit/phpunit/phpunit -c phpunit.xml --coverage-clover build/logs/clover.xml
