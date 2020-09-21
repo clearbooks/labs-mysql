@@ -24,7 +24,7 @@ class MysqlGetAllFeedbackForTogglesTest extends LabsTest
     /** @var GetFeedbackForTogglesGateway */
     private $gateway;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->gateway = new MysqlGetAllFeedbackForToggles($this->connection);

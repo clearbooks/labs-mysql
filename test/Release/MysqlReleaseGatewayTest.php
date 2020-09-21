@@ -6,10 +6,8 @@
 
 namespace Clearbooks\LabsMysql\Release;
 
-use Clearbooks\Labs\Bootstrap;
 use Clearbooks\Labs\LabsTest;
 use Clearbooks\Labs\Release\Release;
-use Doctrine\DBAL\Connection;
 
 class MysqlReleaseGatewayTest extends LabsTest
 {
@@ -39,7 +37,7 @@ class MysqlReleaseGatewayTest extends LabsTest
         $this->assertEquals( $expectedRelease->getReleaseInfoUrl(), $release->getReleaseInfoUrl() );
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->gateway = new MysqlReleaseGateway( $this->connection );

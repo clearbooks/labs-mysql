@@ -24,7 +24,7 @@ class MysqlGetTogglesVisibleWithoutReleaseGatewayTest extends LabsTest
      */
     private $mysqlGetTogglesVisibleWithoutReleaseGateway;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->toggleTable = new ToggleTable();

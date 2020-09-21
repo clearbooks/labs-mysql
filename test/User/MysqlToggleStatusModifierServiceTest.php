@@ -191,7 +191,7 @@ class MysqlToggleStatusModifierServiceTest extends LabsTest
         $this->assertInsertedDatabaseData( $toggleId3, $userId4, true, false, $isGroup );
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->gateway = new MysqlToggleStatusModifierService( $this->connection, new UserPolicy(), new GroupPolicy() );

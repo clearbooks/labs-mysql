@@ -147,7 +147,7 @@ class MysqlInsertFeedbackForToggleGatewayTest extends LabsTest
         return $this->getAllFeedback();
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->gateway = new MysqlInsertFeedbackForToggleGateway( $this->connection );

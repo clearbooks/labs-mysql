@@ -56,7 +56,7 @@ class MysqlGroupToggleGatewayTest extends LabsTest
             [ 'name' => $name, 'release_id' => $releaseId, 'type' => $toggleType, 'visible' => $isActive ] );
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->gateway = new MysqlGroupToggleGateway( $this->connection );

@@ -180,7 +180,7 @@ class MysqlMarketableToggleGatewayTest extends LabsTest
         return $expected;
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->gateway = new MysqlMarketableToggleGateway( $this->connection );

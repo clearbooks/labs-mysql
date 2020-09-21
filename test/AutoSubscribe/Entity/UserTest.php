@@ -1,13 +1,15 @@
 <?php
 namespace Clearbooks\LabsMysql\AutoSubscribe\Entity;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Created by PhpStorm.
  * User: Volodymyr
  * Date: 04/09/2015
  * Time: 10:18
  */
-class UserTest extends \PHPUnit_Framework_TestCase
+class UserTest extends TestCase
 {
     const USER_ID = "TheChosenOne";
 
@@ -25,7 +27,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals( $emptyUserData[ 'userId' ], $user->getId() );
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->emptyUserData = array(
