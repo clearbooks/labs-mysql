@@ -46,7 +46,7 @@ class MysqlAutoSubscriptionProviderTest extends LabsTest
         $this->assertEquals( $initialSubscribers, $actualSubscribers );
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->gateway = new MysqlAutoSubscriptionProvider( $this->connection );

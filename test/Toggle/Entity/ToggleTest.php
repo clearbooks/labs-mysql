@@ -8,8 +8,9 @@
 
 namespace Clearbooks\LabsMysql\Toggle\Entity;
 
+use PHPUnit\Framework\TestCase;
 
-class ToggleTest extends \PHPUnit_Framework_TestCase
+class ToggleTest extends TestCase
 {
 
     /**
@@ -17,7 +18,7 @@ class ToggleTest extends \PHPUnit_Framework_TestCase
      */
     private $emptyToggleData;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->emptyToggleData = array(
@@ -98,5 +99,4 @@ class ToggleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals( $expectedToggleData[ 'guideUrl' ], $toggle->getGuideUrl() );
         $this->assertEquals( $expectedToggleData[ 'notificationCopy' ], $toggle->getAppNotificationCopyText() );
     }
-
 }

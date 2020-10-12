@@ -114,7 +114,7 @@ class MysqlActivatableToggleGatewayTest extends LabsTest
         $this->assertEquals( $expectedToggle3, $returnedToggle3 );
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->gateway = new MysqlActivatableToggleGateway( $this->connection );

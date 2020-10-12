@@ -23,7 +23,7 @@ class MysqlPublicReleaseGatewayTest extends LabsTest
      */
     private $futureDateTime;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->gateway = new MysqlPublicReleaseGateway( $this->connection );
@@ -88,7 +88,7 @@ class MysqlPublicReleaseGatewayTest extends LabsTest
     /**
      * @param bool $visibility
      * @param \DateTimeInterface $dateTime
-     * @return array
+     * @return Release
      */
     public function addRelease( $visibility, \DateTimeInterface $dateTime = null )
     {

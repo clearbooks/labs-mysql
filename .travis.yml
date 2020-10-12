@@ -1,13 +1,13 @@
 language: php
 php:
-  - 7.0
-  - 7.1
   - 7.2
+  - 7.3
+  - 7.4
 
 services:
   - mysql
 
-install: composer install --dev
+install: composer install
 before_script:
   - cp vendor/clearbooks/labs-php-client-mysql/config/db-config.sample.php vendor/clearbooks/labs-php-client-mysql/config/db-config.php
   - mysql -e 'create database labs; SET GLOBAL sql_mode = "";'

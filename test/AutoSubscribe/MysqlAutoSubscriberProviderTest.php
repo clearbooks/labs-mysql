@@ -26,7 +26,7 @@ class MysqlAutoSubscriberProviderTest extends LabsTest
         $this->connection->insert( '`subscribers`', [ 'user_id' => $name ] );
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->gateway = new MysqlAutoSubscriberProvider( $this->connection );

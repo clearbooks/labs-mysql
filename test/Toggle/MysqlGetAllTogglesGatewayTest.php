@@ -110,7 +110,7 @@ class MysqlGetAllTogglesGatewayTest extends LabsTest
         ] );
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->gateway = new MysqlGetAllTogglesGateway( $this->connection );
