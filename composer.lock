@@ -4,18 +4,18 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "58b2b3810a27ac95e92479e96c193129",
+    "content-hash": "0dc0d906a27098057dafaaea1ee2769b",
     "packages": [
         {
             "name": "clearbooks/labs",
-            "version": "dev-php82-compatibility",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/clearbooks/labs.git",
-                "reference": "e10edad085f49abfdaf831af04d267b23ecab984"
+                "reference": "77e0b1aece1d9268eebd903314d5b21c537fd697"
             },
             "require": {
-                "clearbooks/labs-php-client": "dev-php82-compatibility",
+                "clearbooks/labs-php-client": "^2.1.0",
                 "php": ">=7.4"
             },
             "require-dev": {
@@ -41,15 +41,15 @@
                 }
             ],
             "description": "Sensible releases",
-            "time": "2023-06-14T15:09:28+00:00"
+            "time": "2023-06-14T16:03:46+00:00"
         },
         {
             "name": "clearbooks/labs-php-client",
-            "version": "dev-php82-compatibility",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/clearbooks/labs-php-client.git",
-                "reference": "8cacc9cda8c0e2ae0b5582c2d52a91e40e3ca9db"
+                "reference": "39ddf95a5d6941001df19a4cac3f420109122fcb"
             },
             "require": {
                 "php": ">=7.4"
@@ -78,18 +78,18 @@
                 }
             ],
             "description": "Sensible releases",
-            "time": "2023-06-13T16:13:53+00:00"
+            "time": "2023-06-14T15:50:32+00:00"
         },
         {
             "name": "clearbooks/labs-php-client-mysql",
-            "version": "dev-php82-compatibility",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/clearbooks/labs-php-client-mysql.git",
-                "reference": "7464038b7110262452e4293451c7ea284c9d17f0"
+                "reference": "7c16fb46b99865838a29642518ce0b9288d59a90"
             },
             "require": {
-                "clearbooks/labs-php-client": "dev-php82-compatibility",
+                "clearbooks/labs-php-client": "^2.1.0",
                 "clearbooks/labs-schema": "^1.1.2",
                 "doctrine/dbal": "^3.6.3",
                 "php": ">=7.4",
@@ -117,7 +117,7 @@
                 }
             ],
             "description": "DB connection classes for Labs",
-            "time": "2023-06-14T15:07:32+00:00"
+            "time": "2023-06-14T15:59:11+00:00"
         },
         {
             "name": "clearbooks/labs-schema",
@@ -2600,11 +2600,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "clearbooks/labs": 20,
-        "clearbooks/labs-php-client": 20,
-        "clearbooks/labs-php-client-mysql": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
