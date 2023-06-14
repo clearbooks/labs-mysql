@@ -37,8 +37,8 @@ class MysqlGroupToggleGateway implements GroupToggleGateway
      */
     public function getAllGroupToggles()
     {
-        $data = $this->connection->fetchAll( 'SELECT * FROM `toggle` LEFT JOIN `toggle_marketing_information` ON toggle.id = toggle_marketing_information.toggle_id WHERE `type` = ?',
-            [ "group" ] );
+        $data = $this->connection->executeQuery( 'SELECT * FROM `toggle` LEFT JOIN `toggle_marketing_information` ON toggle.id = toggle_marketing_information.toggle_id WHERE `type` = ?',
+            [ "group" ] )->fetchAllAssociative();
         return $this->getAllTogglesFromGivenSqlResult( $data );
     }
 }

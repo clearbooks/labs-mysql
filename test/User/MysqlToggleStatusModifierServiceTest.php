@@ -87,8 +87,8 @@ class MysqlToggleStatusModifierServiceTest extends LabsTest
      */
     private function getUserActivatedToggleEntry( $toggleId, $userId )
     {
-        $data = $this->connection->fetchAssoc( 'SELECT * FROM `user_policy` WHERE toggle_id = ? AND user_id = ?',
-            [ $toggleId, $userId ] );
+        $data = $this->connection->executeQuery( 'SELECT * FROM `user_policy` WHERE toggle_id = ? AND user_id = ?',
+            [ $toggleId, $userId ] )->fetchAssociative();
         if ( empty( $data ) ) {
             return [ ];
         }
@@ -103,8 +103,8 @@ class MysqlToggleStatusModifierServiceTest extends LabsTest
      */
     private function getGroupActivatedToggleEntry( $toggleId, $groupId )
     {
-        $data = $this->connection->fetchAssoc( 'SELECT * FROM `group_policy` WHERE toggle_id = ? AND group_id = ?',
-            [ $toggleId, $groupId ] );
+        $data = $this->connection->executeQuery( 'SELECT * FROM `group_policy` WHERE toggle_id = ? AND group_id = ?',
+            [ $toggleId, $groupId ] )->fetchAssociative();
         if ( empty( $data ) ) {
             return [ ];
         }

@@ -112,8 +112,8 @@ class MysqlInsertFeedbackForToggleGatewayTest extends LabsTest
      */
     private function getAllFeedbackForToggle( $toggleId )
     {
-        return $this->connection->fetchAll( "SELECT toggle_id, mood, message, user_id, group_id FROM `feedback` WHERE toggle_id = ?",
-            [ $toggleId ] );
+        return $this->connection->executeQuery( "SELECT toggle_id, mood, message, user_id, group_id FROM `feedback` WHERE toggle_id = ?",
+            [ $toggleId ] )->fetchAllAssociative();
     }
 
     /**
@@ -130,7 +130,7 @@ class MysqlInsertFeedbackForToggleGatewayTest extends LabsTest
      */
     private function getAllFeedback()
     {
-        return $this->connection->fetchAll( "SELECT toggle_id, mood, message, user_id, group_id FROM `feedback`" );
+        return $this->connection->executeQuery( "SELECT toggle_id, mood, message, user_id, group_id FROM `feedback`" )->fetchAllAssociative();
     }
 
     private function insertDataToDatabase()

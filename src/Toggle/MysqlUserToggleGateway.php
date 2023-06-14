@@ -37,8 +37,8 @@ class MysqlUserToggleGateway implements UserToggleGateway
      */
     public function getAllUserToggles()
     {
-        $data = $this->connection->fetchAll( 'SELECT *, toggle.id as toggleId FROM `toggle` LEFT JOIN `toggle_marketing_information` ON toggle.id = toggle_marketing_information.toggle_id WHERE type = ?',
-            [ "simple" ] );
+        $data = $this->connection->executeQuery( 'SELECT *, toggle.id as toggleId FROM `toggle` LEFT JOIN `toggle_marketing_information` ON toggle.id = toggle_marketing_information.toggle_id WHERE type = ?',
+            [ "simple" ] )->fetchAllAssociative();
         return $this->getAllTogglesFromGivenSqlResult( $data );
     }
 }

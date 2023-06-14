@@ -51,8 +51,8 @@ class MysqlGetTogglesVisibleWithoutReleaseGatewayTest extends LabsTest
                                                         ->from( (string)$this->releaseTable )
                                                         ->where( "id = ?" )
                                                         ->setParameter( 0, $releaseId )
-                                                        ->execute()
-                                                        ->fetchColumn();
+                                                        ->executeQuery()
+                                                        ->fetchOne();
 
             if ( $numberOfReleasesWithGivenId == 0 ) {
                 $this->connection->insert(

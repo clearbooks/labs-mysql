@@ -36,7 +36,7 @@ class MysqlGetAllTogglesGateway implements GetAllTogglesGateway
      */
     public function getAllToggles()
     {
-        $data = $this->connection->fetchAll( 'SELECT toggle.*, toggle.id as toggleId, toggle_marketing_information.toggle_title  FROM `toggle`  LEFT JOIN `toggle_marketing_information` ON `toggle`.`id` = `toggle_marketing_information`.`toggle_id`' );
+        $data = $this->connection->executeQuery( 'SELECT toggle.*, toggle.id as toggleId, toggle_marketing_information.toggle_title  FROM `toggle`  LEFT JOIN `toggle_marketing_information` ON `toggle`.`id` = `toggle_marketing_information`.`toggle_id`' )->fetchAllAssociative();
         return $this->getAllTogglesFromGivenSqlResult( $data );
     }
 }
