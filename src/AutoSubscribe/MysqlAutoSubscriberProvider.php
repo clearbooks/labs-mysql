@@ -33,7 +33,7 @@ class MysqlAutoSubscriberProvider implements AutoSubscriberProvider
     public function getSubscribers()
     {
         $subscribers = [ ];
-        $data = $this->connection->fetchAll( 'SELECT * FROM `subscribers`' );
+        $data = $this->connection->executeQuery( 'SELECT * FROM `subscribers`' )->fetchAllAssociative();
 
         foreach ( $data as $subscriber ) {
             $subscribers[] = new User( $subscriber[ 'user_id' ] );

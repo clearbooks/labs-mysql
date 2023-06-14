@@ -60,7 +60,7 @@ class MysqlReleaseGatewayTest extends LabsTest
             'release_date' => null
         );
         $this->assertEquals( $expectedRelease,
-            $this->connection->fetchAssoc( 'SELECT * FROM `release` WHERE `id` = ?', [ $id ] ) );
+            $this->connection->executeQuery( 'SELECT * FROM `release` WHERE `id` = ?', [ $id ] )->fetchAssociative() );
     }
 
     /**

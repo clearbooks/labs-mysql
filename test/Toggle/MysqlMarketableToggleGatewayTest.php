@@ -116,8 +116,8 @@ class MysqlMarketableToggleGatewayTest extends LabsTest
      */
     private function validateMarketingInformationInTheDatabase( $expected, $toggleId )
     {
-        $actual = $this->connection->fetchAll( 'SELECT * FROM `toggle_marketing_information` WHERE toggle_id = ?',
-            [ $toggleId ] );
+        $actual = $this->connection->executeQuery( 'SELECT * FROM `toggle_marketing_information` WHERE toggle_id = ?',
+            [ $toggleId ] )->fetchAllAssociative();
 
         $this->assertEquals( $expected, $actual );
     }

@@ -45,7 +45,7 @@ class MysqlGetTogglesVisibleWithoutReleaseGateway implements GetUserTogglesVisib
 
         $queryBuilder->setParameter( 0, $isGroupToggle ? "group" : "simple" );
 
-        $results = $queryBuilder->execute()->fetchAll();
+        $results = $queryBuilder->executeQuery()->fetchAllAssociative();
         return $this->getAllTogglesFromGivenSqlResult( $results );
     }
 

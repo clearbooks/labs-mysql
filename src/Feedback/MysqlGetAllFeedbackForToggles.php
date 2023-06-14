@@ -33,9 +33,9 @@ class MysqlGetAllFeedbackForToggles implements GetFeedbackForTogglesGateway
      */
     public function getFeedbackForToggles()
     {
-        $toggleFeedbackResults = $this->connection->fetchAll(
+        $toggleFeedbackResults = $this->connection->executeQuery(
             'SELECT `toggle`.`name`, `feedback`.* FROM `feedback` JOIN `toggle` ON `toggle`.`id` = `feedback`.`toggle_id`;'
-        );
+        )->fetchAllAssociative();
 
         $feedback = [];
         foreach($toggleFeedbackResults as $toggleFeedback) {

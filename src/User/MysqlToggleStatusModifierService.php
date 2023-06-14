@@ -127,7 +127,7 @@ class MysqlToggleStatusModifierService implements ToggleStatusModifierService
                                                   ->andWhere( $identityColumn . " = ?" )
                                                   ->setParameter( 0, $toggleIdentifier )
                                                   ->setParameter( 1, $identity )
-                                                  ->execute()->fetchColumn();
+                                                  ->executeQuery()->fetchOne();
         return $numberOfPolicyRecords > 0;
     }
 

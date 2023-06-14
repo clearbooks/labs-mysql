@@ -46,7 +46,7 @@ class MysqlReleaseGateway implements ReleaseGateway
      */
     public function getRelease( $releaseId )
     {
-        $releaseArray = $this->connection->fetchAssoc( 'SELECT * FROM `release` WHERE id = ?', [ $releaseId ] );
+        $releaseArray = $this->connection->executeQuery( 'SELECT * FROM `release` WHERE id = ?', [ $releaseId ] )->fetchAssociative();
         if ( empty( $releaseArray ) ) {
             return null;
         }
@@ -60,7 +60,7 @@ class MysqlReleaseGateway implements ReleaseGateway
     public function getAllReleases()
     {
         $releases = [ ];
-        foreach ( $this->connection->fetchAll( 'SELECT * FROM `release`' ) as $row ) {
+        foreach ( $this->connection->executeQuery( 'SELECT * FROM `release`' )->fetchAllAssociative() as $row ) {
             $releases[] = new Release( $row[ 'id' ], $row[ 'name' ], $row[ 'info' ], (new \DateTime())->modify('midnight') );
         }
         return $releases;
@@ -86,7 +86,7 @@ class MysqlReleaseGateway implements ReleaseGateway
             ->setParameter( 0, $releaseName )
             ->setParameter( 1, $releaseUrl )
             ->setParameter( 2, $releaseId );
-        $queryBuilder->execute();
+        $queryBuilder->executeStatement();
         return true;
     }
 

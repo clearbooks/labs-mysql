@@ -37,7 +37,7 @@ class MysqlPublicReleaseGateway implements PublicReleaseGateway
      */
     public function getAllPublicReleases()
     {
-        $rows = $this->connection->fetchAll( 'SELECT * FROM `release` WHERE visibility <> 0 OR release_date <= ?', [ date( 'Y-m-d' ) ] );
+        $rows = $this->connection->executeQuery( 'SELECT * FROM `release` WHERE visibility <> 0 OR release_date <= ?', [ date( 'Y-m-d' ) ] )->fetchAllAssociative();
 
         $releases = [];
         foreach ( $rows as $row  ) {

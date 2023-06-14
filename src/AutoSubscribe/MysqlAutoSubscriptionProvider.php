@@ -61,6 +61,6 @@ class MysqlAutoSubscriptionProvider implements AutoSubscriptionProvider
      */
     protected function getIsUserSubscribed( User $user )
     {
-        return $this->connection->fetchAssoc( 'SELECT * FROM `subscribers` WHERE user_id = ?', [ $user->getId() ] );
+        return $this->connection->executeQuery( 'SELECT * FROM `subscribers` WHERE user_id = ?', [ $user->getId() ] )->fetchAssociative();
     }
 }
