@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-versions: ['7.4', '8.2']
+        php-versions: ['7.4', '8.2', '8.3']
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -21,7 +21,7 @@ jobs:
       - name: Setup MySQL
         uses: shogo82148/actions-setup-mysql@v1
         with:
-          mysql-version: '5.7'
+          mysql-version: '8.0'
 
       - name: Cache Composer packages
         id: composer-cache
